@@ -8,76 +8,61 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Sistema de Asistencia EDEC</h1>
-            <p class="subtitle">Registro de Asistencia de Alumnos y Maestros</p>
-        </header>
-
-        <main>
-            <div class="card">
-                <form id="asistenciaForm">
-                    <div class="form-group">
-                        <label for="matricula">Matrícula:</label>
-                        <input 
-                            type="text" 
-                            id="matricula" 
-                            name="matricula" 
-                            placeholder="Ingrese su matrícula"
-                            required
-                            autocomplete="off"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tipo de Registro:</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input 
-                                    type="radio" 
-                                    name="tipoRegistro" 
-                                    value="entrada" 
-                                    required
-                                >
-                                <span class="radio-custom entrada">Entrada</span>
-                            </label>
-                            <label class="radio-label">
-                                <input 
-                                    type="radio" 
-                                    name="tipoRegistro" 
-                                    value="salida" 
-                                    required
-                                >
-                                <span class="radio-custom salida">Salida</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="infoUsuario" class="info-usuario hidden">
-                        <div class="info-card">
-                            <h3>Información del Usuario</h3>
-                            <p><strong>Nombre:</strong> <span id="nombreUsuario">-</span></p>
-                            <p><strong>Carrera:</strong> <span id="carreraUsuario">-</span></p>
-                            <p><strong>Tipo:</strong> <span id="tipoUsuario">-</span></p>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="btnRegistrar" class="btn-primary" disabled>
-                        Registrar Asistencia
-                    </button>
-                </form>
-
-                <div id="mensaje" class="mensaje hidden"></div>
+        <!-- Logo -->
+        <div class="logo-container">
+            <img src="../images/logo.png" alt="Logo EDEC" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="logo-placeholder" style="display: none;">
+                <div class="logo-box">LOGO</div>
             </div>
-        </main>
+        </div>
 
-        <footer>
-            <p>&copy; 2024 Sistema de Asistencia EDEC</p>
-        </footer>
+        <!-- Input Matrícula -->
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="matricula" 
+                placeholder="Ingrese matrícula"
+                maxlength="10"
+                readonly
+            >
+        </div>
+
+        <!-- Teclado Numérico -->
+        <div class="keyboard-container">
+            <div class="keyboard">
+                <button type="button" class="key" data-value="1">1</button>
+                <button type="button" class="key" data-value="2">2</button>
+                <button type="button" class="key" data-value="3">3</button>
+                <button type="button" class="key" data-value="4">4</button>
+                <button type="button" class="key" data-value="5">5</button>
+                <button type="button" class="key" data-value="6">6</button>
+                <button type="button" class="key" data-value="7">7</button>
+                <button type="button" class="key" data-value="8">8</button>
+                <button type="button" class="key" data-value="9">9</button>
+                <button type="button" class="key key-clear" data-action="clear">⌫</button>
+                <button type="button" class="key" data-value="0">0</button>
+                <button type="button" class="key key-clear" data-action="delete">✕</button>
+            </div>
+        </div>
+
+        <!-- Botones Entrada/Salida -->
+        <div class="tipo-registro-container">
+            <button type="button" class="btn-tipo btn-entrada" data-tipo="entrada">
+                Entrada
+            </button>
+            <button type="button" class="btn-tipo btn-salida" data-tipo="salida">
+                Salida
+            </button>
+        </div>
+
+        <!-- Botón Registrar -->
+        <div class="registrar-container">
+            <button type="button" id="btnRegistrar" class="btn-registrar" disabled>
+                Registrar
+            </button>
+        </div>
     </div>
 
-    <script src="../js/config.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/app.js"></script>
+    <script src="../js/keyboard.js"></script>
 </body>
 </html>
-

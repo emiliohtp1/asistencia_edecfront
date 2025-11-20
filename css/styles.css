@@ -1,19 +1,3 @@
-/* Variables CSS */
-:root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --success-color: #10b981;
-    --error-color: #ef4444;
-    --warning-color: #f59e0b;
-    --bg-color: #f3f4f6;
-    --card-bg: #ffffff;
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --border-color: #e5e7eb;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
 /* Reset y estilos base */
 * {
     margin: 0;
@@ -29,285 +13,262 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: var(--text-primary);
+    color: #1f2937;
 }
 
 .container {
     width: 100%;
-    max-width: 600px;
-}
-
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* Card */
-.card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 40px;
-    box-shadow: var(--shadow-lg);
-    animation: slideUp 0.5s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Formulario */
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 14px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-/* Radio buttons personalizados */
-.radio-group {
+    max-width: 500px;
     display: flex;
-    gap: 15px;
-    margin-top: 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 }
 
-.radio-label {
-    flex: 1;
-    cursor: pointer;
+/* Logo */
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
-.radio-label input[type="radio"] {
-    display: none;
+.logo {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: contain;
 }
 
-.radio-custom {
-    display: block;
-    padding: 16px 20px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
+.logo-placeholder {
+    display: flex;
+    justify-content: center;
+}
+
+.logo-box {
+    width: 200px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Matrícula */
+.input-container {
+    width: 100%;
+}
+
+#matricula {
+    width: 100%;
+    padding: 20px;
+    font-size: 2rem;
     text-align: center;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
     font-weight: 600;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none;
     transition: all 0.3s ease;
-    background: white;
+}
+
+#matricula:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+#matricula::placeholder {
+    color: #9ca3af;
+    font-weight: normal;
+    letter-spacing: normal;
+}
+
+/* Teclado Numérico */
+.keyboard-container {
+    width: 100%;
+}
+
+.keyboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.key {
+    aspect-ratio: 1;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     user-select: none;
 }
 
-.radio-custom.entrada {
-    color: var(--success-color);
-}
-
-.radio-custom.salida {
-    color: var(--warning-color);
-}
-
-.radio-label input[type="radio"]:checked + .radio-custom {
-    border-color: var(--primary-color);
-    background: var(--primary-color);
-    color: white;
-    transform: scale(1.02);
-    box-shadow: var(--shadow);
-}
-
-.radio-label:hover .radio-custom {
-    border-color: var(--primary-color);
+.key:hover {
+    background: rgba(255, 255, 255, 1);
     transform: translateY(-2px);
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Información del usuario */
-.info-usuario {
-    margin: 25px 0;
-    animation: fadeIn 0.3s ease-in;
+.key:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.info-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.key-clear {
+    background: rgba(239, 68, 68, 0.9);
     color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
+    font-size: 1.5rem;
 }
 
-.info-card h3 {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
+.key-clear:hover {
+    background: rgba(239, 68, 68, 1);
 }
 
-.info-card p {
-    margin: 8px 0;
-    font-size: 1rem;
-}
-
-.info-card strong {
-    display: inline-block;
-    min-width: 100px;
-}
-
-/* Botones */
-.btn-primary {
+/* Botones Entrada/Salida */
+.tipo-registro-container {
     width: 100%;
-    padding: 16px;
-    background: var(--primary-color);
-    color: white;
+    display: flex;
+    gap: 20px;
+}
+
+.btn-tipo {
+    flex: 1;
+    padding: 25px;
+    font-size: 1.5rem;
+    font-weight: 700;
     border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--shadow);
-    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--primary-hover);
+.btn-entrada {
+    background: #10b981;
+}
+
+.btn-entrada:hover {
+    background: #059669;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
 }
 
-.btn-primary:active:not(:disabled) {
+.btn-entrada.selected {
+    background: #047857;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+    transform: scale(1.05);
+}
+
+.btn-salida {
+    background: #ef4444;
+}
+
+.btn-salida:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-salida.selected {
+    background: #b91c1c;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
+    transform: scale(1.05);
+}
+
+/* Botón Registrar */
+.registrar-container {
+    width: 100%;
+}
+
+.btn-registrar {
+    width: 100%;
+    padding: 25px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.btn-registrar:hover:not(:disabled) {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-registrar:active:not(:disabled) {
     transform: translateY(0);
 }
 
-.btn-primary:disabled {
-    background: var(--text-secondary);
+.btn-registrar:disabled {
+    background: #9ca3af;
     cursor: not-allowed;
     opacity: 0.6;
 }
 
-/* Mensajes */
-.mensaje {
-    margin-top: 20px;
-    padding: 16px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-align: center;
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.mensaje.success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 2px solid var(--success-color);
-}
-
-.mensaje.error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 2px solid var(--error-color);
-}
-
-.mensaje.info {
-    background: #dbeafe;
-    color: #1e40af;
-    border: 2px solid var(--primary-color);
-}
-
-/* Utilidades */
-.hidden {
-    display: none !important;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 30px;
-    color: white;
-    opacity: 0.8;
-    font-size: 0.9rem;
-}
-
 /* Responsive */
-@media (max-width: 640px) {
-    header h1 {
-        font-size: 2rem;
+@media (max-width: 600px) {
+    .container {
+        gap: 20px;
     }
 
-    .card {
-        padding: 25px;
+    .logo {
+        max-width: 150px;
+        max-height: 120px;
     }
 
-    .radio-group {
-        flex-direction: column;
+    .logo-box {
+        width: 150px;
+        height: 120px;
+        font-size: 1.5rem;
+    }
+
+    #matricula {
+        font-size: 1.5rem;
+        padding: 15px;
+    }
+
+    .keyboard {
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .key {
+        font-size: 1.5rem;
+    }
+
+    .btn-tipo {
+        padding: 20px;
+        font-size: 1.3rem;
+    }
+
+    .btn-registrar {
+        padding: 20px;
+        font-size: 1.5rem;
     }
 }
-
-/* Loading spinner */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 0.8s linear infinite;
-    margin-right: 10px;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
