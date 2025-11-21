@@ -2,43 +2,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const errorMessage = document.getElementById('error-message');
 
+    // Nuevo endpoint POST de login
+    const API_LOGIN_URL = 'https://asistencia-edec.onrender.com/api/usuarios/login';
+
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Evita el envío tradicional del formulario
 
-        // Obtener los valores del formulario
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        const usernameInput = document.getElementById('username').value;
+        const passwordInput = document.getElementById('password').value;
 
-        // Ocultar el mensaje de error antes de cada intento
+        // Ocultar mensaje de error al intentar logear
         errorMessage.style.display = 'none';
-
+        
         try {
-            // 🚨 Importante: La URL debe apuntar al endpoint de tu servidor backend
-            // Si el backend está en el mismo dominio, usa una ruta relativa: '/api/login'
-            const response = await fetch('http://localhost:3000/api/login', {
+            // --- 1. Enviar credenciales al backend ---
+            const response = await fetch(API_LOGIN_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({
+                    username: usernameInput,
+                    password: passwordInput
+                })
             });
+
+            // --- 2. Validar respuesta del backend ---
+            if (response.status === 401) {
+                // Credenciales incorrectas
+                errorMessage.textContent = 'Las credenciales no son correctas.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Error en el servidor.');
+            }
 
             const data = await response.json();
 
-            if (response.ok) {
-                // Credenciales correctas
-                console.log('Login exitoso:', data.message);
-                // Redirigir a home.html
-                window.location.href = 'home.html';
-            } else {
-                // Credenciales incorrectas
-                console.error('Error de login:', data.message);
-                errorMessage.textContent = data.message || 'Las credenciales no son correctas.';
-                errorMessage.style.display = 'block';
-            }
+            console.log('Login exitoso:', data);
+
+            // --- 3. Redirigir si todo fue correcto ---
+            window.location.href = 'home.html';
+
         } catch (error) {
-            console.error('Error de conexión con el servidor:', error);
-            errorMessage.textContent = 'Error al intentar conectar. Inténtalo de nuevo.';
+            console.error('Error durante el login:', error.message);
+            errorMessage.textContent = 'Error de conexión o del servidor.';
             errorMessage.style.display = 'block';
         }
     });
