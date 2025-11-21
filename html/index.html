@@ -3,66 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Asistencia EDEC</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <title>Login - Asistencia EDEC</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Logo -->
-        <div class="logo-container">
-            <img src="../images/logo.png" alt="Logo EDEC" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div class="logo-placeholder" style="display: none;">
-                <div class="logo-box">LOGO</div>
+    <div class="login-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
             </div>
-        </div>
-
-        <!-- Input Matrícula -->
-        <div class="input-container">
-            <input 
-                type="text" 
-                id="matricula" 
-                placeholder="Ingrese matrícula"
-                maxlength="10"
-                readonly
-            >
-        </div>
-
-        <!-- Teclado Numérico -->
-        <div class="keyboard-container">
-            <div class="keyboard">
-                <button type="button" class="key" data-value="1">1</button>
-                <button type="button" class="key" data-value="2">2</button>
-                <button type="button" class="key" data-value="3">3</button>
-                <button type="button" class="key" data-value="4">4</button>
-                <button type="button" class="key" data-value="5">5</button>
-                <button type="button" class="key" data-value="6">6</button>
-                <button type="button" class="key" data-value="7">7</button>
-                <button type="button" class="key" data-value="8">8</button>
-                <button type="button" class="key" data-value="9">9</button>
-                <button type="button" class="key key-clear" data-action="clear">⌫</button>
-                <button type="button" class="key" data-value="0">0</button>
-                <button type="button" class="key key-clear" data-action="delete">✕</button>
+            <div class="input-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
             </div>
-        </div>
-
-        <!-- Botones Entrada/Salida -->
-        <div class="tipo-registro-container">
-            <button type="button" class="btn-tipo btn-entrada" data-tipo="entrada">
-                Entrada
-            </button>
-            <button type="button" class="btn-tipo btn-salida" data-tipo="salida">
-                Salida
-            </button>
-        </div>
-
-        <!-- Botón Registrar -->
-        <div class="registrar-container">
-            <button type="button" id="btnRegistrar" class="btn-registrar" disabled>
-                Registrar
-            </button>
-        </div>
+            <p id="error-message" class="error-text" style="display: none;">
+                Las credenciales no son correctas.
+            </p>
+            <button type="submit">Ingresar</button>
+        </form>
     </div>
-
-    <script src="../js/keyboard.js"></script>
+    <script src="../js/login.js"></script>
 </body>
 </html>
