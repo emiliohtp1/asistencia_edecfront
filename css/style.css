@@ -3,114 +3,71 @@ body {
     background-color: #0b0b63;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* ← coloca el contenido arriba */
     min-height: 100vh;
     margin: 0;
-}
-
-.login-container {
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.input-group input[type="text"],
-.input-group input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-/* Estilo para el mensaje de error */
-.error-text {
-    color: #dc3545;
-    text-align: center;
-    font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: -5px;
+    padding-top: 40px; /* separación superior */
 }
 
 /* ---------------------------------------------------- */
-/* NUEVOS ESTILOS PARA PANTALLA DE ASISTENCIA           */
-/* (Agregados sin tocar los estilos previos)            */
+/* CONTENEDOR PRINCIPAL DE ASISTENCIA                   */
 /* ---------------------------------------------------- */
 
 .asistencia-container {
-    height: 300px;
+    width: 400px;        /* ← Ancho solicitado */
+    height: 300px;       /* ← Altura solicitada */
     background: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    width: 300px;
+    padding: 20px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 }
 
+/* ---------------------------------------------------- */
+/* ELEMENTOS INTERNOS                                   */
+/* ---------------------------------------------------- */
+
 .logo {
-    width: 120px;
-    margin: 0 auto 15px auto;
-    display: block;
-    background-color: #eee; /* Temporal */
-    height: 120px; /* Temporal */
+    width: 90px;
+    height: 90px;
+    background: #eee;
     border-radius: 10px;
+    margin-bottom: 15px;
 }
 
 .input-matricula {
-    width: 270px;
-    padding: 12px;
+    width: 90%;
+    padding: 10px;
     font-size: 22px;
     text-align: center;
     border: 2px solid #ccc;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
+
+/* ---------------------------------------------------- */
+/* TECLADO NUMÉRICO                                     */
+/* ---------------------------------------------------- */
 
 .teclado {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 280px; /* ajustado para que entre */
+    margin-bottom: 10px;
 }
 
 .tecla {
     background: #e0e0e0;
-    padding: 18px;
-    font-size: 22px;
+    padding: 14px;
+    font-size: 20px;
     border-radius: 8px;
     cursor: pointer;
     transition: 0.2s;
@@ -121,16 +78,22 @@ button[type="submit"]:hover {
     background: #c9c9c9;
 }
 
+/* ---------------------------------------------------- */
+/* BOTONES DE ENTRADA / SALIDA                          */
+/* ---------------------------------------------------- */
+
 .boton-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 12px;
 }
 
 .btn-entrada, .btn-salida {
     width: 48%;
-    padding: 12px;
-    font-size: 18px;
+    padding: 10px;
+    font-size: 16px;
     border: none;
     border-radius: 8px;
     color: white;
@@ -153,27 +116,58 @@ button[type="submit"]:hover {
     background: #a71d2a;
 }
 
+/* ---------------------------------------------------- */
+/* BOTÓN REGISTRAR                                       */
+/* (VA FUERA DEL CONTAINER)                              */
+/* ---------------------------------------------------- */
+
 .btn-registrar {
-    width: 100%;
+    width: 400px;
     padding: 14px;
     font-size: 20px;
     background: #0b0b63;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 .btn-registrar:hover {
     background: #060644;
 }
 
+/* ---------------------------------------------------- */
+/* MENSAJE DE ÉXITO                                      */
+/* ---------------------------------------------------- */
+
 .mensaje-exito {
     display: none;
+    width: 400px;
     background: #28a745;
     color: white;
     padding: 10px;
     margin-top: 15px;
-    border-radius: 5px;
+    border-radius: 8px;
+    text-align: center;
     font-weight: bold;
+}
+
+
+/* Animación de éxito */
+.mensaje-exito {
+    display: none;
+    opacity: 0;
+    background: #28a745;
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.mensaje-exito.show {
+    display: block;
+    opacity: 1;
 }

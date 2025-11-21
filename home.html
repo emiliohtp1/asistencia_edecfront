@@ -8,40 +8,44 @@
 </head>
 <body>
 
-<div class="asistencia-container">
-    
-    <div class="logo"></div>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="asistencia-container">
+        
+        <!-- LOGO -->
+        <div class="logo"></div>
 
-    <input 
-        type="text" 
-        id="matriculaInput" 
-        class="input-matricula" 
-        placeholder="Ingresa tu matrícula" 
-        readonly
-    >
+        <!-- INPUT MATRICULA -->
+        <input 
+            type="text" 
+            id="matriculaInput" 
+            class="input-matricula" 
+            placeholder="Ingresa tu matrícula" 
+            readonly
+        >
 
-    <div class="teclado">
-        <div class="tecla">1</div>
-        <div class="tecla">2</div>
-        <div class="tecla">3</div>
-        <div class="tecla">4</div>
-        <div class="tecla">5</div>
-        <div class="tecla">6</div>
-        <div class="tecla">7</div>
-        <div class="tecla">8</div>
-        <div class="tecla">9</div>
-        <div class="tecla">←</div>
-        <div class="tecla">0</div>
-        <div class="tecla">C</div>
+        <!-- TECLADO NUMÉRICO -->
+        <div class="teclado">
+            <div class="tecla">1</div>
+            <div class="tecla">2</div>
+            <div class="tecla">3</div>
+            <div class="tecla">4</div>
+            <div class="tecla">5</div>
+            <div class="tecla">6</div>
+            <div class="tecla">7</div>
+            <div class="tecla">8</div>
+            <div class="tecla">9</div>
+            <div class="tecla">←</div>
+            <div class="tecla">0</div>
+            <div class="tecla">C</div>
+        </div>
+
     </div>
 
+    <!-- BOTÓN Y MENSAJES (FUERA DEL CONTAINER) -->
     <button class="btn-registrar" id="btnRegistrar">Registrar</button>
 
     <div id="mensajeExito" class="mensaje-exito">Asistencia registrada</div>
 
-</div>
-
-<script src="../js/asistencia.js"></script>
-
+    <script src="../js/asistencia.js"></script>
 </body>
 </html>
