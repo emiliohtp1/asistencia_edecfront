@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Login exitoso:', data);
 
             // --- 3. Redirigir si todo fue correcto ---
+            localStorage.setItem('isLoggedIn', true);
             window.location.href = 'home.html';
 
         } catch (error) {
