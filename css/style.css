@@ -1,12 +1,16 @@
+/* ====== ESTILOS GENERALES ====== */
 body {
     font-family: Arial, sans-serif;
     background-color: #0b0b63;
+    margin: 0;
+}
+
+/* Esto centra SOLO el login */
+.login-page {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* ← coloca el contenido arriba */
+    align-items: center;
     min-height: 100vh;
-    margin: 0;
-    padding-top: 40px; /* separación superior */
 }
 
 /* ---------------------------------------------------- */
@@ -170,4 +174,13 @@ body {
 .mensaje-exito.show {
     display: block;
     opacity: 1;
+}
+
+/* SOLO PARA HOME.HTML */
+.asistencia-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    min-height: 100vh;
 }
