@@ -90,7 +90,7 @@ button[type="submit"]:hover {
 }
 
 .input-matricula {
-    width: 100%;
+    width: 450px;
     padding: 12px;
     font-size: 22px;
     text-align: center;
