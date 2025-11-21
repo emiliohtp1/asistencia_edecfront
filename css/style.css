@@ -13,7 +13,7 @@ body {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 500px;
+    width: 300px;
 }
 
 h2 {
@@ -75,7 +75,7 @@ button[type="submit"]:hover {
     background: #ffffff;
     padding: 25px;
     border-radius: 10px;
-    width: 350px;
+    width: 500px;
     text-align: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
 }
