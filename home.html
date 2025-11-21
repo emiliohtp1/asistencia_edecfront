@@ -3,23 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido - Asistencia EDEC</title>
+    <title>Registrar Asistencia</title>
     <link rel="stylesheet" href="../css/style.css">
-    
-    <script src="../js/authGuard.js"></script> 
 </head>
 <body>
-    <div class="home-container">
-        <h1>¡Bienvenido!</h1>
-        <p>Has iniciado sesión correctamente.</p>
-        <button id="logoutButton">Cerrar Sesión</button>
-    </div>
+
+<div class="asistencia-container">
     
-    <script>
-        document.getElementById('logoutButton').addEventListener('click', () => {
-            localStorage.removeItem('isLoggedIn'); // Elimina el flag de sesión
-            window.location.href = 'index.html'; // Redirige al login
-        });
-    </script>
+    <div class="logo"></div> <!-- Cambiarás esto luego -->
+
+    <input 
+        type="text" 
+        id="matriculaInput" 
+        class="input-matricula" 
+        placeholder="Ingresa tu matrícula" 
+        readonly
+    >
+
+    <div class="teclado">
+        <div class="tecla">1</div>
+        <div class="tecla">2</div>
+        <div class="tecla">3</div>
+        <div class="tecla">4</div>
+        <div class="tecla">5</div>
+        <div class="tecla">6</div>
+        <div class="tecla">7</div>
+        <div class="tecla">8</div>
+        <div class="tecla">9</div>
+        <div class="tecla">←</div>
+        <div class="tecla">0</div>
+        <div class="tecla">C</div>
+    </div>
+
+    <div class="boton-row">
+        <button class="btn-entrada" id="btnEntrada">Entrada</button>
+        <button class="btn-salida" id="btnSalida">Salida</button>
+    </div>
+
+    <button class="btn-registrar" id="btnRegistrar">Registrar</button>
+
+    <div id="mensajeExito" class="mensaje-exito">Asistencia registrada</div>
+
+</div>
+
+<script src="../js/asistencia.js"></script>
+
 </body>
 </html>

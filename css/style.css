@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #2020a5;
+    background-color: #0b0b63;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,7 +38,7 @@ h2 {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; /* Importante para el padding */
+    box-sizing: border-box;
 }
 
 button[type="submit"] {
@@ -59,9 +59,120 @@ button[type="submit"]:hover {
 
 /* Estilo para el mensaje de error */
 .error-text {
-    color: #dc3545; /* Rojo */
+    color: #dc3545;
     text-align: center;
     font-weight: bold;
     margin-top: 10px;
-    margin-bottom: -5px; /* Ajuste para que quede encima del botón */
+    margin-bottom: -5px;
+}
+
+/* ---------------------------------------------------- */
+/* NUEVOS ESTILOS PARA PANTALLA DE ASISTENCIA           */
+/* (Agregados sin tocar los estilos previos)            */
+/* ---------------------------------------------------- */
+
+.asistencia-container {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+}
+
+.logo {
+    width: 120px;
+    margin: 0 auto 15px auto;
+    display: block;
+    background-color: #eee; /* Temporal */
+    height: 120px; /* Temporal */
+    border-radius: 10px;
+}
+
+.input-matricula {
+    width: 100%;
+    padding: 12px;
+    font-size: 22px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.teclado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tecla {
+    background: #e0e0e0;
+    padding: 18px;
+    font-size: 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    user-select: none;
+}
+
+.tecla:hover {
+    background: #c9c9c9;
+}
+
+.boton-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.btn-entrada, .btn-salida {
+    width: 48%;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-entrada {
+    background: #28a745;
+}
+
+.btn-entrada.selected {
+    background: #1e7e34;
+}
+
+.btn-salida {
+    background: #dc3545;
+}
+
+.btn-salida.selected {
+    background: #a71d2a;
+}
+
+.btn-registrar {
+    width: 100%;
+    padding: 14px;
+    font-size: 20px;
+    background: #0b0b63;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-registrar:hover {
+    background: #060644;
+}
+
+.mensaje-exito {
+    display: none;
+    background: #28a745;
+    color: white;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-weight: bold;
 }
