@@ -10,6 +10,24 @@ const mensajeExito = document.getElementById("mensajeExito");
 
 let tipoRegistro = null;
 
+// Obtener referencia del input donde se escribe la matrícula
+const inputMatricula = document.getElementById("matriculaInput");
+
+// Función: insertar número en el input
+function agregarNumero(num) {
+    inputMatricula.value += num;
+}
+
+// Función: borrar último número
+function borrarUltimo() {
+    inputMatricula.value = inputMatricula.value.slice(0, -1);
+}
+
+// Función: limpiar todo
+function limpiarInput() {
+    inputMatricula.value = "";
+}
+
 // Teclado numérico
 teclas.forEach(tecla => {
     tecla.addEventListener("click", () => {
