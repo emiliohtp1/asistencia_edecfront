@@ -129,7 +129,7 @@ body {
     width: 400px;
     padding: 14px;
     font-size: 20px;
-    background: #0b0b63;
+    background: #0c7e1f;
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -138,7 +138,7 @@ body {
 }
 
 .btn-registrar:hover {
-    background: #060644;
+    background: #09cc4a;
 }
 
 /* ---------------------------------------------------- */
@@ -223,7 +223,7 @@ body {
 }
 
 .input-group input {
-    width: 300px;
+    width: 310px;
     padding: 10px;
     margin-top: 5px;
     border: 2px solid #ccc;
