@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Asistencias - EDEC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="buscador-page">
+    <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar Sesión</button>
+
+    <div class="buscador-container">
+        <h1>Buscador de Asistencias</h1>
+        
+        <div class="buscador-header">
+            <input 
+                type="text" 
+                id="inputBuscarMatricula" 
+                class="input-buscar" 
+                placeholder="Buscar por matrícula..."
+            >
+            <button class="btn-buscar" id="btnBuscar">Buscar</button>
+        </div>
+
+        <div class="tabla-container">
+            <table class="tabla-asistencias" id="tablaAsistencias">
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyAsistencias">
+                    <!-- Las filas se agregarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="mensajeSinResultados" class="mensaje-sin-resultados" style="display: none;">
+            No se encontraron resultados.
+        </div>
+    </div>
+
+    <script src="js/authGuardBuscador.js"></script>
+    <script src="js/buscador.js"></script>
+</body>
+</html>

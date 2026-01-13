@@ -266,3 +266,115 @@ button[type="submit"]:hover {
     color: red;
     font-weight: bold;
 }
+
+/* ================================
+   ESTILOS PARA BUSCADOR (buscador.html)
+   ================================ */
+
+.buscador-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    min-height: 100vh;
+    position: relative;
+    background-color: #0b0b63;
+}
+
+.buscador-container {
+    width: 90%;
+    max-width: 1200px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    margin-top: 60px;
+}
+
+.buscador-container h1 {
+    text-align: center;
+    color: #000;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.buscador-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.input-buscar {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    max-width: 300px;
+}
+
+.input-buscar:focus {
+    outline: none;
+    border-color: #0b0b63;
+}
+
+.btn-buscar {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #0b0b63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-buscar:hover {
+    background: #050545;
+}
+
+.tabla-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.tabla-asistencias {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.tabla-asistencias thead {
+    background: #0b0b63;
+    color: white;
+}
+
+.tabla-asistencias th {
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.tabla-asistencias td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    font-size: 15px;
+}
+
+.tabla-asistencias tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.tabla-asistencias tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.mensaje-sin-resultados {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-size: 16px;
+    margin-top: 20px;
+}
