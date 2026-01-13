@@ -4,6 +4,7 @@ const matriculaInput = document.getElementById("matriculaInput");
 const teclas = document.querySelectorAll(".tecla");
 const btnRegistrar = document.getElementById("btnRegistrar");
 const mensajeExito = document.getElementById("mensajeExito");
+const btnCerrarSesion = document.getElementById("btnCerrarSesion");
 
 // ==============================
 //      TECLADO NUMÉRICO
@@ -82,4 +83,14 @@ btnRegistrar.addEventListener("click", async () => {
 
     btnRegistrar.disabled = false;
     btnRegistrar.textContent = "Registrar";
+});
+
+// ==============================
+//   CERRAR SESIÓN
+// ==============================
+btnCerrarSesion.addEventListener("click", () => {
+    if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+        localStorage.removeItem("isLoggedIn");
+        window.location.href = "index.html";
+    }
 });
