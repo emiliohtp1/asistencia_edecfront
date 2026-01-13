@@ -38,9 +38,10 @@ body {
 .logo {
     width: 90px;
     height: 90px;
-    background: #eee;
+    object-fit: contain;
     border-radius: 10px;
     margin-bottom: 15px;
+    display: block;
 }
 
 .input-matricula {
