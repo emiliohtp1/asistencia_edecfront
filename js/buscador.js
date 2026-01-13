@@ -6,6 +6,7 @@ let btnBuscar;
 let tbodyAsistencias;
 let mensajeSinResultados;
 let btnCerrarSesion;
+let intervaloActualizacion;
 
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
@@ -88,6 +89,40 @@ function mostrarMensajeError(mensaje) {
     mensajeSinResultados.style.display = 'block';
 }
 
+// ==============================
+//   ACTUALIZACIÓN AUTOMÁTICA
+// ==============================
+function actualizarTabla() {
+    const matricula = inputBuscarMatricula.value.trim();
+    
+    if (matricula === '') {
+        // Si no hay búsqueda activa, cargar todas las asistencias
+        cargarTodasLasAsistencias();
+    } else {
+        // Si hay una búsqueda activa, actualizar esa búsqueda
+        buscarPorMatricula(matricula);
+    }
+}
+
+function iniciarActualizacionAutomatica() {
+    // Limpiar intervalo anterior si existe
+    if (intervaloActualizacion) {
+        clearInterval(intervaloActualizacion);
+    }
+    
+    // Actualizar cada 5 segundos
+    intervaloActualizacion = setInterval(() => {
+        actualizarTabla();
+    }, 5000);
+}
+
+function detenerActualizacionAutomatica() {
+    if (intervaloActualizacion) {
+        clearInterval(intervaloActualizacion);
+        intervaloActualizacion = null;
+    }
+}
+
 
 // ==============================
 //   INICIALIZACIÓN
@@ -119,6 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
             cargarTodasLasAsistencias();
         }
     });
+    
+    // Limpiar intervalo cuando la página se cierre o se navegue
+    window.addEventListener("beforeunload", () => {
+        detenerActualizacionAutomatica();
+    });
 
     // Cerrar sesión
     btnCerrarSesion.addEventListener("click", () => {
@@ -130,4 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar todas las asistencias al iniciar
     cargarTodasLasAsistencias();
+    
+    // Iniciar actualización automática
+    iniciarActualizacionAutomatica();
 });
