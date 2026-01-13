@@ -7,47 +7,23 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="asistencia-page">
-
-    <!-- BOTÓN CERRAR SESIÓN -->
     <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar Sesión</button>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="asistencia-container">
-        
-        <!-- LOGO -->
         <div class="logo"></div>
 
-        <!-- INPUT MATRICULA -->
-        <input 
-            type="text" 
-            id="matriculaInput" 
-            class="input-matricula" 
-            placeholder="Ingresa tu matrícula" 
-            readonly
-        >
+        <input type="text" id="matriculaInput" class="input-matricula" placeholder="Ingresa tu matrícula" readonly>
 
-        <!-- TECLADO NUMÉRICO -->
         <div class="teclado">
-            <div class="tecla">1</div>
-            <div class="tecla">2</div>
-            <div class="tecla">3</div>
-            <div class="tecla">4</div>
-            <div class="tecla">5</div>
-            <div class="tecla">6</div>
-            <div class="tecla">7</div>
-            <div class="tecla">8</div>
-            <div class="tecla">9</div>
-            <div class="tecla">←</div>
-            <div class="tecla">0</div>
-            <div class="tecla">C</div>
+            <div class="tecla">1</div><div class="tecla">2</div><div class="tecla">3</div>
+            <div class="tecla">4</div><div class="tecla">5</div><div class="tecla">6</div>
+            <div class="tecla">7</div><div class="tecla">8</div><div class="tecla">9</div>
+            <div class="tecla">←</div><div class="tecla">0</div><div class="tecla">C</div>
         </div>
 
+        <button class="btn-registrar" id="btnRegistrar">Registrar</button>
+        <div id="mensajeExito" class="mensaje-exito">¡Asistencia registrada!</div>
     </div>
-
-    <!-- BOTÓN Y MENSAJES (FUERA DEL CONTAINER) -->
-    <button class="btn-registrar" id="btnRegistrar">Registrar</button>
-
-    <div id="mensajeExito" class="mensaje-exito">Asistencia registrada</div>
 
     <script src="../js/authGuard.js"></script>
     <script src="../js/asistencia.js"></script>

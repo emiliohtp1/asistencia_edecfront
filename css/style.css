@@ -18,17 +18,16 @@ body {
 /* ---------------------------------------------------- */
 
 .asistencia-container {
-    width: 400px;        /* ← Ancho solicitado */
-    height: 300px;       /* ← Altura solicitada */
+    width: 400px;
+    height: auto; /* Cambiado de 300px a auto para que crezca con el contenido */
+    min-height: 550px; /* Asegura un tamaño base */
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
 }
 
@@ -126,7 +125,8 @@ body {
 /* ---------------------------------------------------- */
 
 .btn-registrar {
-    width: 400px;
+    width: 100%; /* Ahora ocupa el ancho del contenedor blanco */
+    max-width: 280px; /* Alineado con el ancho del teclado */
     padding: 14px;
     font-size: 20px;
     background: #0c7e1f;
@@ -146,29 +146,18 @@ body {
 /* ---------------------------------------------------- */
 
 .mensaje-exito {
-    display: none;
-    width: 400px;
-    background: #28a745;
-    color: white;
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-}
-
-
-/* Animación de éxito */
-.mensaje-exito {
-    display: none;
+    display: none; /* Se controla con JS */
     opacity: 0;
+    width: 100%;
+    max-width: 280px;
     background: #28a745;
     color: white;
     padding: 12px;
     border-radius: 6px;
     font-weight: bold;
-    margin-top: 20px;
-    transition: opacity 0.6s ease-in-out;
+    margin-top: 15px;
+    transition: opacity 0.5s ease;
+    box-sizing: border-box;
 }
 
 .mensaje-exito.show {

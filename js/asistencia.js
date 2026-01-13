@@ -53,27 +53,36 @@ btnRegistrar.addEventListener("click", async () => {
         const data = await response.json();
 
         if (!response.ok) {
+            // Si hay un error del servidor, mostramos el detalle y detenemos el proceso
             alert(data.detail || "Error al registrar asistencia.");
             btnRegistrar.disabled = false;
             btnRegistrar.textContent = "Registrar";
             return;
         }
 
-        // Mostrar popup flotante con animación
-        mensajeExito.classList.add("show");
+        // --- LÓGICA DE LA ALERTA INTERNA ---
+        
+        // 1. Hacemos que el elemento exista en el flujo de la página
+        mensajeExito.style.display = "block";
 
+        // 2. Un pequeño retraso para que el navegador note el cambio y ejecute la transición CSS
         setTimeout(() => {
+            mensajeExito.classList.add("show");
+        }, 10);
+
+        // 3. Programamos la desaparición tras 3 segundos
+        setTimeout(() => {
+            // Iniciamos desvanecimiento
             mensajeExito.classList.remove("show");
 
-            // Espera a que termine la animación antes de ocultarlo
+            // Esperamos a que la transición de opacidad termine (0.6s según tu CSS) para ocultarlo totalmente
             setTimeout(() => {
                 mensajeExito.style.display = "none";
-            }, 500);
+            }, 600); 
 
         }, 3000);
 
-
-        // Limpiar campo
+        // Limpiar el campo de texto inmediatamente tras el éxito
         matriculaInput.value = "";
 
     } catch (e) {
