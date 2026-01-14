@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Asistencias - EDEC</title>
+    <title>Asistencias - EDEC Apodaca</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="buscador-page">
     <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar Sesión</button>
 
     <div class="buscador-container">
-        <h1>Buscador de Asistencias</h1>
+        <h1>Asistencia Apodaca</h1>
         
         <div class="buscador-header">
+            <button class="btn-filtros" id="btnFiltros">🔍 Filtros</button>
             <input 
                 type="text" 
                 id="inputBuscarMatricula" 
@@ -20,6 +21,28 @@
                 placeholder="Buscar por matrícula..."
             >
             <button class="btn-buscar" id="btnBuscar">Buscar</button>
+        </div>
+
+        <div class="panel-filtros" id="panelFiltros" style="display: none;">
+            <h3>Filtros de Búsqueda</h3>
+            <div class="filtro-grupo">
+                <label for="filtroDia">Filtrar por día:</label>
+                <input 
+                    type="date" 
+                    id="filtroDia" 
+                    class="input-filtro"
+                >
+                <button class="btn-limpiar-filtro" id="btnLimpiarDia">Limpiar</button>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroMes">Filtrar por mes:</label>
+                <input 
+                    type="month" 
+                    id="filtroMes" 
+                    class="input-filtro"
+                >
+                <button class="btn-limpiar-filtro" id="btnLimpiarMes">Limpiar</button>
+            </div>
         </div>
 
         <div class="tabla-container">

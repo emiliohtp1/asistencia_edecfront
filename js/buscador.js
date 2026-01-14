@@ -7,6 +7,13 @@ let tbodyAsistencias;
 let mensajeSinResultados;
 let btnCerrarSesion;
 let intervaloActualizacion;
+let btnFiltros;
+let panelFiltros;
+let filtroDia;
+let filtroMes;
+let btnLimpiarDia;
+let btnLimpiarMes;
+let todasLasAsistencias = []; // Almacenar todas las asistencias cargadas
 
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
@@ -20,7 +27,8 @@ async function cargarTodasLasAsistencias() {
         }
 
         const data = await response.json();
-        mostrarAsistencias(data.asistencias || []);
+        todasLasAsistencias = data.asistencias || [];
+        aplicarFiltros();
     } catch (error) {
         console.error('Error:', error);
         mostrarMensajeError('Error al cargar las asistencias del día.');
@@ -42,18 +50,55 @@ async function buscarPorMatricula(matricula) {
         
         if (!response.ok) {
             if (response.status === 404) {
-                mostrarAsistencias([]);
+                todasLasAsistencias = [];
+                aplicarFiltros();
                 return;
             }
             throw new Error('Error al buscar la matrícula.');
         }
 
         const data = await response.json();
-        mostrarAsistencias(data.asistencias || []);
+        todasLasAsistencias = data.asistencias || [];
+        aplicarFiltros();
     } catch (error) {
         console.error('Error:', error);
         mostrarMensajeError('Error al buscar la matrícula.');
     }
+}
+
+// ==============================
+//   APLICAR FILTROS
+// ==============================
+function aplicarFiltros() {
+    // Verificar que los elementos del DOM estén inicializados
+    if (!filtroDia || !filtroMes) {
+        mostrarAsistencias(todasLasAsistencias);
+        return;
+    }
+
+    let asistenciasFiltradas = [...todasLasAsistencias];
+
+    // Filtrar por día
+    if (filtroDia && filtroDia.value) {
+        const fechaFiltro = filtroDia.value;
+        asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+            // Comparar solo la fecha (sin hora)
+            const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
+            return fechaAsistencia === fechaFiltro || asistencia.fecha.startsWith(fechaFiltro);
+        });
+    }
+
+    // Filtrar por mes
+    if (filtroMes && filtroMes.value) {
+        const [año, mes] = filtroMes.value.split('-');
+        asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+            const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
+            const [añoAsistencia, mesAsistencia] = fechaAsistencia.split('-');
+            return añoAsistencia === año && mesAsistencia === mes;
+        });
+    }
+
+    mostrarAsistencias(asistenciasFiltradas);
 }
 
 // ==============================
@@ -134,6 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tbodyAsistencias = document.getElementById("tbodyAsistencias");
     mensajeSinResultados = document.getElementById("mensajeSinResultados");
     btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    btnFiltros = document.getElementById("btnFiltros");
+    panelFiltros = document.getElementById("panelFiltros");
+    filtroDia = document.getElementById("filtroDia");
+    filtroMes = document.getElementById("filtroMes");
+    btnLimpiarDia = document.getElementById("btnLimpiarDia");
+    btnLimpiarMes = document.getElementById("btnLimpiarMes");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -153,6 +204,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.value.trim() === '') {
             cargarTodasLasAsistencias();
         }
+    });
+
+    // Toggle panel de filtros
+    btnFiltros.addEventListener("click", () => {
+        if (panelFiltros.style.display === 'none') {
+            panelFiltros.style.display = 'block';
+        } else {
+            panelFiltros.style.display = 'none';
+        }
+    });
+
+    // Aplicar filtros cuando cambien los valores
+    filtroDia.addEventListener("change", () => {
+        aplicarFiltros();
+    });
+
+    filtroMes.addEventListener("change", () => {
+        aplicarFiltros();
+    });
+
+    // Limpiar filtros
+    btnLimpiarDia.addEventListener("click", () => {
+        filtroDia.value = '';
+        aplicarFiltros();
+    });
+
+    btnLimpiarMes.addEventListener("click", () => {
+        filtroMes.value = '';
+        aplicarFiltros();
     });
     
     // Limpiar intervalo cuando la página se cierre o se navegue
