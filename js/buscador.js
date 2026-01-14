@@ -78,23 +78,65 @@ function aplicarFiltros() {
 
     let asistenciasFiltradas = [...todasLasAsistencias];
 
-    // Filtrar por día
+    // Filtrar por día (número del 1 al 31)
     if (filtroDia && filtroDia.value) {
-        const fechaFiltro = filtroDia.value;
+        const diaFiltro = parseInt(filtroDia.value);
         asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-            // Comparar solo la fecha (sin hora)
             const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
-            return fechaAsistencia === fechaFiltro || asistencia.fecha.startsWith(fechaFiltro);
+            let diaAsistencia;
+            
+            // Extraer el día según el formato de fecha
+            if (fechaAsistencia.includes('-')) {
+                // Formato YYYY-MM-DD o DD-MM-YYYY
+                const partes = fechaAsistencia.split('-');
+                // Si el primer número es mayor a 31, es año (formato YYYY-MM-DD)
+                if (parseInt(partes[0]) > 31) {
+                    diaAsistencia = parseInt(partes[2]);
+                } else {
+                    // Formato DD-MM-YYYY
+                    diaAsistencia = parseInt(partes[0]);
+                }
+            } else if (fechaAsistencia.includes('/')) {
+                // Formato DD/MM/YYYY o YYYY/MM/DD
+                const partes = fechaAsistencia.split('/');
+                // Si el primer número es mayor a 31, es año (formato YYYY/MM/DD)
+                if (parseInt(partes[0]) > 31) {
+                    diaAsistencia = parseInt(partes[2]);
+                } else {
+                    // Formato DD/MM/YYYY
+                    diaAsistencia = parseInt(partes[0]);
+                }
+            } else {
+                return false; // Formato desconocido
+            }
+            
+            return diaAsistencia === diaFiltro;
         });
     }
 
-    // Filtrar por mes
+    // Filtrar por mes (número del 1 al 12)
     if (filtroMes && filtroMes.value) {
-        const [año, mes] = filtroMes.value.split('-');
+        const mesFiltro = parseInt(filtroMes.value);
         asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
             const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
-            const [añoAsistencia, mesAsistencia] = fechaAsistencia.split('-');
-            return añoAsistencia === año && mesAsistencia === mes;
+            let mesAsistencia;
+            
+            // Extraer el mes según el formato de fecha
+            if (fechaAsistencia.includes('-')) {
+                // Formato YYYY-MM-DD o DD-MM-YYYY
+                const partes = fechaAsistencia.split('-');
+                // El mes siempre es la segunda parte
+                mesAsistencia = parseInt(partes[1]);
+            } else if (fechaAsistencia.includes('/')) {
+                // Formato DD/MM/YYYY o YYYY/MM/DD
+                const partes = fechaAsistencia.split('/');
+                // El mes siempre es la segunda parte
+                mesAsistencia = parseInt(partes[1]);
+            } else {
+                return false; // Formato desconocido
+            }
+            
+            return mesAsistencia === mesFiltro;
         });
     }
 
@@ -216,7 +258,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Aplicar filtros cuando cambien los valores
+    filtroDia.addEventListener("input", () => {
+        aplicarFiltros();
+    });
+
     filtroDia.addEventListener("change", () => {
+        aplicarFiltros();
+    });
+
+    filtroMes.addEventListener("input", () => {
         aplicarFiltros();
     });
 

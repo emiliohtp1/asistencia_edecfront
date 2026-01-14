@@ -26,20 +26,26 @@
         <div class="panel-filtros" id="panelFiltros" style="display: none;">
             <h3>Filtros de Búsqueda</h3>
             <div class="filtro-grupo">
-                <label for="filtroDia">Filtrar por día:</label>
+                <label for="filtroDia">Filtrar por día (1-31):</label>
                 <input 
-                    type="date" 
+                    type="number" 
                     id="filtroDia" 
                     class="input-filtro"
+                    min="1"
+                    max="31"
+                    placeholder="Día"
                 >
                 <button class="btn-limpiar-filtro" id="btnLimpiarDia">Limpiar</button>
             </div>
             <div class="filtro-grupo">
-                <label for="filtroMes">Filtrar por mes:</label>
+                <label for="filtroMes">Filtrar por mes (1-12):</label>
                 <input 
-                    type="month" 
+                    type="number" 
                     id="filtroMes" 
                     class="input-filtro"
+                    min="1"
+                    max="12"
+                    placeholder="Mes"
                 >
                 <button class="btn-limpiar-filtro" id="btnLimpiarMes">Limpiar</button>
             </div>
