@@ -23,7 +23,12 @@
             <button class="btn-buscar" id="btnBuscar">Buscar</button>
         </div>
 
+        <!-- Overlay para la ventana flotante -->
+        <div class="filtros-overlay" id="filtrosOverlay" style="display: none;"></div>
+        
+        <!-- Ventana flotante de filtros -->
         <div class="panel-filtros" id="panelFiltros" style="display: none;">
+            <button class="btn-cerrar-filtros" id="btnCerrarFiltros">×</button>
             <h3>Filtros de Búsqueda</h3>
             <div class="filtro-grupo">
                 <label for="filtroDia">Filtrar por día (1-31):</label>

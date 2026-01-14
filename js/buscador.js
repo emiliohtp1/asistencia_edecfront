@@ -9,6 +9,8 @@ let btnCerrarSesion;
 let intervaloActualizacion;
 let btnFiltros;
 let panelFiltros;
+let filtrosOverlay;
+let btnCerrarFiltros;
 let filtroDia;
 let filtroMes;
 let btnLimpiarDia;
@@ -223,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarSesion = document.getElementById("btnCerrarSesion");
     btnFiltros = document.getElementById("btnFiltros");
     panelFiltros = document.getElementById("panelFiltros");
+    filtrosOverlay = document.getElementById("filtrosOverlay");
+    btnCerrarFiltros = document.getElementById("btnCerrarFiltros");
     filtroDia = document.getElementById("filtroDia");
     filtroMes = document.getElementById("filtroMes");
     btnLimpiarDia = document.getElementById("btnLimpiarDia");
@@ -248,13 +252,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Función para abrir la ventana flotante de filtros
+    function abrirFiltros() {
+        filtrosOverlay.style.display = 'flex';
+        panelFiltros.style.display = 'block';
+    }
+
+    // Función para cerrar la ventana flotante de filtros
+    function cerrarFiltros() {
+        filtrosOverlay.style.display = 'none';
+        panelFiltros.style.display = 'none';
+    }
+
     // Toggle panel de filtros
     btnFiltros.addEventListener("click", () => {
         if (panelFiltros.style.display === 'none') {
-            panelFiltros.style.display = 'block';
+            abrirFiltros();
         } else {
-            panelFiltros.style.display = 'none';
+            cerrarFiltros();
         }
+    });
+
+    // Cerrar al hacer clic en el overlay
+    filtrosOverlay.addEventListener("click", (e) => {
+        if (e.target === filtrosOverlay) {
+            cerrarFiltros();
+        }
+    });
+
+    // Cerrar con el botón X
+    btnCerrarFiltros.addEventListener("click", () => {
+        cerrarFiltros();
     });
 
     // Aplicar filtros cuando cambien los valores
