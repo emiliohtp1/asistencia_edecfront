@@ -203,7 +203,7 @@ function iniciarActualizacionAutomatica() {
     // Actualizar cada 5 segundos
     intervaloActualizacion = setInterval(() => {
         actualizarTabla();
-    }, 5000);
+    }, 2000);
 }
 
 function detenerActualizacionAutomatica() {
