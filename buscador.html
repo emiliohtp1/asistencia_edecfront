@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Alumnos - EDEC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="buscador-page">
+    <div class="buscador-container">
+        <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar Sesión</button>
+        <h1>Buscador de Alumnos</h1>
+        
+        <div class="buscador-alumnos-header">
+            <input 
+                type="text" 
+                id="inputBuscarAlumno" 
+                class="input-buscar-alumno" 
+                placeholder="Buscar por matrícula o nombre..."
+            >
+            <button class="btn-buscar-alumno" id="btnBuscarAlumno">Buscar</button>
+        </div>
+
+        <div class="tabla-container-alumnos">
+            <table class="tabla-alumnos" id="tablaAlumnos" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nombre</th>
+                        <th>Programa</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyAlumnos">
+                    <!-- Las filas se agregarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/authGuard_buscador.js"></script>
+    <script src="js/buscador_alumnos.js"></script>
+</body>
+</html>
