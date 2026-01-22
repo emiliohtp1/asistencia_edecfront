@@ -1,5 +1,5 @@
 const API_TODAS_ASISTENCIAS_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/todas";
-const API_BUSCAR_MATRICULA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/";
+const API_BUSCAR_MATRICULA_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/";
 
 let inputBuscarMatricula;
 let btnBuscar;
@@ -48,7 +48,7 @@ async function buscarPorMatricula(matricula) {
     }
 
     try {
-        const response = await fetch(`${API_BUSCAR_MATRICULA}${matricula.trim()}`);
+        const response = await fetch(`${API_BUSCAR_MATRICULA_APODACA}${matricula.trim()}`);
         
         if (!response.ok) {
             if (response.status === 404) {
@@ -84,7 +84,7 @@ function aplicarFiltros() {
     if (filtroDia && filtroDia.value) {
         const diaFiltro = parseInt(filtroDia.value);
         asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-            const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
+            const fechaAsistencia = (asistencia.Fecha || '').split(' ')[0]; // Si viene con hora, tomar solo la fecha
             let diaAsistencia;
             
             // Extraer el día según el formato de fecha
@@ -120,7 +120,7 @@ function aplicarFiltros() {
     if (filtroMes && filtroMes.value) {
         const mesFiltro = parseInt(filtroMes.value);
         asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-            const fechaAsistencia = asistencia.fecha.split(' ')[0]; // Si viene con hora, tomar solo la fecha
+            const fechaAsistencia = (asistencia.Fecha || '').split(' ')[0]; // Si viene con hora, tomar solo la fecha
             let mesAsistencia;
             
             // Extraer el mes según el formato de fecha
@@ -161,10 +161,10 @@ function mostrarAsistencias(asistencias) {
     asistencias.forEach(asistencia => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
-            <td>${asistencia.matricula || ''}</td>
-            <td>${asistencia.nombre || ''}</td>
-            <td>${asistencia.fecha || ''}</td>
-            <td>${asistencia.hora || ''}</td>
+            <td>${asistencia.Matricula || ''}</td>
+            <td>${asistencia.Nombre || ''}</td>
+            <td>${asistencia.Fecha || ''}</td>
+            <td>${asistencia.Hora || ''}</td>
         `;
         tbodyAsistencias.appendChild(fila);
     });
