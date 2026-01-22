@@ -1,5 +1,5 @@
-const API_TODAS_ASISTENCIAS = "https://asistencia-edec.onrender.com/api/asistencias/todas";
-const API_BUSCAR_MATRICULA = "https://asistencia-edec.onrender.com/api/asistencias/matricula/";
+const API_TODAS_ASISTENCIAS_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/todas";
+const API_BUSCAR_MATRICULA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/";
 
 let inputBuscarMatricula;
 let btnBuscar;
@@ -22,7 +22,7 @@ let todasLasAsistencias = []; // Almacenar todas las asistencias cargadas
 // ==============================
 async function cargarTodasLasAsistencias() {
     try {
-        const response = await fetch(API_TODAS_ASISTENCIAS);
+        const response = await fetch(API_TODAS_ASISTENCIAS_APODACA);
         
         if (!response.ok) {
             throw new Error('Error al cargar las asistencias.');
