@@ -161,9 +161,10 @@ function mostrarAsistencias(asistencias) {
     asistencias.forEach(asistencia => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
-            <td>${asistencia.matricula}</td>
-            <td>${asistencia.fecha}</td>
-            <td>${asistencia.hora}</td>
+            <td>${asistencia.matricula || ''}</td>
+            <td>${asistencia.nombre || ''}</td>
+            <td>${asistencia.fecha || ''}</td>
+            <td>${asistencia.hora || ''}</td>
         `;
         tbodyAsistencias.appendChild(fila);
     });

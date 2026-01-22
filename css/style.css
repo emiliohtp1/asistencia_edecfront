@@ -285,10 +285,39 @@ button[type="submit"]:hover {
     width: 90%;
     max-width: 1200px;
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     margin-top: 60px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.buscador-container .btn-cerrar-sesion {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .buscador-page {
+        padding: 10px;
+    }
+    
+    .buscador-container {
+        width: 100%;
+        padding: 15px;
+        margin-top: 50px;
+    }
+    
+    .buscador-container .btn-cerrar-sesion {
+        position: relative;
+        top: 0;
+        right: 0;
+        width: 100%;
+        margin-bottom: 15px;
+    }
 }
 
 .buscador-container h1 {
@@ -303,6 +332,24 @@ button[type="submit"]:hover {
     gap: 10px;
     margin-bottom: 25px;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .buscador-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .buscador-header .input-buscar {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .buscador-header .btn-buscar,
+    .buscador-header .btn-filtros {
+        width: 100%;
+    }
 }
 
 .btn-filtros {
@@ -457,6 +504,15 @@ button[type="submit"]:hover {
 .tabla-container {
     overflow-x: auto;
     margin-top: 20px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .tabla-container {
+        margin-top: 15px;
+    }
 }
 
 .tabla-asistencias {
@@ -475,12 +531,26 @@ button[type="submit"]:hover {
     text-align: left;
     font-weight: bold;
     font-size: 16px;
+    white-space: nowrap;
 }
 
 .tabla-asistencias td {
     padding: 12px 15px;
     border-bottom: 1px solid #ddd;
     font-size: 15px;
+    word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+    .tabla-asistencias th {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+    
+    .tabla-asistencias td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
 }
 
 .tabla-asistencias tbody tr:hover {
