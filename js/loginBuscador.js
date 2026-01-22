@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- 3. Redirigir si todo fue correcto ---
             localStorage.setItem('isLoggedInBuscador', 'true');
-            window.location.href = 'buscador.html';
+            window.location.href = 'asistencias.html';
 
         } catch (error) {
             console.error('Error durante el login:', error.message);

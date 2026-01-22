@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isLoggedIn !== 'true') {
         // Si no está logueado, redirigir al login del buscador
-        window.location.href = 'buscadorlogin.html';
+        window.location.href = 'asistenciaslogin.html';
     }
     
-    // Si la sesión existe, la ejecución continúa y la página buscador.html se muestra.
+    // Si la sesión existe, la ejecución continúa y la página asistencias.html se muestra.
 });

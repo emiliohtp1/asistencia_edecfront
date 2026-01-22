@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarSesion.addEventListener("click", () => {
         if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
             localStorage.removeItem("isLoggedInBuscador");
-            window.location.href = "buscadorlogin.html";
+            window.location.href = "asistenciaslogin.html";
         }
     });
 
