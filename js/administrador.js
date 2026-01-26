@@ -256,48 +256,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Función para validar credenciales antes de redirigir
-    async function validarCredencialesAntesDeRedirigir(url) {
+    // Función para validar que el usuario siga siendo administrador antes de redirigir
+    async function validarAdminAntesDeRedirigir(url, tipoPagina) {
         const correo = localStorage.getItem('adminCorreo');
-        const contraseña = localStorage.getItem('adminContraseña');
         
-        if (!correo || !contraseña) {
-            alert('Error: No se encontraron credenciales guardadas. Por favor, inicia sesión nuevamente.');
+        if (!correo) {
+            alert('Error: No se encontró información de sesión. Por favor, inicia sesión nuevamente.');
             localStorage.removeItem('isLoggedInAdmin');
             localStorage.removeItem('adminCorreo');
             localStorage.removeItem('adminRol');
+            localStorage.removeItem('adminContraseña');
             window.location.href = 'administradorlogin.html';
             return false;
         }
         
         try {
-            const response = await fetch('https://asistencia-edec.onrender.com/api/usuarios/apodaca/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    correo: correo,
-                    contraseña: contraseña
-                })
-            });
-            
-            if (response.status === 401) {
-                alert('Las credenciales han expirado o son inválidas. Por favor, inicia sesión nuevamente.');
-                localStorage.removeItem('isLoggedInAdmin');
-                localStorage.removeItem('adminCorreo');
-                localStorage.removeItem('adminRol');
-                localStorage.removeItem('adminContraseña');
-                window.location.href = 'administradorlogin.html';
-                return false;
-            }
-            
-            if (!response.ok) {
-                throw new Error('Error al validar credenciales.');
-            }
-            
-            const data = await response.json();
-            
             // Verificar que el usuario siga siendo administrador
             const userResponse = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correo}`);
             if (userResponse.ok) {
@@ -311,9 +284,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = 'administradorlogin.html';
                     return false;
                 }
+                
+                // Establecer las claves de localStorage necesarias para la página destino
+                // Esto permite que los authGuards de esas páginas permitan el acceso
+                if (tipoPagina === 'buscador') {
+                    localStorage.setItem('isLoggedInBuscadorAlumnos', 'true');
+                } else if (tipoPagina === 'asistencias') {
+                    localStorage.setItem('isLoggedInBuscador', 'true');
+                } else if (tipoPagina === 'registrador') {
+                    localStorage.setItem('isLoggedIn', 'true');
+                }
+                
+                return true;
+            } else {
+                throw new Error('Error al obtener información del usuario.');
             }
-            
-            return true;
         } catch (error) {
             console.error('Error al validar credenciales:', error);
             alert('Error de conexión al validar credenciales. Intenta nuevamente.');
@@ -323,21 +308,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Navegación a otras páginas (en nuevas pestañas) con validación de credenciales
     btnBuscador.addEventListener('click', async () => {
-        const valido = await validarCredencialesAntesDeRedirigir(btnBuscador.getAttribute('data-url'));
+        const valido = await validarAdminAntesDeRedirigir(btnBuscador.getAttribute('data-url'), 'buscador');
         if (valido) {
             window.open(btnBuscador.getAttribute('data-url'), '_blank');
         }
     });
     
     btnAsistencias.addEventListener('click', async () => {
-        const valido = await validarCredencialesAntesDeRedirigir(btnAsistencias.getAttribute('data-url'));
+        const valido = await validarAdminAntesDeRedirigir(btnAsistencias.getAttribute('data-url'), 'asistencias');
         if (valido) {
             window.open(btnAsistencias.getAttribute('data-url'), '_blank');
         }
     });
     
     btnRegistrador.addEventListener('click', async () => {
-        const valido = await validarCredencialesAntesDeRedirigir(btnRegistrador.getAttribute('data-url'));
+        const valido = await validarAdminAntesDeRedirigir(btnRegistrador.getAttribute('data-url'), 'registrador');
         if (valido) {
             window.open(btnRegistrador.getAttribute('data-url'), '_blank');
         }
