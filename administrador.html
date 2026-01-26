@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrador - EDEC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="administrador-page">
+    <!-- Botones superiores derechos -->
+    <div class="admin-header-buttons">
+        <button class="btn-crear-usuario" id="btnCrearUsuario">Crear Usuario</button>
+        <button class="btn-usuario-circular" id="btnUsuarioCircular">U</button>
+        <button class="btn-cerrar-sesion-admin" id="btnCerrarSesion">Cerrar Sesión</button>
+    </div>
+
+    <div class="administrador-container">
+        <h1>Dashboard Administrador</h1>
+        
+        <div class="dashboard-buttons">
+            <button class="btn-dashboard" id="btnBuscador" data-url="buscador.html">
+                <span class="btn-icon">🔍</span>
+                <span class="btn-text">Buscador de Alumnos</span>
+            </button>
+            <button class="btn-dashboard" id="btnAsistencias" data-url="asistencias.html">
+                <span class="btn-icon">📋</span>
+                <span class="btn-text">Asistencias</span>
+            </button>
+            <button class="btn-dashboard" id="btnRegistrador" data-url="home.html">
+                <span class="btn-icon">📝</span>
+                <span class="btn-text">Registrador de Asistencia</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para crear usuario -->
+    <div class="modal-overlay" id="modalCrearUsuario" style="display: none;">
+        <div class="modal-content">
+            <button class="btn-cerrar-modal" id="btnCerrarCrearUsuario">×</button>
+            <h2>Crear Nuevo Usuario</h2>
+            <form id="formCrearUsuario">
+                <div class="input-group">
+                    <label for="nombreCompleto">Nombre Completo:</label>
+                    <input type="text" id="nombreCompleto" name="nombreCompleto" required>
+                </div>
+                <div class="input-group">
+                    <label for="correoCrear">Correo:</label>
+                    <input type="email" id="correoCrear" name="correoCrear" required>
+                </div>
+                <div class="input-group">
+                    <label for="contraseñaCrear">Contraseña:</label>
+                    <input type="password" id="contraseñaCrear" name="contraseñaCrear" required>
+                </div>
+                <div class="input-group">
+                    <label for="rolCrear">Rol:</label>
+                    <select id="rolCrear" name="rolCrear" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="administrador">Administrador</option>
+                        <option value="director">Director</option>
+                        <option value="coordinador">Coordinador</option>
+                        <option value="maestro">Maestro</option>
+                        <option value="alumno">Alumno</option>
+                        <option value="servicio social">Servicio Social</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="campusCrear">Campus:</label>
+                    <select id="campusCrear" name="campusCrear" required>
+                        <option value="">Seleccione un campus</option>
+                        <option value="apodaca">Apodaca</option>
+                        <option value="miguel aleman">Miguel Alemán</option>
+                        <option value="eloy cavazos">Eloy Cavazos</option>
+                    </select>
+                </div>
+                <p id="error-message-crear" class="error-text" style="display: none;"></p>
+                <p id="success-message-crear" class="success-text" style="display: none;"></p>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal-submit">Crear Usuario</button>
+                    <button type="button" class="btn-modal-cancel" id="btnCancelarCrearUsuario">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para información del usuario -->
+    <div class="modal-overlay" id="modalInfoUsuario" style="display: none;">
+        <div class="modal-content">
+            <button class="btn-cerrar-modal" id="btnCerrarInfoUsuario">×</button>
+            <h2>Información del Usuario</h2>
+            <div id="infoUsuarioContent">
+                <p>Cargando información...</p>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-modal-submit" id="btnCambiarContraseña">Cambiar Contraseña</button>
+                <button type="button" class="btn-modal-cancel" id="btnCerrarInfoUsuario2">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para cambiar contraseña -->
+    <div class="modal-overlay" id="modalCambiarContraseña" style="display: none;">
+        <div class="modal-content">
+            <button class="btn-cerrar-modal" id="btnCerrarCambiarContraseña">×</button>
+            <h2>Cambiar Contraseña</h2>
+            <form id="formCambiarContraseña">
+                <div class="input-group">
+                    <label for="contraseñaActual">Contraseña Actual:</label>
+                    <input type="password" id="contraseñaActual" name="contraseñaActual" required>
+                </div>
+                <div class="input-group">
+                    <label for="nuevaContraseña">Nueva Contraseña:</label>
+                    <input type="password" id="nuevaContraseña" name="nuevaContraseña" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirmarContraseña">Confirmar Nueva Contraseña:</label>
+                    <input type="password" id="confirmarContraseña" name="confirmarContraseña" required>
+                </div>
+                <p id="error-message-password" class="error-text" style="display: none;"></p>
+                <p id="success-message-password" class="success-text" style="display: none;"></p>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal-submit">Cambiar Contraseña</button>
+                    <button type="button" class="btn-modal-cancel" id="btnCancelarCambiarContraseña">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/authGuard_administrador.js"></script>
+    <script src="js/administrador.js"></script>
+</body>
+</html>
