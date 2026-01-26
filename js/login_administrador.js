@@ -43,10 +43,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log('Login exitoso:', data);
 
-            // --- 3. Guardar correo en localStorage para uso posterior ---
-            localStorage.setItem('adminCorreo', correoInput);
-            localStorage.setItem('isLoggedInAdmin', 'true');
-            window.location.href = 'administrador.html';
+            // --- 3. Obtener información del usuario para verificar rol ---
+            try {
+                const userResponse = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correoInput}`);
+                if (userResponse.ok) {
+                    const usuario = await userResponse.json();
+                    
+                    // Verificar que el usuario tenga rol de administrador
+                    if (usuario.rol !== 'administrador') {
+                        errorMessage.textContent = 'No tienes permisos para acceder a esta página. Solo administradores pueden acceder.';
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Guardar información del usuario (incluyendo contraseña para validación posterior)
+                    localStorage.setItem('adminCorreo', correoInput);
+                    localStorage.setItem('adminContraseña', contraseñaInput);
+                    localStorage.setItem('adminRol', usuario.rol);
+                    localStorage.setItem('isLoggedInAdmin', 'true');
+                    window.location.href = 'administrador.html';
+                } else {
+                    throw new Error('Error al obtener información del usuario.');
+                }
+            } catch (error) {
+                console.error('Error al verificar rol:', error);
+                errorMessage.textContent = 'Error al verificar permisos del usuario.';
+                errorMessage.style.display = 'block';
+            }
 
         } catch (error) {
             console.error('Error durante el login:', error.message);

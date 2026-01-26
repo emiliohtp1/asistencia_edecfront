@@ -14,10 +14,24 @@
         // Verificación inmediata antes de renderizar contenido
         (function() {
             const isLoggedIn = localStorage.getItem('isLoggedInAdmin');
-            if (isLoggedIn !== 'true') {
+            const correoUsuario = localStorage.getItem('adminCorreo');
+            
+            if (isLoggedIn !== 'true' || !correoUsuario) {
                 window.location.replace('administradorlogin.html');
                 return;
             }
+            
+            // Verificación rápida del rol (la verificación completa se hace en authGuard)
+            const rolGuardado = localStorage.getItem('adminRol');
+            if (rolGuardado !== 'administrador') {
+                localStorage.removeItem('isLoggedInAdmin');
+                localStorage.removeItem('adminCorreo');
+                localStorage.removeItem('adminRol');
+                localStorage.removeItem('adminContraseña');
+                window.location.replace('administradorlogin.html');
+                return;
+            }
+            
             document.body.style.visibility = 'visible';
         })();
     </script>
