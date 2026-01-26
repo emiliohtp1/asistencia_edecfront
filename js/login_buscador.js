@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
 
     // Nuevo endpoint POST de login
-    const API_LOGIN_URL = 'https://asistencia-edec.onrender.com/api/usuarios/login';
+    const API_LOGIN_URL = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca/login';
 
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Evita el envío tradicional del formulario
 
-        const usernameInput = document.getElementById('username').value;
-        const passwordInput = document.getElementById('password').value;
+        const correoInput = document.getElementById('correo').value;
+        const contraseñaInput = document.getElementById('contraseña').value;
 
         // Ocultar mensaje de error al intentar logear
         errorMessage.style.display = 'none';
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: usernameInput,
-                    password: passwordInput
+                    correo: correoInput,
+                    contraseña: contraseñaInput
                 })
             });
 
