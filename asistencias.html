@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistencias - EDEC Apodaca</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { visibility: hidden; }
+    </style>
 </head>
 <body class="buscador-page">
+    <script>
+        // Verificación inmediata antes de renderizar contenido
+        (function() {
+            const isLoggedIn = localStorage.getItem('isLoggedInBuscador');
+            if (isLoggedIn !== 'true') {
+                window.location.replace('asistenciaslogin.html');
+                return;
+            }
+            document.body.style.visibility = 'visible';
+        })();
+    </script>
     <div class="buscador-container">
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar Sesión</button>
         <h1>Asistencia Apodaca</h1>

@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrador - EDEC</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { visibility: hidden; }
+    </style>
 </head>
 <body class="administrador-page">
+    <script>
+        // Verificación inmediata antes de renderizar contenido
+        (function() {
+            const isLoggedIn = localStorage.getItem('isLoggedInAdmin');
+            if (isLoggedIn !== 'true') {
+                window.location.replace('administradorlogin.html');
+                return;
+            }
+            document.body.style.visibility = 'visible';
+        })();
+    </script>
     <!-- Botones superiores derechos -->
     <div class="admin-header-buttons">
         <button class="btn-crear-usuario" id="btnCrearUsuario">Crear Usuario</button>

@@ -834,20 +834,22 @@ button[type="submit"]:hover {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #0b0b63;
-    color: white;
-    border: none;
+    background: white;
+    color: #0b0b63;
+    border: 2px solid #0b0b63;
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .btn-usuario-circular:hover {
-    background: #050545;
+    background: #f0f0f0;
+    border-color: #050545;
+    color: #050545;
 }
 
 .btn-cerrar-sesion-admin {

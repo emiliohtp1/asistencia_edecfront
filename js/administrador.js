@@ -81,9 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         content.innerHTML = `
             <div class="info-usuario-item">
-                <strong>ID:</strong> <span>${usuario._id}</span>
-            </div>
-            <div class="info-usuario-item">
                 <strong>Nombre Completo:</strong> <span>${usuario.nombre_completo}</span>
             </div>
             <div class="info-usuario-item">
