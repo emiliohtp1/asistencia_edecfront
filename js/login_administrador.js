@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Verificar que el usuario tenga rol de administrador
                     if (usuario.rol !== 'administrador') {
-                        errorMessage.textContent = 'No tienes permisos para acceder a esta página. Solo administradores pueden acceder.';
+                        errorMessage.textContent = 'No tienes permisos para acceder a esta página.';
                         errorMessage.style.display = 'block';
                         return;
                     }

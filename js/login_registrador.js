@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Verificar que el usuario tenga un rol permitido
                     if (!rolesPermitidos.includes(usuario.rol)) {
-                        errorMessage.textContent = 'No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director, coordinador o servicio social pueden acceder.';
+                        errorMessage.textContent = 'No tienes permisos para acceder a esta página.';
                         errorMessage.style.display = 'block';
                         return;
                     }
