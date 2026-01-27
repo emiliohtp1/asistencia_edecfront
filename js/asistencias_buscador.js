@@ -1,8 +1,10 @@
 const API_TODAS_ASISTENCIAS_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/todas";
 const API_BUSCAR_MATRICULA_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/";
+const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
 
 let inputBuscarMatricula;
 let btnBuscar;
+let btnFichados;
 let tbodyAsistencias;
 let mensajeSinResultados;
 let btnCerrarSesion;
@@ -16,6 +18,12 @@ let filtroMes;
 let btnLimpiarDia;
 let btnLimpiarMes;
 let todasLasAsistencias = []; // Almacenar todas las asistencias cargadas
+
+// Elementos para fichados
+let contenedorFichados;
+let contenedorAsistencias;
+let btnRegresar;
+let tbodyFichados;
 
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
@@ -213,6 +221,93 @@ function detenerActualizacionAutomatica() {
     }
 }
 
+// ==============================
+//   CARGAR FICHADOS
+// ==============================
+async function cargarFichados() {
+    tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">Cargando fichados...</td></tr>';
+    
+    try {
+        const response = await fetch(API_FICHADOS);
+        
+        if (!response.ok) {
+            throw new Error('Error al cargar los fichados.');
+        }
+        
+        const data = await response.json();
+        const fichados = data.fichados || [];
+        
+        if (fichados.length === 0) {
+            tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos fichados.</td></tr>';
+            return;
+        }
+        
+        tbodyFichados.innerHTML = '';
+        
+        fichados.forEach(fichado => {
+            const fila = document.createElement('tr');
+            const cantidadFichas = fichado.cantidad_fichas || 0;
+            const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
+            
+            fila.innerHTML = `
+                <td>${fichado.matricula || ''}</td>
+                <td>${fichado.nombre || ''}</td>
+                <td>${fichado.programa || ''}</td>
+                <td class="${claseFichas}">${cantidadFichas}</td>
+            `;
+            tbodyFichados.appendChild(fila);
+        });
+        
+    } catch (error) {
+        console.error('Error al cargar fichados:', error);
+        tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar fichados.</td></tr>';
+    }
+}
+
+// ==============================
+//   CAMBIAR A VISTA DE FICHADOS
+// ==============================
+function mostrarVistaFichados() {
+    // Ocultar contenedor de asistencias
+    const tablaAsistencias = document.getElementById('tablaAsistencias');
+    const mensajeSinResultados = document.getElementById('mensajeSinResultados');
+    const buscadorHeader = document.querySelector('.buscador-header');
+    
+    tablaAsistencias.style.display = 'none';
+    mensajeSinResultados.style.display = 'none';
+    buscadorHeader.style.display = 'none';
+    
+    // Detener actualización automática
+    detenerActualizacionAutomatica();
+    
+    // Mostrar contenedor de fichados
+    contenedorFichados.style.display = 'block';
+    
+    // Cargar fichados
+    cargarFichados();
+}
+
+// ==============================
+//   REGRESAR A VISTA DE ASISTENCIAS
+// ==============================
+function mostrarVistaAsistencias() {
+    // Ocultar contenedor de fichados
+    contenedorFichados.style.display = 'none';
+    
+    // Mostrar contenedor de asistencias
+    const tablaAsistencias = document.getElementById('tablaAsistencias');
+    const buscadorHeader = document.querySelector('.buscador-header');
+    
+    buscadorHeader.style.display = 'flex';
+    tablaAsistencias.style.display = 'table';
+    
+    // Reiniciar actualización automática
+    iniciarActualizacionAutomatica();
+    
+    // Recargar asistencias
+    cargarTodasLasAsistencias();
+}
+
 
 // ==============================
 //   INICIALIZACIÓN
@@ -221,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Obtener referencias a los elementos del DOM
     inputBuscarMatricula = document.getElementById("inputBuscarMatricula");
     btnBuscar = document.getElementById("btnBuscar");
+    btnFichados = document.getElementById("btnFichados");
     tbodyAsistencias = document.getElementById("tbodyAsistencias");
     mensajeSinResultados = document.getElementById("mensajeSinResultados");
     btnCerrarSesion = document.getElementById("btnCerrarSesion");
@@ -232,6 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
     filtroMes = document.getElementById("filtroMes");
     btnLimpiarDia = document.getElementById("btnLimpiarDia");
     btnLimpiarMes = document.getElementById("btnLimpiarMes");
+    
+    // Elementos para fichados
+    contenedorFichados = document.getElementById("contenedorFichados");
+    btnRegresar = document.getElementById("btnRegresar");
+    tbodyFichados = document.getElementById("tbodyFichados");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -329,6 +430,15 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem("adminRol");
         localStorage.removeItem("adminContraseña");
     }
+
+    // Event listeners para fichados
+    btnFichados.addEventListener("click", () => {
+        mostrarVistaFichados();
+    });
+    
+    btnRegresar.addEventListener("click", () => {
+        mostrarVistaAsistencias();
+    });
 
     // Cerrar sesión
     btnCerrarSesion.addEventListener("click", () => {

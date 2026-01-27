@@ -34,6 +34,7 @@
                 placeholder="Buscar por matrícula..."
             >
             <button class="btn-buscar" id="btnBuscar">Buscar</button>
+            <button class="btn-fichados" id="btnFichados">Fichados</button>
         </div>
 
         <!-- Overlay para la ventana flotante -->
@@ -87,6 +88,31 @@
 
         <div id="mensajeSinResultados" class="mensaje-sin-resultados" style="display: none;">
             No se encontraron resultados.
+        </div>
+
+        <!-- Contenedor de fichados (oculto por defecto) -->
+        <div id="contenedorFichados" style="display: none;">
+            <div class="fichados-header">
+                <button class="btn-regresar" id="btnRegresar">← Regresar</button>
+                <h2>Alumnos Fichados</h2>
+            </div>
+            <div class="tabla-container">
+                <table class="tabla-fichados" id="tablaFichados">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nombre</th>
+                            <th>Programa</th>
+                            <th>Fichas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyFichados">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Cargando fichados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
