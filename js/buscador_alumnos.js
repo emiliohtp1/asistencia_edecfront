@@ -116,6 +116,12 @@ function mostrarAlumnos(alumnos) {
 function abrirModalFichar(alumno) {
     alumnoSeleccionado = alumno;
     modalFicharAlumno.style.display = 'flex';
+    // Ocultar mensaje de éxito al abrir el modal
+    const mensajeExito = document.getElementById('mensajeExitoFichar');
+    if (mensajeExito) {
+        mensajeExito.style.display = 'none';
+        mensajeExito.classList.remove('show');
+    }
 }
 
 // ==============================
@@ -166,8 +172,27 @@ async function ficharAlumno() {
             throw new Error(data.detail || 'Error al fichar alumno.');
         }
         
-        alert('Alumno fichado exitosamente.');
-        cerrarModalFichar();
+        // Mostrar mensaje de éxito
+        const mensajeExito = document.getElementById('mensajeExitoFichar');
+        if (mensajeExito) {
+            mensajeExito.style.display = 'block';
+            setTimeout(() => {
+                mensajeExito.classList.add('show');
+            }, 10);
+            
+            // Cerrar el modal después de 2 segundos
+            setTimeout(() => {
+                mensajeExito.classList.remove('show');
+                setTimeout(() => {
+                    mensajeExito.style.display = 'none';
+                    cerrarModalFichar();
+                }, 500);
+            }, 2000);
+        } else {
+            // Fallback si no existe el elemento
+            alert('Alumno fichado exitosamente.');
+            cerrarModalFichar();
+        }
         
     } catch (error) {
         console.error('Error al fichar alumno:', error);
