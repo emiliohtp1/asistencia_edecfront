@@ -359,7 +359,8 @@ button[type="submit"]:hover {
     
     .buscador-header .btn-buscar,
     .buscador-header .btn-filtros,
-    .buscador-header .btn-fichados {
+    .buscador-header .btn-fichados,
+    .buscador-header .btn-excel {
         width: 100%;
         padding: 10px 16px;
         font-size: 14px;
@@ -529,6 +530,23 @@ button[type="submit"]:hover {
 
 .btn-fichados:hover {
     background: #c82333;
+}
+
+.btn-excel {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #217346;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.btn-excel:hover {
+    background: #1a5a37;
 }
 
 .tabla-container {
@@ -1171,6 +1189,10 @@ button[type="submit"]:hover {
     border: 2px solid #ccc;
     border-radius: 8px;
     box-sizing: border-box;
+}
+
+.modal-content .input-group select {
+    cursor: pointer;
 }
 
 .modal-content .input-group input:focus,

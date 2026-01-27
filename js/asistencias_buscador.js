@@ -25,6 +25,16 @@ let contenedorAsistencias;
 let btnRegresar;
 let tbodyFichados;
 
+// Elementos para Excel
+let btnExcel;
+let modalExcelOverlay;
+let modalExcel;
+let btnCerrarModalExcel;
+let btnCancelarExcel;
+let btnGenerarExcel;
+let excelFiltroDia;
+let excelFiltroMes;
+
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
 // ==============================
@@ -333,6 +343,16 @@ document.addEventListener('DOMContentLoaded', () => {
     contenedorFichados = document.getElementById("contenedorFichados");
     btnRegresar = document.getElementById("btnRegresar");
     tbodyFichados = document.getElementById("tbodyFichados");
+    
+    // Elementos para Excel
+    btnExcel = document.getElementById("btnExcel");
+    modalExcelOverlay = document.getElementById("modalExcelOverlay");
+    modalExcel = document.getElementById("modalExcel");
+    btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
+    btnCancelarExcel = document.getElementById("btnCancelarExcel");
+    btnGenerarExcel = document.getElementById("btnGenerarExcel");
+    excelFiltroDia = document.getElementById("excelFiltroDia");
+    excelFiltroMes = document.getElementById("excelFiltroMes");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -453,4 +473,169 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Iniciar actualización automática
     iniciarActualizacionAutomatica();
+    
+    // ==============================
+    //   FUNCIONALIDAD DE EXCEL
+    // ==============================
+    
+    // Función para abrir el modal de Excel
+    function abrirModalExcel() {
+        modalExcelOverlay.style.display = 'flex';
+        modalExcel.style.display = 'block';
+    }
+    
+    // Función para cerrar el modal de Excel
+    function cerrarModalExcel() {
+        modalExcelOverlay.style.display = 'none';
+        modalExcel.style.display = 'none';
+    }
+    
+    // Event listeners para el modal de Excel
+    btnExcel.addEventListener("click", () => {
+        abrirModalExcel();
+    });
+    
+    btnCerrarModalExcel.addEventListener("click", () => {
+        cerrarModalExcel();
+    });
+    
+    btnCancelarExcel.addEventListener("click", () => {
+        cerrarModalExcel();
+    });
+    
+    modalExcelOverlay.addEventListener("click", (e) => {
+        if (e.target === modalExcelOverlay) {
+            cerrarModalExcel();
+        }
+    });
+    
+    // Función para extraer día de una fecha
+    function extraerDia(fecha) {
+        if (!fecha) return null;
+        const fechaAsistencia = fecha.split(' ')[0];
+        
+        if (fechaAsistencia.includes('-')) {
+            const partes = fechaAsistencia.split('-');
+            if (parseInt(partes[0]) > 31) {
+                return parseInt(partes[2]);
+            } else {
+                return parseInt(partes[0]);
+            }
+        } else if (fechaAsistencia.includes('/')) {
+            const partes = fechaAsistencia.split('/');
+            if (parseInt(partes[0]) > 31) {
+                return parseInt(partes[2]);
+            } else {
+                return parseInt(partes[0]);
+            }
+        }
+        return null;
+    }
+    
+    // Función para extraer mes de una fecha
+    function extraerMes(fecha) {
+        if (!fecha) return null;
+        const fechaAsistencia = fecha.split(' ')[0];
+        
+        if (fechaAsistencia.includes('-')) {
+            const partes = fechaAsistencia.split('-');
+            return parseInt(partes[1]);
+        } else if (fechaAsistencia.includes('/')) {
+            const partes = fechaAsistencia.split('/');
+            return parseInt(partes[1]);
+        }
+        return null;
+    }
+    
+    // Función para filtrar asistencias según los filtros del modal Excel
+    function filtrarAsistenciasParaExcel() {
+        let asistenciasFiltradas = [...todasLasAsistencias];
+        
+        const diaSeleccionado = excelFiltroDia.value;
+        const mesSeleccionado = excelFiltroMes.value;
+        
+        // Filtrar por día
+        if (diaSeleccionado !== 'todos') {
+            const diaFiltro = parseInt(diaSeleccionado);
+            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                const diaAsistencia = extraerDia(asistencia.Fecha);
+                return diaAsistencia === diaFiltro;
+            });
+        }
+        
+        // Filtrar por mes
+        if (mesSeleccionado !== 'todos') {
+            const mesFiltro = parseInt(mesSeleccionado);
+            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                const mesAsistencia = extraerMes(asistencia.Fecha);
+                return mesAsistencia === mesFiltro;
+            });
+        }
+        
+        return asistenciasFiltradas;
+    }
+    
+    // Función para ordenar por matrícula (valores numéricos en string, de menor a mayor)
+    function ordenarPorMatricula(asistencias) {
+        return asistencias.sort((a, b) => {
+            const matriculaA = parseInt(a.Matricula || '0') || 0;
+            const matriculaB = parseInt(b.Matricula || '0') || 0;
+            return matriculaA - matriculaB;
+        });
+    }
+    
+    // Función para generar el archivo Excel
+    function generarExcel() {
+        try {
+            // Filtrar asistencias según los filtros seleccionados
+            let asistenciasFiltradas = filtrarAsistenciasParaExcel();
+            
+            if (asistenciasFiltradas.length === 0) {
+                alert('No hay datos para exportar con los filtros seleccionados.');
+                return;
+            }
+            
+            // Ordenar por matrícula
+            asistenciasFiltradas = ordenarPorMatricula(asistenciasFiltradas);
+            
+            // Preparar los datos para Excel
+            const datosExcel = asistenciasFiltradas.map(asistencia => ({
+                'Matricula': asistencia.Matricula || '',
+                'Nombre': asistencia.Nombre || '',
+                'Fecha': asistencia.Fecha || '',
+                'Hora': asistencia.Hora || ''
+            }));
+            
+            // Crear el libro de trabajo
+            const wb = XLSX.utils.book_new();
+            
+            // Crear la hoja de trabajo
+            const ws = XLSX.utils.json_to_sheet(datosExcel);
+            
+            // Agregar la hoja al libro
+            XLSX.utils.book_append_sheet(wb, ws, 'Asistencias');
+            
+            // Generar el nombre del archivo con fecha y hora
+            const fecha = new Date();
+            const fechaStr = fecha.toISOString().split('T')[0];
+            const horaStr = fecha.toTimeString().split(' ')[0].replace(/:/g, '-');
+            const nombreArchivo = `Asistencias_${fechaStr}_${horaStr}.xlsx`;
+            
+            // Escribir el archivo
+            XLSX.writeFile(wb, nombreArchivo);
+            
+            // Cerrar el modal
+            cerrarModalExcel();
+            
+            alert(`Archivo Excel generado exitosamente: ${nombreArchivo}`);
+        } catch (error) {
+            console.error('Error al generar Excel:', error);
+            alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
+        }
+    }
+    
+    // Event listener para generar Excel
+    btnGenerarExcel.addEventListener("click", () => {
+        generarExcel();
+    });
 });

@@ -35,10 +35,77 @@
             >
             <button class="btn-buscar" id="btnBuscar">Buscar</button>
             <button class="btn-fichados" id="btnFichados">Fichados</button>
+            <button class="btn-excel" id="btnExcel">Importar a Excel</button>
         </div>
 
         <!-- Overlay para la ventana flotante -->
         <div class="filtros-overlay" id="filtrosOverlay" style="display: none;"></div>
+        
+        <!-- Modal para exportar a Excel -->
+        <div class="modal-overlay" id="modalExcelOverlay" style="display: none;"></div>
+        <div class="modal-content" id="modalExcel" style="display: none;">
+            <button class="btn-cerrar-modal" id="btnCerrarModalExcel">×</button>
+            <h2>Importar a Excel</h2>
+            <div class="input-group">
+                <label for="excelFiltroDia">Día:</label>
+                <select id="excelFiltroDia" class="input-filtro">
+                    <option value="todos">Todos</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="excelFiltroMes">Mes:</label>
+                <select id="excelFiltroMes" class="input-filtro">
+                    <option value="todos">Todos</option>
+                    <option value="1">1 (Enero)</option>
+                    <option value="2">2 (Febrero)</option>
+                    <option value="3">3 (Marzo)</option>
+                    <option value="4">4 (Abril)</option>
+                    <option value="5">5 (Mayo)</option>
+                    <option value="6">6 (Junio)</option>
+                    <option value="7">7 (Julio)</option>
+                    <option value="8">8 (Agosto)</option>
+                    <option value="9">9 (Septiembre)</option>
+                    <option value="10">10 (Octubre)</option>
+                    <option value="11">11 (Noviembre)</option>
+                    <option value="12">12 (Diciembre)</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-modal-cancel" id="btnCancelarExcel">Cancelar</button>
+                <button class="btn-modal-submit" id="btnGenerarExcel">Generar Excel</button>
+            </div>
+        </div>
         
         <!-- Ventana flotante de filtros -->
         <div class="panel-filtros" id="panelFiltros" style="display: none;">
@@ -116,6 +183,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="js/authGuard_asistencias.js"></script>
     <script src="js/asistencias_buscador.js"></script>
 </body>
