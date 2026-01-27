@@ -393,8 +393,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${usuario.rol || ''}</td>
                     <td>${usuario.campus || ''}</td>
                     <td>
-                        <button class="btn-eliminar-usuario" data-correo="${usuario.correo}">
-                            Eliminar
+                        <button class="btn-eliminar-usuario" data-correo="${usuario.correo}" title="Eliminar usuario">
+                            ×
                         </button>
                     </td>
                 `;
