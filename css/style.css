@@ -538,11 +538,15 @@ button[type="submit"]:hover {
     background: #217346;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;
     font-weight: bold;
     white-space: nowrap;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-excel:hover {
@@ -678,11 +682,15 @@ button[type="submit"]:hover {
     background: #217346;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;
     font-weight: bold;
     white-space: nowrap;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-excel-fichados:hover {
@@ -690,13 +698,14 @@ button[type="submit"]:hover {
 }
 
 .mensaje-exito-fichados {
-    background-color: #28a745;
+    background-color: #217346;
     color: white;
     padding: 12px 20px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: bold;
     white-space: nowrap;
     animation: fadeIn 0.3s ease-in;
+    display: inline-block;
 }
 
 .btn-regresar {
