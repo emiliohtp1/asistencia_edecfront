@@ -480,34 +480,58 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Función para abrir el modal de Excel
     function abrirModalExcel() {
-        modalExcelOverlay.style.display = 'flex';
-        modalExcel.style.display = 'block';
+        if (modalExcelOverlay && modalExcel) {
+            modalExcelOverlay.style.display = 'flex';
+        }
     }
     
     // Función para cerrar el modal de Excel
     function cerrarModalExcel() {
-        modalExcelOverlay.style.display = 'none';
-        modalExcel.style.display = 'none';
+        if (modalExcelOverlay) {
+            modalExcelOverlay.style.display = 'none';
+        }
     }
     
     // Event listeners para el modal de Excel
-    btnExcel.addEventListener("click", () => {
-        abrirModalExcel();
-    });
+    if (btnExcel) {
+        btnExcel.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            abrirModalExcel();
+        });
+    }
     
-    btnCerrarModalExcel.addEventListener("click", () => {
-        cerrarModalExcel();
-    });
-    
-    btnCancelarExcel.addEventListener("click", () => {
-        cerrarModalExcel();
-    });
-    
-    modalExcelOverlay.addEventListener("click", (e) => {
-        if (e.target === modalExcelOverlay) {
+    if (btnCerrarModalExcel) {
+        btnCerrarModalExcel.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             cerrarModalExcel();
-        }
-    });
+        });
+    }
+    
+    if (btnCancelarExcel) {
+        btnCancelarExcel.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            cerrarModalExcel();
+        });
+    }
+    
+    if (modalExcelOverlay) {
+        modalExcelOverlay.addEventListener("click", (e) => {
+            // Solo cerrar si se hace clic directamente en el overlay, no en el contenido del modal
+            if (e.target === modalExcelOverlay) {
+                cerrarModalExcel();
+            }
+        });
+    }
+    
+    // Prevenir que los clics dentro del modal lo cierren
+    if (modalExcel) {
+        modalExcel.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+    }
     
     // Función para extraer día de una fecha
     function extraerDia(fecha) {

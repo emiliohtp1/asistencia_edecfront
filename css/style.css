@@ -1138,6 +1138,7 @@ button[type="submit"]:hover {
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+    z-index: 2001;
 }
 
 .modal-content h2 {
