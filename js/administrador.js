@@ -328,13 +328,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Función para limpiar todas las credenciales
+    function limpiarTodasLasCredenciales() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isLoggedInBuscador');
+        localStorage.removeItem('isLoggedInBuscadorAlumnos');
+        localStorage.removeItem('isLoggedInAdmin');
+        localStorage.removeItem('adminCorreo');
+        localStorage.removeItem('adminRol');
+        localStorage.removeItem('adminContraseña');
+    }
+
     // Cerrar sesión
     btnCerrarSesion.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-            localStorage.removeItem('isLoggedInAdmin');
-            localStorage.removeItem('adminCorreo');
-            localStorage.removeItem('adminRol');
-            localStorage.removeItem('adminContraseña');
+            limpiarTodasLasCredenciales();
             window.location.href = 'administradorlogin.html';
         }
     });

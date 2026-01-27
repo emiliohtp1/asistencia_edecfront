@@ -157,11 +157,24 @@ btnRegistrar.addEventListener("click", async () => {
 });
 
 // ==============================
+//   FUNCIÓN PARA LIMPIAR TODAS LAS CREDENCIALES
+// ==============================
+function limpiarTodasLasCredenciales() {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("isLoggedInBuscador");
+    localStorage.removeItem("isLoggedInBuscadorAlumnos");
+    localStorage.removeItem("isLoggedInAdmin");
+    localStorage.removeItem("adminCorreo");
+    localStorage.removeItem("adminRol");
+    localStorage.removeItem("adminContraseña");
+}
+
+// ==============================
 //   CERRAR SESIÓN
 // ==============================
 btnCerrarSesion.addEventListener("click", () => {
     if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-        localStorage.removeItem("isLoggedIn");
+        limpiarTodasLasCredenciales();
         window.location.href = "index.html";
     }
 });
