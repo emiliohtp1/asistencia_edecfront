@@ -32,8 +32,8 @@ let modalExcel;
 let btnCerrarModalExcel;
 let btnCancelarExcel;
 let btnGenerarExcel;
-let excelFiltroDia;
-let excelFiltroMes;
+let excelFiltroFecha;
+let btnLimpiarFechaExcel;
 
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
@@ -351,8 +351,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
     btnCancelarExcel = document.getElementById("btnCancelarExcel");
     btnGenerarExcel = document.getElementById("btnGenerarExcel");
-    excelFiltroDia = document.getElementById("excelFiltroDia");
-    excelFiltroMes = document.getElementById("excelFiltroMes");
+    excelFiltroFecha = document.getElementById("excelFiltroFecha");
+    btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -571,30 +571,48 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
     
+    // Función para convertir fecha a formato YYYY-MM-DD
+    function formatearFechaParaComparacion(fecha) {
+        if (!fecha) return null;
+        const fechaAsistencia = fecha.split(' ')[0]; // Tomar solo la fecha, sin la hora
+        
+        // Convertir diferentes formatos a YYYY-MM-DD
+        if (fechaAsistencia.includes('-')) {
+            const partes = fechaAsistencia.split('-');
+            // Si el primer número es mayor a 31, es año (formato YYYY-MM-DD)
+            if (parseInt(partes[0]) > 31) {
+                return fechaAsistencia; // Ya está en formato YYYY-MM-DD
+            } else {
+                // Formato DD-MM-YYYY, convertir a YYYY-MM-DD
+                return `${partes[2]}-${partes[1]}-${partes[0]}`;
+            }
+        } else if (fechaAsistencia.includes('/')) {
+            const partes = fechaAsistencia.split('/');
+            // Si el primer número es mayor a 31, es año (formato YYYY/MM/DD)
+            if (parseInt(partes[0]) > 31) {
+                return fechaAsistencia.replace(/\//g, '-'); // Convertir / a -
+            } else {
+                // Formato DD/MM/YYYY, convertir a YYYY-MM-DD
+                return `${partes[2]}-${partes[1]}-${partes[0]}`;
+            }
+        }
+        return null;
+    }
+    
     // Función para filtrar asistencias según los filtros del modal Excel
     function filtrarAsistenciasParaExcel() {
         let asistenciasFiltradas = [...todasLasAsistencias];
         
-        const diaSeleccionado = excelFiltroDia.value;
-        const mesSeleccionado = excelFiltroMes.value;
+        const fechaSeleccionada = excelFiltroFecha.value;
         
-        // Filtrar por día
-        if (diaSeleccionado !== 'todos') {
-            const diaFiltro = parseInt(diaSeleccionado);
+        // Si hay una fecha seleccionada, filtrar por esa fecha
+        if (fechaSeleccionada && fechaSeleccionada !== '') {
             asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                const diaAsistencia = extraerDia(asistencia.Fecha);
-                return diaAsistencia === diaFiltro;
+                const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
+                return fechaAsistencia === fechaSeleccionada;
             });
         }
-        
-        // Filtrar por mes
-        if (mesSeleccionado !== 'todos') {
-            const mesFiltro = parseInt(mesSeleccionado);
-            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                const mesAsistencia = extraerMes(asistencia.Fecha);
-                return mesAsistencia === mesFiltro;
-            });
-        }
+        // Si no hay fecha seleccionada, retornar todas las asistencias
         
         return asistenciasFiltradas;
     }
@@ -609,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Función para generar el archivo Excel
-    function generarExcel() {
+    async function generarExcel() {
         try {
             // Filtrar asistencias según los filtros seleccionados
             let asistenciasFiltradas = filtrarAsistenciasParaExcel();
@@ -622,22 +640,88 @@ document.addEventListener('DOMContentLoaded', () => {
             // Ordenar por matrícula
             asistenciasFiltradas = ordenarPorMatricula(asistenciasFiltradas);
             
-            // Preparar los datos para Excel
-            const datosExcel = asistenciasFiltradas.map(asistencia => ({
-                'Matricula': asistencia.Matricula || '',
-                'Nombre': asistencia.Nombre || '',
-                'Fecha': asistencia.Fecha || '',
-                'Hora': asistencia.Hora || ''
-            }));
+            // Crear un nuevo libro de trabajo
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Asistencias');
             
-            // Crear el libro de trabajo
-            const wb = XLSX.utils.book_new();
+            // Definir los headers
+            const headers = ['Matricula', 'Nombre', 'Fecha', 'Hora'];
             
-            // Crear la hoja de trabajo
-            const ws = XLSX.utils.json_to_sheet(datosExcel);
+            // Agregar headers con estilo
+            const headerRow = worksheet.addRow(headers);
+            headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF0B0B63' } // Color #0b0b63
+            };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            headerRow.height = 20;
             
-            // Agregar la hoja al libro
-            XLSX.utils.book_append_sheet(wb, ws, 'Asistencias');
+            // Agregar los datos
+            asistenciasFiltradas.forEach(asistencia => {
+                const row = worksheet.addRow([
+                    asistencia.Matricula || '',
+                    asistencia.Nombre || '',
+                    asistencia.Fecha || '',
+                    asistencia.Hora || ''
+                ]);
+                
+                // Aplicar bordes negros a todas las celdas de la fila
+                row.eachCell({ includeEmpty: true }, (cell) => {
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FF000000' } },
+                        left: { style: 'thin', color: { argb: 'FF000000' } },
+                        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                        right: { style: 'thin', color: { argb: 'FF000000' } }
+                    };
+                });
+            });
+            
+            // Aplicar bordes a los headers también
+            headerRow.eachCell({ includeEmpty: true }, (cell) => {
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            });
+            
+            // Calcular el ancho máximo para cada columna basado en el contenido
+            const columnWidths = {
+                A: 0, // Matricula
+                B: 0, // Nombre
+                C: 0, // Fecha
+                D: 0  // Hora
+            };
+            
+            // Calcular ancho para headers
+            headers.forEach((header, index) => {
+                const colLetter = String.fromCharCode(65 + index); // A, B, C, D
+                columnWidths[colLetter] = Math.max(columnWidths[colLetter] || 0, header.length);
+            });
+            
+            // Calcular ancho para datos
+            asistenciasFiltradas.forEach(asistencia => {
+                const values = [
+                    String(asistencia.Matricula || ''),
+                    String(asistencia.Nombre || ''),
+                    String(asistencia.Fecha || ''),
+                    String(asistencia.Hora || '')
+                ];
+                
+                values.forEach((value, index) => {
+                    const colLetter = String.fromCharCode(65 + index);
+                    columnWidths[colLetter] = Math.max(columnWidths[colLetter] || 0, value.length);
+                });
+            });
+            
+            // Aplicar anchos de columna (mínimo 15, máximo basado en contenido + padding)
+            worksheet.getColumn('A').width = Math.max(15, Math.min(columnWidths.A + 5, 20)); // Matricula
+            worksheet.getColumn('B').width = Math.max(30, Math.min(columnWidths.B + 5, 50)); // Nombre
+            worksheet.getColumn('C').width = Math.max(15, Math.min(columnWidths.C + 5, 20)); // Fecha
+            worksheet.getColumn('D').width = Math.max(12, Math.min(columnWidths.D + 5, 15)); // Hora
             
             // Generar el nombre del archivo con fecha y hora
             const fecha = new Date();
@@ -645,8 +729,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const horaStr = fecha.toTimeString().split(' ')[0].replace(/:/g, '-');
             const nombreArchivo = `Asistencias_${fechaStr}_${horaStr}.xlsx`;
             
-            // Escribir el archivo
-            XLSX.writeFile(wb, nombreArchivo);
+            // Generar el buffer y descargar
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = nombreArchivo;
+            link.click();
+            window.URL.revokeObjectURL(url);
             
             // Cerrar el modal
             cerrarModalExcel();
@@ -656,6 +747,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error al generar Excel:', error);
             alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
         }
+    }
+    
+    // Event listener para limpiar fecha
+    if (btnLimpiarFechaExcel) {
+        btnLimpiarFechaExcel.addEventListener("click", () => {
+            excelFiltroFecha.value = '';
+        });
     }
     
     // Event listener para generar Excel
