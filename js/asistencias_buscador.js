@@ -34,6 +34,7 @@ let btnCancelarExcel;
 let btnGenerarExcel;
 let excelFiltroFecha;
 let btnLimpiarFechaExcel;
+let mensajeExitoExcel;
 
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
@@ -353,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGenerarExcel = document.getElementById("btnGenerarExcel");
     excelFiltroFecha = document.getElementById("excelFiltroFecha");
     btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
+    mensajeExitoExcel = document.getElementById("mensajeExitoExcel");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -739,10 +741,31 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             window.URL.revokeObjectURL(url);
             
-            // Cerrar el modal
-            cerrarModalExcel();
+            // Ocultar el contenido del modal y mostrar el mensaje de éxito
+            const inputGroup = modalExcel.querySelector('.input-group');
+            const modalButtons = modalExcel.querySelector('.modal-buttons');
+            const titulo = modalExcel.querySelector('h2');
             
-            alert(`Archivo Excel generado exitosamente: ${nombreArchivo}`);
+            if (inputGroup) inputGroup.style.display = 'none';
+            if (modalButtons) modalButtons.style.display = 'none';
+            if (titulo) titulo.style.display = 'none';
+            if (btnCerrarModalExcel) btnCerrarModalExcel.style.display = 'none';
+            
+            // Mostrar mensaje de éxito
+            if (mensajeExitoExcel) {
+                mensajeExitoExcel.style.display = 'block';
+            }
+            
+            // Después de 2 segundos, cerrar el modal
+            setTimeout(() => {
+                cerrarModalExcel();
+                // Restaurar elementos del modal
+                if (inputGroup) inputGroup.style.display = 'block';
+                if (modalButtons) modalButtons.style.display = 'flex';
+                if (titulo) titulo.style.display = 'block';
+                if (btnCerrarModalExcel) btnCerrarModalExcel.style.display = 'flex';
+                if (mensajeExitoExcel) mensajeExitoExcel.style.display = 'none';
+            }, 2000);
         } catch (error) {
             console.error('Error al generar Excel:', error);
             alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
