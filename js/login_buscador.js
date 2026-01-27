@@ -43,9 +43,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log('Login exitoso:', data);
 
-            // --- 3. Redirigir si todo fue correcto ---
-            localStorage.setItem('isLoggedInBuscadorAlumnos', 'true');
-            window.location.href = 'buscador.html';
+            // --- 3. Obtener información del usuario para verificar rol ---
+            try {
+                const userResponse = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correoInput}`);
+                if (userResponse.ok) {
+                    const usuario = await userResponse.json();
+                    
+                    // Roles permitidos: administrador, director, coordinador, servicio social
+                    const rolesPermitidos = ['administrador', 'director', 'coordinador', 'servicio social'];
+                    
+                    // Verificar que el usuario tenga un rol permitido
+                    if (!rolesPermitidos.includes(usuario.rol)) {
+                        errorMessage.textContent = 'No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director, coordinador o servicio social pueden acceder.';
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Guardar información del usuario
+                    localStorage.setItem('buscadorCorreo', correoInput);
+                    localStorage.setItem('buscadorRol', usuario.rol);
+                    localStorage.setItem('isLoggedInBuscadorAlumnos', 'true');
+                    window.location.href = 'buscador.html';
+                } else {
+                    throw new Error('Error al obtener información del usuario.');
+                }
+            } catch (error) {
+                console.error('Error al verificar rol:', error);
+                errorMessage.textContent = 'Error al verificar permisos del usuario.';
+                errorMessage.style.display = 'block';
+            }
 
         } catch (error) {
             console.error('Error durante el login:', error.message);

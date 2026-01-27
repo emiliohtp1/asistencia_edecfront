@@ -326,10 +326,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Esto permite que los authGuards de esas páginas permitan el acceso
                 if (tipoPagina === 'buscador') {
                     localStorage.setItem('isLoggedInBuscadorAlumnos', 'true');
+                    localStorage.setItem('buscadorCorreo', correo);
+                    localStorage.setItem('buscadorRol', usuario.rol);
                 } else if (tipoPagina === 'asistencias') {
                     localStorage.setItem('isLoggedInBuscador', 'true');
+                    localStorage.setItem('asistenciasCorreo', correo);
+                    localStorage.setItem('asistenciasRol', usuario.rol);
                 } else if (tipoPagina === 'registrador') {
                     localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('registradorCorreo', correo);
+                    localStorage.setItem('registradorRol', usuario.rol);
                 }
                 
                 return true;
@@ -452,6 +458,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('adminCorreo');
         localStorage.removeItem('adminRol');
         localStorage.removeItem('adminContraseña');
+        localStorage.removeItem('buscadorCorreo');
+        localStorage.removeItem('buscadorRol');
+        localStorage.removeItem('asistenciasCorreo');
+        localStorage.removeItem('asistenciasRol');
+        localStorage.removeItem('registradorCorreo');
+        localStorage.removeItem('registradorRol');
     }
 
     // Cerrar sesión

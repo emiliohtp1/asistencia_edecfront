@@ -459,6 +459,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem("adminCorreo");
         localStorage.removeItem("adminRol");
         localStorage.removeItem("adminContraseña");
+        localStorage.removeItem("buscadorCorreo");
+        localStorage.removeItem("buscadorRol");
+        localStorage.removeItem("asistenciasCorreo");
+        localStorage.removeItem("asistenciasRol");
+        localStorage.removeItem("registradorCorreo");
+        localStorage.removeItem("registradorRol");
     }
 
     // Event listeners para fichados
