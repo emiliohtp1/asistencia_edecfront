@@ -727,6 +727,68 @@ button[type="submit"]:hover {
     border-bottom: none;
 }
 
+/* Botón fichar */
+.btn-fichar {
+    padding: 8px 16px;
+    font-size: 14px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.btn-fichar:hover {
+    background: #c82333;
+}
+
+/* Modal de fichar alumno */
+.modal-fichar {
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-buttons-fichar {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn-fichar-si {
+    padding: 12px 40px;
+    font-size: 18px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.btn-fichar-si:hover {
+    background: #218838;
+}
+
+.btn-fichar-no {
+    padding: 12px 40px;
+    font-size: 18px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.btn-fichar-no:hover {
+    background: #c82333;
+}
+
 @media (max-width: 768px) {
     .buscador-alumnos-header {
         flex-direction: column;
@@ -770,6 +832,22 @@ button[type="submit"]:hover {
     .tabla-alumnos th:last-child,
     .tabla-alumnos td:last-child {
         padding-right: 8px;
+    }
+    
+    .btn-fichar {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .modal-buttons-fichar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-fichar-si,
+    .btn-fichar-no {
+        width: 100%;
+        padding: 12px 20px;
     }
 }
 

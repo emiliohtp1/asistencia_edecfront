@@ -1,11 +1,16 @@
 const API_BACHILLERATO = "https://asistencia-edec.onrender.com/api/alumnos/bachillerato";
 const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/universidad";
+const API_FICHAR_ALUMNO = "https://asistencia-edec.onrender.com/api/fichados/apodaca/registrar";
 
 let inputBuscarAlumno;
 let btnBuscarAlumno;
 let tbodyAlumnos;
 let tablaAlumnos;
 let btnCerrarSesion;
+let modalFicharAlumno;
+let btnFicharSi;
+let btnFicharNo;
+let alumnoSeleccionado = null;
 
 // ==============================
 //   BUSCAR ALUMNO
@@ -83,9 +88,91 @@ function mostrarAlumnos(alumnos) {
             <td>${alumno.matricula || ''}</td>
             <td>${alumno.nombre || ''}</td>
             <td>${alumno.programa || ''}</td>
+            <td>
+                <button class="btn-fichar" data-matricula="${alumno.matricula || ''}">
+                    Fichar
+                </button>
+            </td>
         `;
         tbodyAlumnos.appendChild(fila);
     });
+    
+    // Agregar event listeners a los botones de fichar
+    const botonesFichar = document.querySelectorAll('.btn-fichar');
+    botonesFichar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const matricula = boton.getAttribute('data-matricula');
+            const alumno = alumnos.find(a => a.matricula === matricula);
+            if (alumno) {
+                abrirModalFichar(alumno);
+            }
+        });
+    });
+}
+
+// ==============================
+//   ABRIR MODAL DE FICHAR
+// ==============================
+function abrirModalFichar(alumno) {
+    alumnoSeleccionado = alumno;
+    modalFicharAlumno.style.display = 'flex';
+}
+
+// ==============================
+//   CERRAR MODAL DE FICHAR
+// ==============================
+function cerrarModalFichar() {
+    modalFicharAlumno.style.display = 'none';
+    alumnoSeleccionado = null;
+}
+
+// ==============================
+//   FICHAR ALUMNO
+// ==============================
+async function ficharAlumno() {
+    if (!alumnoSeleccionado) return;
+    
+    // Validar que tenga al menos matrícula y nombre
+    if (!alumnoSeleccionado.matricula || !alumnoSeleccionado.nombre) {
+        alert('Error: El alumno no tiene la información necesaria para ser fichado.');
+        return;
+    }
+    
+    // Preparar los datos según el formato requerido
+    // Usar los valores del objeto alumno si existen, sino valores por defecto
+    const datosFichar = {
+        matricula: alumnoSeleccionado.matricula || '',
+        nombre: alumnoSeleccionado.nombre || '',
+        coordinador: alumnoSeleccionado.coordinador || alumnoSeleccionado.Coordinador || 'Leslie',
+        graduado: alumnoSeleccionado.graduado || alumnoSeleccionado.Graduado || 'No',
+        correo: alumnoSeleccionado.correo || alumnoSeleccionado.Correo || `al${alumnoSeleccionado.matricula}@edec.edu.mx`,
+        campus: alumnoSeleccionado.campus || alumnoSeleccionado.Campus || 'Apodaca',
+        programa: alumnoSeleccionado.programa || alumnoSeleccionado.Programa || '',
+        ciclo: alumnoSeleccionado.ciclo || alumnoSeleccionado.Ciclo || 'C1-2026',
+        turno: alumnoSeleccionado.turno || alumnoSeleccionado.Turno || 'Sabatino'
+    };
+    
+    try {
+        const response = await fetch(API_FICHAR_ALUMNO, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datosFichar)
+        });
+        
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.detail || 'Error al fichar alumno.');
+        }
+        
+        alert('Alumno fichado exitosamente.');
+        cerrarModalFichar();
+        
+    } catch (error) {
+        console.error('Error al fichar alumno:', error);
+        alert(error.message || 'Error al fichar alumno. Intenta nuevamente.');
+    }
 }
 
 // ==============================
@@ -98,6 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tbodyAlumnos = document.getElementById("tbodyAlumnos");
     tablaAlumnos = document.getElementById("tablaAlumnos");
     btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    modalFicharAlumno = document.getElementById("modalFicharAlumno");
+    btnFicharSi = document.getElementById("btnFicharSi");
+    btnFicharNo = document.getElementById("btnFicharNo");
 
     // Configurar event listeners
     btnBuscarAlumno.addEventListener("click", () => {
@@ -122,6 +212,22 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem("adminRol");
         localStorage.removeItem("adminContraseña");
     }
+
+    // Event listeners para el modal de fichar
+    btnFicharSi.addEventListener("click", async () => {
+        await ficharAlumno();
+    });
+    
+    btnFicharNo.addEventListener("click", () => {
+        cerrarModalFichar();
+    });
+    
+    // Cerrar modal al hacer click fuera
+    modalFicharAlumno.addEventListener("click", (e) => {
+        if (e.target === modalFicharAlumno) {
+            cerrarModalFichar();
+        }
+    });
 
     // Cerrar sesión
     btnCerrarSesion.addEventListener("click", () => {

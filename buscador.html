@@ -42,12 +42,24 @@
                         <th>Matrícula</th>
                         <th>Nombre</th>
                         <th>Programa</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyAlumnos">
                     <!-- Las filas se agregarán dinámicamente -->
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal para confirmar fichar alumno -->
+    <div class="modal-overlay" id="modalFicharAlumno" style="display: none;">
+        <div class="modal-content modal-fichar">
+            <h2>¿Fichar alumno?</h2>
+            <div class="modal-buttons-fichar">
+                <button class="btn-fichar-si" id="btnFicharSi">Sí</button>
+                <button class="btn-fichar-no" id="btnFicharNo">No</button>
+            </div>
         </div>
     </div>
 
