@@ -1,23 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const API_CREAR_USUARIO = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca/crear';
     const API_CAMBIAR_CONTRASEÑA = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca/cambiar-contraseña';
+    const API_USUARIOS = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca';
     
     // Elementos del DOM
     const btnCrearUsuario = document.getElementById('btnCrearUsuario');
+    const btnCrearUsuarioModal = document.getElementById('btnCrearUsuarioModal');
     const btnUsuarioCircular = document.getElementById('btnUsuarioCircular');
     const btnCerrarSesion = document.getElementById('btnCerrarSesion');
     const btnBuscador = document.getElementById('btnBuscador');
     const btnAsistencias = document.getElementById('btnAsistencias');
     const btnRegistrador = document.getElementById('btnRegistrador');
+    const btnUsuarios = document.getElementById('btnUsuarios');
     
     // Modales
     const modalCrearUsuario = document.getElementById('modalCrearUsuario');
     const modalInfoUsuario = document.getElementById('modalInfoUsuario');
     const modalCambiarContraseña = document.getElementById('modalCambiarContraseña');
+    const modalUsuarios = document.getElementById('modalUsuarios');
     
     // Formularios
     const formCrearUsuario = document.getElementById('formCrearUsuario');
     const formCambiarContraseña = document.getElementById('formCambiarContraseña');
+    
+    // Tabla de usuarios
+    const tbodyUsuarios = document.getElementById('tbodyUsuarios');
     
     // Obtener correo del usuario logueado
     const correoUsuario = localStorage.getItem('adminCorreo');
@@ -42,8 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar información al iniciar
     cargarInfoUsuario();
     
+    // Abrir modal de usuarios
+    btnUsuarios.addEventListener('click', async () => {
+        modalUsuarios.style.display = 'flex';
+        await cargarUsuarios();
+    });
+    
+    // Abrir modal de crear usuario desde el modal de usuarios
+    btnCrearUsuarioModal.addEventListener('click', () => {
+        modalUsuarios.style.display = 'none';
+        modalCrearUsuario.style.display = 'flex';
+        formCrearUsuario.reset();
+        document.getElementById('error-message-crear').style.display = 'none';
+        document.getElementById('success-message-crear').style.display = 'none';
+    });
+    
     // Abrir modales
-    btnCrearUsuario.addEventListener('click', () => {
+    btnCrearUsuario?.addEventListener('click', () => {
         modalCrearUsuario.style.display = 'flex';
         formCrearUsuario.reset();
         document.getElementById('error-message-crear').style.display = 'none';
@@ -123,6 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
         modalCambiarContraseña.style.display = 'none';
     });
     
+    document.getElementById('btnCerrarUsuarios').addEventListener('click', () => {
+        modalUsuarios.style.display = 'none';
+    });
+    
     // Cerrar modal al hacer click fuera
     modalCrearUsuario.addEventListener('click', (e) => {
         if (e.target === modalCrearUsuario) {
@@ -139,6 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
     modalCambiarContraseña.addEventListener('click', (e) => {
         if (e.target === modalCambiarContraseña) {
             modalCambiarContraseña.style.display = 'none';
+        }
+    });
+    
+    modalUsuarios.addEventListener('click', (e) => {
+        if (e.target === modalUsuarios) {
+            modalUsuarios.style.display = 'none';
         }
     });
     
@@ -189,8 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
             successMsg.style.display = 'block';
             formCrearUsuario.reset();
             
-            setTimeout(() => {
+            setTimeout(async () => {
                 modalCrearUsuario.style.display = 'none';
+                // Si el modal de usuarios estaba abierto, recargar usuarios y volver a abrirlo
+                if (modalUsuarios.style.display === 'flex' || document.getElementById('btnUsuarios')) {
+                    await cargarUsuarios();
+                    modalUsuarios.style.display = 'flex';
+                }
             }, 2000);
             
         } catch (error) {
@@ -327,6 +364,84 @@ document.addEventListener('DOMContentLoaded', () => {
             window.open(btnRegistrador.getAttribute('data-url'), '_blank');
         }
     });
+    
+    // Función para cargar usuarios desde la API
+    async function cargarUsuarios() {
+        tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando usuarios...</td></tr>';
+        
+        try {
+            const response = await fetch(API_USUARIOS);
+            if (!response.ok) {
+                throw new Error('Error al cargar usuarios.');
+            }
+            
+            const data = await response.json();
+            const usuarios = data.usuarios || [];
+            
+            if (usuarios.length === 0) {
+                tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
+                return;
+            }
+            
+            tbodyUsuarios.innerHTML = '';
+            
+            usuarios.forEach(usuario => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${usuario.nombre_completo || ''}</td>
+                    <td>${usuario.correo || ''}</td>
+                    <td>${usuario.rol || ''}</td>
+                    <td>${usuario.campus || ''}</td>
+                    <td>
+                        <button class="btn-eliminar-usuario" data-correo="${usuario.correo}">
+                            Eliminar
+                        </button>
+                    </td>
+                `;
+                tbodyUsuarios.appendChild(fila);
+            });
+            
+            // Agregar event listeners a los botones de eliminar
+            const botonesEliminar = document.querySelectorAll('.btn-eliminar-usuario');
+            botonesEliminar.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const correo = boton.getAttribute('data-correo');
+                    await eliminarUsuario(correo);
+                });
+            });
+            
+        } catch (error) {
+            console.error('Error al cargar usuarios:', error);
+            tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar usuarios.</td></tr>';
+        }
+    }
+    
+    // Función para eliminar usuario
+    async function eliminarUsuario(correo) {
+        if (!correo) return;
+        
+        if (!confirm(`¿Estás seguro de que deseas eliminar al usuario con correo: ${correo}?`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API_USUARIOS}/${correo}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.detail || 'Error al eliminar usuario.');
+            }
+            
+            alert('Usuario eliminado exitosamente.');
+            await cargarUsuarios();
+            
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+            alert(error.message || 'Error al eliminar usuario. Intenta nuevamente.');
+        }
+    }
     
     // Función para limpiar todas las credenciales
     function limpiarTodasLasCredenciales() {

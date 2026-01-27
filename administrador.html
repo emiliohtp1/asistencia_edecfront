@@ -37,7 +37,6 @@
     </script>
     <!-- Botones superiores derechos -->
     <div class="admin-header-buttons">
-        <button class="btn-crear-usuario" id="btnCrearUsuario">Crear Usuario</button>
         <button class="btn-usuario-circular" id="btnUsuarioCircular">U</button>
         <button class="btn-cerrar-sesion-admin" id="btnCerrarSesion">Cerrar Sesión</button>
     </div>
@@ -57,6 +56,10 @@
             <button class="btn-dashboard" id="btnRegistrador" data-url="home.html">
                 <span class="btn-icon">📝</span>
                 <span class="btn-text">Registrador de Asistencia</span>
+            </button>
+            <button class="btn-dashboard" id="btnUsuarios">
+                <span class="btn-icon">👥</span>
+                <span class="btn-text">Usuarios</span>
             </button>
         </div>
     </div>
@@ -150,6 +153,35 @@
                     <button type="button" class="btn-modal-cancel" id="btnCancelarCambiarContraseña">Cancelar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal para gestionar usuarios -->
+    <div class="modal-overlay" id="modalUsuarios" style="display: none;">
+        <div class="modal-content modal-usuarios">
+            <button class="btn-cerrar-modal" id="btnCerrarUsuarios">×</button>
+            <h2>Gestión de Usuarios</h2>
+            <div class="usuarios-header">
+                <button class="btn-crear-usuario-modal" id="btnCrearUsuarioModal">Crear Usuario</button>
+            </div>
+            <div class="tabla-usuarios-container">
+                <table class="tabla-usuarios" id="tablaUsuarios">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Campus</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsuarios">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Cargando usuarios...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
