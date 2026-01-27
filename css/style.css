@@ -662,12 +662,41 @@ button[type="submit"]:hover {
     align-items: center;
     gap: 20px;
     margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .fichados-header h2 {
     margin: 0;
     color: #000;
     font-size: 24px;
+    flex: 1;
+}
+
+.btn-excel-fichados {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #217346;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.btn-excel-fichados:hover {
+    background: #1a5a37;
+}
+
+.mensaje-exito-fichados {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    white-space: nowrap;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .btn-regresar {
@@ -733,7 +762,19 @@ button[type="submit"]:hover {
         gap: 15px;
     }
     
+    .fichados-header h2 {
+        width: 100%;
+    }
+    
     .btn-regresar {
+        width: 100%;
+    }
+    
+    .btn-excel-fichados {
+        width: 100%;
+    }
+    
+    .mensaje-exito-fichados {
         width: 100%;
     }
     

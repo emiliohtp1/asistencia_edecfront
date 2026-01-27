@@ -24,6 +24,9 @@ let contenedorFichados;
 let contenedorAsistencias;
 let btnRegresar;
 let tbodyFichados;
+let btnExcelFichados;
+let mensajeExitoFichados;
+let todosLosFichados = []; // Almacenar todos los fichados cargados
 
 // Elementos para Excel
 let btnExcel;
@@ -248,6 +251,9 @@ async function cargarFichados() {
         const data = await response.json();
         const fichados = data.fichados || [];
         
+        // Almacenar fichados globalmente
+        todosLosFichados = fichados;
+        
         if (fichados.length === 0) {
             tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos fichados.</td></tr>';
             return;
@@ -344,6 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
     contenedorFichados = document.getElementById("contenedorFichados");
     btnRegresar = document.getElementById("btnRegresar");
     tbodyFichados = document.getElementById("tbodyFichados");
+    btnExcelFichados = document.getElementById("btnExcelFichados");
+    mensajeExitoFichados = document.getElementById("mensajeExitoFichados");
     
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
@@ -729,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const fecha = new Date();
             const fechaStr = fecha.toISOString().split('T')[0];
             const horaStr = fecha.toTimeString().split(' ')[0].replace(/:/g, '-');
-            const nombreArchivo = `Asistencias_${fechaStr}_${horaStr}.xlsx`;
+            const nombreArchivo = `Asistencias_Apodaca_${fechaStr}_${horaStr}.xlsx`;
             
             // Generar el buffer y descargar
             const buffer = await workbook.xlsx.writeBuffer();
@@ -783,4 +791,159 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGenerarExcel.addEventListener("click", () => {
         generarExcel();
     });
+    
+    // ==============================
+    //   FUNCIONALIDAD DE EXCEL PARA FICHADOS
+    // ==============================
+    
+    // Función para generar el archivo Excel de fichados
+    async function generarExcelFichados() {
+        try {
+            if (todosLosFichados.length === 0) {
+                alert('No hay datos de fichados para exportar.');
+                return;
+            }
+            
+            // Ordenar de mayor a menor por cantidad_fichas
+            const fichadosOrdenados = [...todosLosFichados].sort((a, b) => {
+                const fichasA = a.cantidad_fichas || 0;
+                const fichasB = b.cantidad_fichas || 0;
+                return fichasB - fichasA; // Orden descendente
+            });
+            
+            // Crear un nuevo libro de trabajo
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Fichados');
+            
+            // Definir los headers
+            const headers = ['Matricula', 'Nombre', 'Programa', 'Fichas'];
+            
+            // Agregar headers con estilo
+            const headerRow = worksheet.addRow(headers);
+            headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF0B0B63' } // Color #0b0b63
+            };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            headerRow.height = 20;
+            
+            // Aplicar bordes a los headers (solo columnas A-D)
+            ['A', 'B', 'C', 'D'].forEach(col => {
+                const cell = worksheet.getCell(`${col}1`);
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            });
+            
+            // Agregar los datos
+            fichadosOrdenados.forEach((fichado, index) => {
+                const rowNumber = index + 2; // +2 porque la fila 1 es el header
+                const row = worksheet.addRow([
+                    fichado.matricula || '',
+                    fichado.nombre || '',
+                    fichado.programa || '',
+                    fichado.cantidad_fichas || 0
+                ]);
+                
+                // Aplicar bordes negros a todas las celdas de la fila (columnas A-D)
+                ['A', 'B', 'C', 'D'].forEach(col => {
+                    const cell = worksheet.getCell(`${col}${rowNumber}`);
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FF000000' } },
+                        left: { style: 'thin', color: { argb: 'FF000000' } },
+                        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                        right: { style: 'thin', color: { argb: 'FF000000' } }
+                    };
+                    
+                    // Si la celda es de Fichas (columna D) y el valor es >= 3, aplicar color rojo
+                    if (col === 'D' && (fichado.cantidad_fichas || 0) >= 3) {
+                        cell.fill = {
+                            type: 'pattern',
+                            pattern: 'solid',
+                            fgColor: { argb: 'FFFF0000' } // Color rojo
+                        };
+                        cell.font = { color: { argb: 'FFFFFFFF' }, bold: true }; // Texto blanco y negrita
+                    }
+                });
+            });
+            
+            // Calcular el ancho máximo para cada columna basado en el contenido
+            const columnWidths = {
+                A: 0, // Matricula
+                B: 0, // Nombre
+                C: 0, // Programa
+                D: 0  // Fichas
+            };
+            
+            // Calcular ancho para headers
+            headers.forEach((header, index) => {
+                const colLetter = String.fromCharCode(65 + index); // A, B, C, D
+                columnWidths[colLetter] = Math.max(columnWidths[colLetter] || 0, header.length);
+            });
+            
+            // Calcular ancho para datos
+            fichadosOrdenados.forEach(fichado => {
+                const values = [
+                    String(fichado.matricula || ''),
+                    String(fichado.nombre || ''),
+                    String(fichado.programa || ''),
+                    String(fichado.cantidad_fichas || 0)
+                ];
+                
+                values.forEach((value, index) => {
+                    const colLetter = String.fromCharCode(65 + index);
+                    columnWidths[colLetter] = Math.max(columnWidths[colLetter] || 0, value.length);
+                });
+            });
+            
+            // Aplicar anchos de columna (mínimo 15, máximo basado en contenido + padding)
+            worksheet.getColumn('A').width = Math.max(15, Math.min(columnWidths.A + 5, 20)); // Matricula
+            worksheet.getColumn('B').width = Math.max(30, Math.min(columnWidths.B + 5, 60)); // Nombre
+            worksheet.getColumn('C').width = Math.max(40, Math.min(columnWidths.C + 5, 80)); // Programa
+            worksheet.getColumn('D').width = Math.max(12, Math.min(columnWidths.D + 5, 15)); // Fichas
+            
+            // Generar el nombre del archivo con fecha y hora
+            const fecha = new Date();
+            const fechaStr = fecha.toISOString().split('T')[0];
+            const horaStr = fecha.toTimeString().split(' ')[0].replace(/:/g, '-');
+            const nombreArchivo = `Fichados_Apodaca_${fechaStr}_${horaStr}.xlsx`;
+            
+            // Generar el buffer y descargar
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = nombreArchivo;
+            link.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Mostrar mensaje de éxito
+            if (mensajeExitoFichados) {
+                mensajeExitoFichados.style.display = 'block';
+                
+                // Ocultar mensaje después de 2 segundos
+                setTimeout(() => {
+                    if (mensajeExitoFichados) {
+                        mensajeExitoFichados.style.display = 'none';
+                    }
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Error al generar Excel de fichados:', error);
+            alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
+        }
+    }
+    
+    // Event listener para generar Excel de fichados
+    if (btnExcelFichados) {
+        btnExcelFichados.addEventListener("click", () => {
+            generarExcelFichados();
+        });
+    }
 });
