@@ -23,7 +23,8 @@
             
             // Verificación rápida del rol (la verificación completa se hace en authGuard)
             const rolGuardado = localStorage.getItem('adminRol');
-            if (rolGuardado !== 'administrador') {
+            const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+            if (!rolesPermitidos.includes(rolGuardado)) {
                 localStorage.removeItem('isLoggedInAdmin');
                 localStorage.removeItem('adminCorreo');
                 localStorage.removeItem('adminRol');

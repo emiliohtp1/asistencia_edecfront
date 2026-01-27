@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Obtener correo del usuario logueado
     const correoUsuario = localStorage.getItem('adminCorreo');
+    let rolUsuarioActual = null; // Almacenar el rol del usuario actual
     
     // Cargar información del usuario y actualizar botón circular
     async function cargarInfoUsuario() {
@@ -37,12 +38,66 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correoUsuario}`);
             if (response.ok) {
                 const usuario = await response.json();
+                rolUsuarioActual = usuario.rol; // Guardar el rol del usuario actual
                 const primeraLetra = usuario.nombre_completo.charAt(0).toUpperCase();
                 btnUsuarioCircular.textContent = primeraLetra;
                 btnUsuarioCircular.setAttribute('data-correo', correoUsuario);
             }
         } catch (error) {
             console.error('Error al cargar información del usuario:', error);
+        }
+    }
+    
+    // Función para configurar los roles disponibles según el rol del usuario
+    function configurarRolesDisponibles() {
+        const selectRol = document.getElementById('rolCrear');
+        if (!selectRol) return;
+        
+        // Limpiar opciones existentes (excepto la primera opción vacía)
+        const primeraOpcion = selectRol.querySelector('option[value=""]');
+        selectRol.innerHTML = '';
+        if (primeraOpcion) {
+            selectRol.appendChild(primeraOpcion);
+        } else {
+            const opcionVacia = document.createElement('option');
+            opcionVacia.value = '';
+            opcionVacia.textContent = 'Seleccione un rol';
+            selectRol.appendChild(opcionVacia);
+        }
+        
+        // Si el usuario es administrador, puede crear cualquier rol
+        if (rolUsuarioActual === 'administrador') {
+            const rolesCompletos = [
+                { value: 'administrador', text: 'Administrador' },
+                { value: 'director', text: 'Director' },
+                { value: 'coordinador', text: 'Coordinador' },
+                { value: 'maestro', text: 'Maestro' },
+                { value: 'alumno', text: 'Alumno' },
+                { value: 'servicio social', text: 'Servicio Social' }
+            ];
+            
+            rolesCompletos.forEach(rol => {
+                const option = document.createElement('option');
+                option.value = rol.value;
+                option.textContent = rol.text;
+                selectRol.appendChild(option);
+            });
+        } 
+        // Si el usuario es director o coordinador, solo puede crear ciertos roles
+        else if (rolUsuarioActual === 'director' || rolUsuarioActual === 'coordinador') {
+            const rolesLimitados = [
+                { value: 'coordinador', text: 'Coordinador' },
+                { value: 'maestro', text: 'Maestro' },
+                { value: 'alumno', text: 'Alumno' },
+                { value: 'servicio social', text: 'Servicio Social' }
+            ];
+            
+            rolesLimitados.forEach(rol => {
+                const option = document.createElement('option');
+                option.value = rol.value;
+                option.textContent = rol.text;
+                selectRol.appendChild(option);
+            });
         }
     }
     
@@ -62,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formCrearUsuario.reset();
         document.getElementById('error-message-crear').style.display = 'none';
         document.getElementById('success-message-crear').style.display = 'none';
+        configurarRolesDisponibles(); // Configurar roles según el usuario actual
     });
     
     // Abrir modales
@@ -70,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formCrearUsuario.reset();
         document.getElementById('error-message-crear').style.display = 'none';
         document.getElementById('success-message-crear').style.display = 'none';
+        configurarRolesDisponibles(); // Configurar roles según el usuario actual
     });
     
     btnUsuarioCircular.addEventListener('click', async () => {
@@ -312,8 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const userResponse = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correo}`);
             if (userResponse.ok) {
                 const usuario = await userResponse.json();
-                if (usuario.rol !== 'administrador') {
-                    alert('Ya no tienes permisos de administrador. Acceso denegado.');
+                // Roles permitidos: administrador, director, coordinador
+                const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+                if (!rolesPermitidos.includes(usuario.rol)) {
+                    alert('Ya no tienes permisos para acceder a esta página. Acceso denegado.');
                     localStorage.removeItem('isLoggedInAdmin');
                     localStorage.removeItem('adminCorreo');
                     localStorage.removeItem('adminRol');

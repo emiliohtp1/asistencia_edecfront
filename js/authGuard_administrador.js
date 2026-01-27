@@ -16,16 +16,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (response.ok) {
             const usuario = await response.json();
             
-            // Verificar que el usuario tenga rol de administrador
-            if (usuario.rol !== 'administrador') {
-            // Limpiar localStorage y redirigir
-            localStorage.removeItem('isLoggedInAdmin');
-            localStorage.removeItem('adminCorreo');
-            localStorage.removeItem('adminRol');
-            localStorage.removeItem('adminContraseña');
-            alert('No tienes permisos para acceder a esta página. Solo administradores pueden acceder.');
-            window.location.href = 'administradorlogin.html';
-            return;
+            // Roles permitidos: administrador, director, coordinador
+            const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+            
+            // Verificar que el usuario tenga un rol permitido
+            if (!rolesPermitidos.includes(usuario.rol)) {
+                // Limpiar localStorage y redirigir
+                localStorage.removeItem('isLoggedInAdmin');
+                localStorage.removeItem('adminCorreo');
+                localStorage.removeItem('adminRol');
+                localStorage.removeItem('adminContraseña');
+                alert('No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director o coordinador pueden acceder.');
+                window.location.href = 'administradorlogin.html';
+                return;
             }
             
             // Actualizar el rol en localStorage si cambió

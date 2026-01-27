@@ -49,9 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userResponse.ok) {
                     const usuario = await userResponse.json();
                     
-                    // Verificar que el usuario tenga rol de administrador
-                    if (usuario.rol !== 'administrador') {
-                        errorMessage.textContent = 'No tienes permisos para acceder a esta página.';
+                    // Roles permitidos: administrador, director, coordinador
+                    const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+                    
+                    // Verificar que el usuario tenga un rol permitido
+                    if (!rolesPermitidos.includes(usuario.rol)) {
+                        errorMessage.textContent = 'No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director o coordinador pueden acceder.';
                         errorMessage.style.display = 'block';
                         return;
                     }
