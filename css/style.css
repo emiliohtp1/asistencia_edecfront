@@ -1393,6 +1393,22 @@ button[type="submit"]:hover {
     white-space: nowrap;
 }
 
+.tabla-usuarios th.sortable-header {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.tabla-usuarios th.sortable-header:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tabla-usuarios th .sort-indicator {
+    margin-left: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 .tabla-usuarios td {
     padding: 12px;
     border: 1px solid #ddd;

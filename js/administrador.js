@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Tabla de usuarios
     const tbodyUsuarios = document.getElementById('tbodyUsuarios');
+    let usuariosGlobales = []; // Almacenar usuarios para ordenamiento
+    let ordenActual = {
+        columna: null,
+        direccion: 'asc' // 'asc' o 'desc'
+    };
     
     // Obtener correo del usuario logueado
     const correoUsuario = localStorage.getItem('adminCorreo');
@@ -108,7 +113,24 @@ document.addEventListener('DOMContentLoaded', () => {
     btnUsuarios.addEventListener('click', async () => {
         modalUsuarios.style.display = 'flex';
         await cargarUsuarios();
+        configurarOrdenamientoHeaders();
     });
+    
+    // Configurar event listeners para ordenamiento en headers
+    function configurarOrdenamientoHeaders() {
+        const headers = document.querySelectorAll('.tabla-usuarios th[data-columna]');
+        headers.forEach(header => {
+            // Verificar si ya tiene un listener (usando un atributo data)
+            if (!header.hasAttribute('data-sort-listener')) {
+                header.setAttribute('data-sort-listener', 'true');
+                header.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const columna = header.getAttribute('data-columna');
+                    ordenarUsuarios(columna);
+                });
+            }
+        });
+    }
     
     // Abrir modal de crear usuario desde el modal de usuarios
     btnCrearUsuarioModal.addEventListener('click', () => {
@@ -431,6 +453,108 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Función para cargar usuarios desde la API
+    // Función para renderizar usuarios en la tabla
+    function renderizarUsuarios(usuarios) {
+        tbodyUsuarios.innerHTML = '';
+        
+        if (usuarios.length === 0) {
+            tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
+            return;
+        }
+        
+        usuarios.forEach(usuario => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${usuario.nombre_completo || ''}</td>
+                <td>${usuario.correo || ''}</td>
+                <td>${usuario.rol || ''}</td>
+                <td>${usuario.campus || ''}</td>
+                <td>
+                    <button class="btn-eliminar-usuario" data-correo="${usuario.correo}" title="Eliminar usuario">
+                        ×
+                    </button>
+                </td>
+            `;
+            tbodyUsuarios.appendChild(fila);
+        });
+        
+        // Agregar event listeners a los botones de eliminar
+        const botonesEliminar = document.querySelectorAll('.btn-eliminar-usuario');
+        botonesEliminar.forEach(boton => {
+            boton.addEventListener('click', async () => {
+                const correo = boton.getAttribute('data-correo');
+                await eliminarUsuario(correo);
+            });
+        });
+    }
+    
+    // Función para ordenar usuarios
+    function ordenarUsuarios(columna) {
+        // Si se hace clic en la misma columna, cambiar dirección
+        if (ordenActual.columna === columna) {
+            ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
+        } else {
+            ordenActual.columna = columna;
+            ordenActual.direccion = 'asc';
+        }
+        
+        const usuariosOrdenados = [...usuariosGlobales].sort((a, b) => {
+            let valorA, valorB;
+            
+            switch(columna) {
+                case 'nombre':
+                    valorA = (a.nombre_completo || '').toLowerCase();
+                    valorB = (b.nombre_completo || '').toLowerCase();
+                    break;
+                case 'correo':
+                    valorA = (a.correo || '').toLowerCase();
+                    valorB = (b.correo || '').toLowerCase();
+                    break;
+                case 'rol':
+                    valorA = (a.rol || '').toLowerCase();
+                    valorB = (b.rol || '').toLowerCase();
+                    break;
+                case 'campus':
+                    valorA = (a.campus || '').toLowerCase();
+                    valorB = (b.campus || '').toLowerCase();
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (valorA < valorB) {
+                return ordenActual.direccion === 'asc' ? -1 : 1;
+            }
+            if (valorA > valorB) {
+                return ordenActual.direccion === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+        
+        renderizarUsuarios(usuariosOrdenados);
+        actualizarIndicadoresOrdenamiento();
+    }
+    
+    // Función para actualizar indicadores visuales de ordenamiento
+    function actualizarIndicadoresOrdenamiento() {
+        const headers = document.querySelectorAll('.tabla-usuarios th[data-columna]');
+        headers.forEach(header => {
+            const columna = header.getAttribute('data-columna');
+            const span = header.querySelector('.sort-indicator');
+            
+            if (span) {
+                span.remove();
+            }
+            
+            if (ordenActual.columna === columna) {
+                const nuevoSpan = document.createElement('span');
+                nuevoSpan.className = 'sort-indicator';
+                nuevoSpan.textContent = ordenActual.direccion === 'asc' ? ' ↑' : ' ↓';
+                header.appendChild(nuevoSpan);
+            }
+        });
+    }
+    
     async function cargarUsuarios() {
         tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando usuarios...</td></tr>';
         
@@ -441,39 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const data = await response.json();
-            const usuarios = data.usuarios || [];
+            usuariosGlobales = data.usuarios || [];
             
-            if (usuarios.length === 0) {
-                tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
-                return;
-            }
+            // Resetear ordenamiento al cargar
+            ordenActual = { columna: null, direccion: 'asc' };
             
-            tbodyUsuarios.innerHTML = '';
-            
-            usuarios.forEach(usuario => {
-                const fila = document.createElement('tr');
-                fila.innerHTML = `
-                    <td>${usuario.nombre_completo || ''}</td>
-                    <td>${usuario.correo || ''}</td>
-                    <td>${usuario.rol || ''}</td>
-                    <td>${usuario.campus || ''}</td>
-                    <td>
-                        <button class="btn-eliminar-usuario" data-correo="${usuario.correo}" title="Eliminar usuario">
-                            ×
-                        </button>
-                    </td>
-                `;
-                tbodyUsuarios.appendChild(fila);
-            });
-            
-            // Agregar event listeners a los botones de eliminar
-            const botonesEliminar = document.querySelectorAll('.btn-eliminar-usuario');
-            botonesEliminar.forEach(boton => {
-                boton.addEventListener('click', async () => {
-                    const correo = boton.getAttribute('data-correo');
-                    await eliminarUsuario(correo);
-                });
-            });
+            renderizarUsuarios(usuariosGlobales);
+            actualizarIndicadoresOrdenamiento();
             
         } catch (error) {
             console.error('Error al cargar usuarios:', error);
