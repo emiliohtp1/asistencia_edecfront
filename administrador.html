@@ -42,7 +42,7 @@
         <button class="btn-cerrar-sesion-admin" id="btnCerrarSesion">Cerrar Sesión</button>
     </div>
 
-    <div class="administrador-container">
+    <div class="administrador-container" id="containerPrincipal">
         <h1>Dashboard Administrador</h1>
         
         <div class="dashboard-buttons">
@@ -62,6 +62,47 @@
                 <span class="btn-icon">👥</span>
                 <span class="btn-text">Usuarios</span>
             </button>
+            <button class="btn-dashboard" id="btnAlumnos">
+                <span class="btn-icon">🎓</span>
+                <span class="btn-text">Alumnos</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Container para la vista de alumnos -->
+    <div class="administrador-container" id="containerAlumnos" style="display: none;">
+        <h1>Lista de Alumnos</h1>
+        
+        <div class="alumnos-controls">
+            <button class="btn-regresar-alumnos" id="btnRegresarAlumnos">← Regresar</button>
+            <div class="selector-tipo-alumno">
+                <label for="selectTipoAlumno">Tipo de Alumno:</label>
+                <select id="selectTipoAlumno" name="selectTipoAlumno">
+                    <option value="bachillerato">Bachillerato</option>
+                    <option value="universidad">Universidad</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="tabla-alumnos-container">
+            <table class="tabla-alumnos" id="tablaAlumnos">
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Alumno</th>
+                        <th>Programa</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyAlumnos">
+                    <tr>
+                        <td colspan="3" style="text-align: center;">Cargando alumnos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="paginacion-alumnos" id="paginacionAlumnos">
+            <!-- Los botones de paginación se generarán dinámicamente -->
         </div>
     </div>
 

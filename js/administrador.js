@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_CREAR_USUARIO = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca/crear';
     const API_CAMBIAR_CONTRASEÑA = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca/cambiar-contraseña';
     const API_USUARIOS = 'https://asistencia-edec.onrender.com/api/usuarios/apodaca';
+    const API_BACHILLERATO = 'https://asistencia-edec.onrender.com/api/alumnos/bachillerato';
+    const API_UNIVERSIDAD = 'https://asistencia-edec.onrender.com/api/alumnos/universidad';
     
     // Elementos del DOM
     const btnCrearUsuario = document.getElementById('btnCrearUsuario');
@@ -12,6 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAsistencias = document.getElementById('btnAsistencias');
     const btnRegistrador = document.getElementById('btnRegistrador');
     const btnUsuarios = document.getElementById('btnUsuarios');
+    const btnAlumnos = document.getElementById('btnAlumnos');
+    
+    // Elementos para la vista de alumnos
+    const containerPrincipal = document.getElementById('containerPrincipal');
+    const containerAlumnos = document.getElementById('containerAlumnos');
+    const btnRegresarAlumnos = document.getElementById('btnRegresarAlumnos');
+    const selectTipoAlumno = document.getElementById('selectTipoAlumno');
+    const tbodyAlumnos = document.getElementById('tbodyAlumnos');
+    const paginacionAlumnos = document.getElementById('paginacionAlumnos');
+    
+    // Variables para alumnos
+    let alumnosGlobales = [];
+    let paginaActual = 1;
+    const alumnosPorPagina = 10;
     
     // Modales
     const modalCrearUsuario = document.getElementById('modalCrearUsuario');
@@ -630,4 +646,197 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'administradorlogin.html';
         }
     });
+    
+    // ==============================
+    //   FUNCIONALIDAD DE ALUMNOS
+    // ==============================
+    
+    // Mostrar vista de alumnos
+    btnAlumnos.addEventListener('click', () => {
+        containerPrincipal.style.display = 'none';
+        containerAlumnos.style.display = 'block';
+        paginaActual = 1;
+        selectTipoAlumno.value = 'bachillerato'; // Por defecto bachillerato
+        cargarAlumnos('bachillerato');
+    });
+    
+    // Regresar al dashboard principal
+    btnRegresarAlumnos.addEventListener('click', () => {
+        containerAlumnos.style.display = 'none';
+        containerPrincipal.style.display = 'block';
+    });
+    
+    // Cambiar tipo de alumno
+    selectTipoAlumno.addEventListener('change', (e) => {
+        paginaActual = 1;
+        cargarAlumnos(e.target.value);
+    });
+    
+    // Función para cargar alumnos desde la API
+    async function cargarAlumnos(tipo) {
+        tbodyAlumnos.innerHTML = '<tr><td colspan="3" style="text-align: center;">Cargando alumnos...</td></tr>';
+        
+        const apiUrl = tipo === 'bachillerato' ? API_BACHILLERATO : API_UNIVERSIDAD;
+        
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Error al cargar alumnos.');
+            }
+            
+            const data = await response.json();
+            alumnosGlobales = data.alumnos || [];
+            
+            // Ordenar por matrícula de mayor a menor
+            alumnosGlobales.sort((a, b) => {
+                const matriculaA = parseInt(a.matricula) || 0;
+                const matriculaB = parseInt(b.matricula) || 0;
+                return matriculaB - matriculaA; // Orden descendente
+            });
+            
+            renderizarAlumnos();
+            renderizarPaginacion();
+            
+        } catch (error) {
+            console.error('Error al cargar alumnos:', error);
+            tbodyAlumnos.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Error al cargar alumnos.</td></tr>';
+        }
+    }
+    
+    // Función para renderizar alumnos en la tabla
+    function renderizarAlumnos() {
+        tbodyAlumnos.innerHTML = '';
+        
+        if (alumnosGlobales.length === 0) {
+            tbodyAlumnos.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay alumnos registrados.</td></tr>';
+            return;
+        }
+        
+        // Calcular índices para la paginación
+        const inicio = (paginaActual - 1) * alumnosPorPagina;
+        const fin = inicio + alumnosPorPagina;
+        const alumnosPagina = alumnosGlobales.slice(inicio, fin);
+        
+        alumnosPagina.forEach(alumno => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${alumno.matricula || ''}</td>
+                <td>${alumno.nombre || ''}</td>
+                <td>${alumno.programa || ''}</td>
+            `;
+            tbodyAlumnos.appendChild(fila);
+        });
+    }
+    
+    // Función para renderizar la paginación
+    function renderizarPaginacion() {
+        paginacionAlumnos.innerHTML = '';
+        
+        if (alumnosGlobales.length === 0) {
+            return;
+        }
+        
+        const totalPaginas = Math.ceil(alumnosGlobales.length / alumnosPorPagina);
+        
+        // Botón "Anterior"
+        const btnAnterior = document.createElement('button');
+        btnAnterior.className = 'btn-pagina';
+        btnAnterior.textContent = '←';
+        btnAnterior.disabled = paginaActual === 1;
+        btnAnterior.addEventListener('click', () => {
+            if (paginaActual > 1) {
+                paginaActual--;
+                renderizarAlumnos();
+                renderizarPaginacion();
+                // Scroll al inicio de la tabla
+                document.querySelector('.tabla-alumnos-container').scrollTop = 0;
+            }
+        });
+        paginacionAlumnos.appendChild(btnAnterior);
+        
+        // Botones de páginas
+        const maxBotones = 5; // Máximo de botones de página a mostrar
+        let inicioPagina = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+        let finPagina = Math.min(totalPaginas, inicioPagina + maxBotones - 1);
+        
+        // Ajustar inicio si estamos cerca del final
+        if (finPagina - inicioPagina < maxBotones - 1) {
+            inicioPagina = Math.max(1, finPagina - maxBotones + 1);
+        }
+        
+        // Mostrar "..." al inicio si es necesario
+        if (inicioPagina > 1) {
+            const btnPrimera = document.createElement('button');
+            btnPrimera.className = 'btn-pagina';
+            btnPrimera.textContent = '1';
+            btnPrimera.addEventListener('click', () => {
+                paginaActual = 1;
+                renderizarAlumnos();
+                renderizarPaginacion();
+                document.querySelector('.tabla-alumnos-container').scrollTop = 0;
+            });
+            paginacionAlumnos.appendChild(btnPrimera);
+            
+            if (inicioPagina > 2) {
+                const span = document.createElement('span');
+                span.textContent = '...';
+                span.style.padding = '0 5px';
+                paginacionAlumnos.appendChild(span);
+            }
+        }
+        
+        // Botones de páginas
+        for (let i = inicioPagina; i <= finPagina; i++) {
+            const btnPagina = document.createElement('button');
+            btnPagina.className = 'btn-pagina';
+            if (i === paginaActual) {
+                btnPagina.classList.add('active');
+            }
+            btnPagina.textContent = i;
+            btnPagina.addEventListener('click', () => {
+                paginaActual = i;
+                renderizarAlumnos();
+                renderizarPaginacion();
+                document.querySelector('.tabla-alumnos-container').scrollTop = 0;
+            });
+            paginacionAlumnos.appendChild(btnPagina);
+        }
+        
+        // Mostrar "..." al final si es necesario
+        if (finPagina < totalPaginas) {
+            if (finPagina < totalPaginas - 1) {
+                const span = document.createElement('span');
+                span.textContent = '...';
+                span.style.padding = '0 5px';
+                paginacionAlumnos.appendChild(span);
+            }
+            
+            const btnUltima = document.createElement('button');
+            btnUltima.className = 'btn-pagina';
+            btnUltima.textContent = totalPaginas;
+            btnUltima.addEventListener('click', () => {
+                paginaActual = totalPaginas;
+                renderizarAlumnos();
+                renderizarPaginacion();
+                document.querySelector('.tabla-alumnos-container').scrollTop = 0;
+            });
+            paginacionAlumnos.appendChild(btnUltima);
+        }
+        
+        // Botón "Siguiente"
+        const btnSiguiente = document.createElement('button');
+        btnSiguiente.className = 'btn-pagina';
+        btnSiguiente.textContent = '→';
+        btnSiguiente.disabled = paginaActual === totalPaginas;
+        btnSiguiente.addEventListener('click', () => {
+            if (paginaActual < totalPaginas) {
+                paginaActual++;
+                renderizarAlumnos();
+                renderizarPaginacion();
+                // Scroll al inicio de la tabla
+                document.querySelector('.tabla-alumnos-container').scrollTop = 0;
+            }
+        });
+        paginacionAlumnos.appendChild(btnSiguiente);
+    }
 });

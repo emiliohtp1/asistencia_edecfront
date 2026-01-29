@@ -1506,3 +1506,188 @@ button[type="submit"]:hover {
         font-size: 12px;
     }
 }
+
+/* ====== ESTILOS PARA VISTA DE ALUMNOS ====== */
+
+.alumnos-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.btn-regresar-alumnos {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.btn-regresar-alumnos:hover {
+    background: #5a6268;
+}
+
+.selector-tipo-alumno {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selector-tipo-alumno label {
+    font-weight: bold;
+    color: #0b0b63;
+    font-size: 16px;
+}
+
+.selector-tipo-alumno select {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.selector-tipo-alumno select:focus {
+    outline: none;
+    border-color: #0b0b63;
+}
+
+.tabla-alumnos-container {
+    max-height: 600px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.tabla-alumnos {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 14px;
+}
+
+.tabla-alumnos thead {
+    background: #0b0b63;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tabla-alumnos th {
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.tabla-alumnos td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+.tabla-alumnos tbody tr {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.tabla-alumnos tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.tabla-alumnos tbody tr:last-child td {
+    border-bottom: 1px solid #ddd;
+}
+
+.paginacion-alumnos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-pagina {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: #0b0b63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 40px;
+}
+
+.btn-pagina:hover {
+    background: #050545;
+    transform: translateY(-2px);
+}
+
+.btn-pagina.active {
+    background: #28a745;
+    font-weight: bold;
+}
+
+.btn-pagina:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 768px) {
+    .alumnos-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-regresar-alumnos {
+        width: 100%;
+    }
+    
+    .selector-tipo-alumno {
+        width: 100%;
+    }
+    
+    .selector-tipo-alumno select {
+        width: 100%;
+    }
+    
+    .tabla-alumnos {
+        font-size: 12px;
+    }
+    
+    .tabla-alumnos th {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+    
+    .tabla-alumnos td {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+    
+    .paginacion-alumnos {
+        gap: 5px;
+    }
+    
+    .btn-pagina {
+        padding: 8px 12px;
+        font-size: 14px;
+        min-width: 35px;
+    }
+}
