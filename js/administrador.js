@@ -21,13 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerAlumnos = document.getElementById('containerAlumnos');
     const btnRegresarAlumnos = document.getElementById('btnRegresarAlumnos');
     const selectTipoAlumno = document.getElementById('selectTipoAlumno');
+    const inputBuscarAlumno = document.getElementById('inputBuscarAlumno');
+    const btnAgregarAlumno = document.getElementById('btnAgregarAlumno');
     const tbodyAlumnos = document.getElementById('tbodyAlumnos');
     const paginacionAlumnos = document.getElementById('paginacionAlumnos');
     
+    // Modales de alumnos
+    const modalEliminarAlumno = document.getElementById('modalEliminarAlumno');
+    const modalCrearAlumno = document.getElementById('modalCrearAlumno');
+    const formCrearAlumno = document.getElementById('formCrearAlumno');
+    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+    const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
+    const btnCerrarCrearAlumno = document.getElementById('btnCerrarCrearAlumno');
+    const btnCancelarCrearAlumno = document.getElementById('btnCancelarCrearAlumno');
+    
     // Variables para alumnos
     let alumnosGlobales = [];
+    let alumnosFiltrados = [];
     let paginaActual = 1;
     const alumnosPorPagina = 10;
+    let alumnoAEliminar = null;
+    let tipoAlumnoActual = 'bachillerato';
     
     // Modales
     const modalCrearUsuario = document.getElementById('modalCrearUsuario');
@@ -656,7 +670,10 @@ document.addEventListener('DOMContentLoaded', () => {
         containerPrincipal.style.display = 'none';
         containerAlumnos.style.display = 'block';
         paginaActual = 1;
+        tipoAlumnoActual = 'bachillerato';
         selectTipoAlumno.value = 'bachillerato'; // Por defecto bachillerato
+        inputBuscarAlumno.value = '';
+        actualizarPlaceholderBuscador('bachillerato');
         cargarAlumnos('bachillerato');
     });
     
@@ -669,12 +686,190 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cambiar tipo de alumno
     selectTipoAlumno.addEventListener('change', (e) => {
         paginaActual = 1;
+        tipoAlumnoActual = e.target.value;
+        inputBuscarAlumno.value = '';
+        actualizarPlaceholderBuscador(e.target.value);
         cargarAlumnos(e.target.value);
     });
     
+    // Actualizar placeholder del buscador
+    function actualizarPlaceholderBuscador(tipo) {
+        if (tipo === 'bachillerato') {
+            inputBuscarAlumno.placeholder = 'Buscar alumno bachillerato';
+        } else {
+            inputBuscarAlumno.placeholder = 'Buscar alumno universidad';
+        }
+    }
+    
+    // Búsqueda de alumnos
+    inputBuscarAlumno.addEventListener('input', (e) => {
+        const termino = e.target.value.trim().toLowerCase();
+        filtrarAlumnos(termino);
+    });
+    
+    // Función para filtrar alumnos
+    function filtrarAlumnos(termino) {
+        if (termino === '') {
+            alumnosFiltrados = [...alumnosGlobales];
+        } else {
+            alumnosFiltrados = alumnosGlobales.filter(alumno => {
+                const matricula = (alumno.matricula || '').toLowerCase();
+                const nombre = (alumno.nombre || '').toLowerCase();
+                return matricula.includes(termino) || nombre.includes(termino);
+            });
+        }
+        
+        paginaActual = 1;
+        renderizarAlumnos();
+        renderizarPaginacion();
+    }
+    
+    // Abrir modal para agregar alumno
+    btnAgregarAlumno.addEventListener('click', () => {
+        modalCrearAlumno.style.display = 'flex';
+        formCrearAlumno.reset();
+        document.getElementById('campusCrearAlumno').value = 'Apodaca';
+        document.getElementById('graduadoCrear').value = 'No';
+        document.getElementById('turnoCrear').value = 'Matutino';
+        document.getElementById('error-message-crear-alumno').style.display = 'none';
+        document.getElementById('success-message-crear-alumno').style.display = 'none';
+    });
+    
+    // Cerrar modal de crear alumno
+    btnCerrarCrearAlumno.addEventListener('click', () => {
+        modalCrearAlumno.style.display = 'none';
+    });
+    
+    btnCancelarCrearAlumno.addEventListener('click', () => {
+        modalCrearAlumno.style.display = 'none';
+    });
+    
+    modalCrearAlumno.addEventListener('click', (e) => {
+        if (e.target === modalCrearAlumno) {
+            modalCrearAlumno.style.display = 'none';
+        }
+    });
+    
+    // Crear alumno
+    formCrearAlumno.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const errorMsg = document.getElementById('error-message-crear-alumno');
+        const successMsg = document.getElementById('success-message-crear-alumno');
+        errorMsg.style.display = 'none';
+        successMsg.style.display = 'none';
+        
+        const curso = document.getElementById('cursoCrear').value;
+        const datos = {
+            matricula: document.getElementById('matriculaCrear').value,
+            nombre: document.getElementById('nombreCrear').value,
+            coordinador: document.getElementById('coordinadorCrear').value,
+            graduado: document.getElementById('graduadoCrear').value,
+            correo: document.getElementById('correoCrearAlumno').value,
+            campus: document.getElementById('campusCrearAlumno').value,
+            programa: document.getElementById('programaCrear').value,
+            ciclo: document.getElementById('cicloCrear').value,
+            turno: document.getElementById('turnoCrear').value
+        };
+        
+        if (!curso) {
+            errorMsg.textContent = 'Por favor seleccione un curso.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+        
+        const apiUrl = curso === 'Bachillerato' 
+            ? 'https://asistencia-edec.onrender.com/api/bachillerato/crear'
+            : 'https://asistencia-edec.onrender.com/api/universidad/crear';
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                errorMsg.textContent = data.detail || 'Error al crear alumno.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            successMsg.textContent = 'Alumno creado exitosamente.';
+            successMsg.style.display = 'block';
+            formCrearAlumno.reset();
+            document.getElementById('campusCrearAlumno').value = 'Apodaca';
+            document.getElementById('graduadoCrear').value = 'No';
+            document.getElementById('turnoCrear').value = 'Matutino';
+            
+            // Recargar alumnos después de crear
+            setTimeout(async () => {
+                modalCrearAlumno.style.display = 'none';
+                await cargarAlumnos(tipoAlumnoActual);
+                inputBuscarAlumno.value = '';
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Error al crear alumno:', error);
+            errorMsg.textContent = 'Error de conexión al crear alumno.';
+            errorMsg.style.display = 'block';
+        }
+    });
+    
+    // Modal de confirmación para eliminar
+    btnConfirmarEliminar.addEventListener('click', async () => {
+        if (alumnoAEliminar) {
+            await eliminarAlumno(alumnoAEliminar.matricula, tipoAlumnoActual);
+            modalEliminarAlumno.style.display = 'none';
+            alumnoAEliminar = null;
+        }
+    });
+    
+    btnCancelarEliminar.addEventListener('click', () => {
+        modalEliminarAlumno.style.display = 'none';
+        alumnoAEliminar = null;
+    });
+    
+    modalEliminarAlumno.addEventListener('click', (e) => {
+        if (e.target === modalEliminarAlumno) {
+            modalEliminarAlumno.style.display = 'none';
+            alumnoAEliminar = null;
+        }
+    });
+    
+    // Función para eliminar alumno
+    async function eliminarAlumno(matricula, tipo) {
+        const apiUrl = tipo === 'bachillerato'
+            ? `https://asistencia-edec.onrender.com/api/alumnos/bachillerato/${matricula}`
+            : `https://asistencia-edec.onrender.com/api/alumnos/universidad/${matricula}`;
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.detail || 'Error al eliminar alumno.');
+            }
+            
+            alert('Alumno eliminado exitosamente.');
+            await cargarAlumnos(tipo);
+            inputBuscarAlumno.value = '';
+            
+        } catch (error) {
+            console.error('Error al eliminar alumno:', error);
+            alert(error.message || 'Error al eliminar alumno. Intenta nuevamente.');
+        }
+    }
+    
     // Función para cargar alumnos desde la API
     async function cargarAlumnos(tipo) {
-        tbodyAlumnos.innerHTML = '<tr><td colspan="3" style="text-align: center;">Cargando alumnos...</td></tr>';
+        tbodyAlumnos.innerHTML = '<tr><td colspan="4" style="text-align: center;">Cargando alumnos...</td></tr>';
         
         const apiUrl = tipo === 'bachillerato' ? API_BACHILLERATO : API_UNIVERSIDAD;
         
@@ -694,6 +889,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return matriculaB - matriculaA; // Orden descendente
             });
             
+            // Aplicar filtro actual si existe
+            const termino = inputBuscarAlumno.value.trim().toLowerCase();
+            if (termino === '') {
+                alumnosFiltrados = [...alumnosGlobales];
+            } else {
+                alumnosFiltrados = alumnosGlobales.filter(alumno => {
+                    const matricula = (alumno.matricula || '').toLowerCase();
+                    const nombre = (alumno.nombre || '').toLowerCase();
+                    return matricula.includes(termino) || nombre.includes(termino);
+                });
+            }
+            
             renderizarAlumnos();
             renderizarPaginacion();
             
@@ -707,15 +914,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderizarAlumnos() {
         tbodyAlumnos.innerHTML = '';
         
-        if (alumnosGlobales.length === 0) {
-            tbodyAlumnos.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay alumnos registrados.</td></tr>';
+        if (alumnosFiltrados.length === 0) {
+            tbodyAlumnos.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos registrados.</td></tr>';
             return;
         }
         
         // Calcular índices para la paginación
         const inicio = (paginaActual - 1) * alumnosPorPagina;
         const fin = inicio + alumnosPorPagina;
-        const alumnosPagina = alumnosGlobales.slice(inicio, fin);
+        const alumnosPagina = alumnosFiltrados.slice(inicio, fin);
         
         alumnosPagina.forEach(alumno => {
             const fila = document.createElement('tr');
@@ -723,8 +930,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${alumno.matricula || ''}</td>
                 <td>${alumno.nombre || ''}</td>
                 <td>${alumno.programa || ''}</td>
+                <td>
+                    <button class="btn-eliminar-alumno" data-matricula="${alumno.matricula || ''}" title="Eliminar alumno">
+                        ×
+                    </button>
+                </td>
             `;
             tbodyAlumnos.appendChild(fila);
+        });
+        
+        // Agregar event listeners a los botones de eliminar
+        const botonesEliminar = document.querySelectorAll('.btn-eliminar-alumno');
+        botonesEliminar.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const matricula = boton.getAttribute('data-matricula');
+                const alumno = alumnosFiltrados.find(a => a.matricula === matricula);
+                if (alumno) {
+                    alumnoAEliminar = alumno;
+                    modalEliminarAlumno.style.display = 'flex';
+                }
+            });
         });
     }
     
@@ -732,11 +957,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderizarPaginacion() {
         paginacionAlumnos.innerHTML = '';
         
-        if (alumnosGlobales.length === 0) {
+        if (alumnosFiltrados.length === 0) {
             return;
         }
         
-        const totalPaginas = Math.ceil(alumnosGlobales.length / alumnosPorPagina);
+        const totalPaginas = Math.ceil(alumnosFiltrados.length / alumnosPorPagina);
         
         // Botón "Anterior"
         const btnAnterior = document.createElement('button');

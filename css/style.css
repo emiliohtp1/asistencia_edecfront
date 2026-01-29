@@ -1513,9 +1513,16 @@ button[type="submit"]:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+.alumnos-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .btn-regresar-alumnos {
@@ -1557,6 +1564,41 @@ button[type="submit"]:hover {
 }
 
 .selector-tipo-alumno select:focus {
+    outline: none;
+    border-color: #0b0b63;
+}
+
+.btn-agregar-alumno {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.btn-agregar-alumno:hover {
+    background: #218838;
+}
+
+.buscador-alumnos-container {
+    margin-bottom: 20px;
+}
+
+.input-buscar-alumno {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.input-buscar-alumno:focus {
     outline: none;
     border-color: #0b0b63;
 }
@@ -1610,6 +1652,43 @@ button[type="submit"]:hover {
 
 .tabla-alumnos tbody tr:last-child td {
     border-bottom: 1px solid #ddd;
+}
+
+.btn-eliminar-alumno {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 18px;
+    font-weight: bold;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.btn-eliminar-alumno:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.modal-confirmacion {
+    max-width: 400px;
+}
+
+.modal-confirmacion h2 {
+    margin-bottom: 30px;
+}
+
+.modal-crear-alumno {
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .paginacion-alumnos {
@@ -1689,5 +1768,19 @@ button[type="submit"]:hover {
         padding: 8px 12px;
         font-size: 14px;
         min-width: 35px;
+    }
+    
+    .alumnos-controls-right {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-agregar-alumno {
+        width: 100%;
+    }
+    
+    .input-buscar-alumno {
+        font-size: 14px;
     }
 }
