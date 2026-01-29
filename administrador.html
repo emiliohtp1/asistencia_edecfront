@@ -118,7 +118,8 @@
     <div class="modal-overlay" id="modalEliminarAlumno" style="display: none;">
         <div class="modal-content modal-confirmacion">
             <h2>¿Eliminar Alumno?</h2>
-            <div class="modal-buttons">
+            <p id="success-message-eliminar" class="success-message-eliminar" style="display: none;"></p>
+            <div class="modal-buttons modal-buttons-centered">
                 <button type="button" class="btn-modal-submit" id="btnConfirmarEliminar">Sí</button>
                 <button type="button" class="btn-modal-cancel" id="btnCancelarEliminar">No</button>
             </div>
@@ -183,7 +184,7 @@
                     </select>
                 </div>
                 <p id="error-message-crear-alumno" class="error-text" style="display: none;"></p>
-                <p id="success-message-crear-alumno" class="success-text" style="display: none;"></p>
+                <p id="success-message-crear-alumno" class="success-message-crear-alumno" style="display: none;"></p>
                 <div class="modal-buttons">
                     <button type="submit" class="btn-modal-submit">Crear Alumno</button>
                     <button type="button" class="btn-modal-cancel" id="btnCancelarCrearAlumno">Cancelar</button>

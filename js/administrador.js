@@ -823,20 +823,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal de confirmación para eliminar
     btnConfirmarEliminar.addEventListener('click', async () => {
         if (alumnoAEliminar) {
+            // Ocultar botones mientras se procesa
+            btnConfirmarEliminar.style.display = 'none';
+            btnCancelarEliminar.style.display = 'none';
             await eliminarAlumno(alumnoAEliminar.matricula, tipoAlumnoActual);
-            modalEliminarAlumno.style.display = 'none';
-            alumnoAEliminar = null;
         }
     });
     
     btnCancelarEliminar.addEventListener('click', () => {
         modalEliminarAlumno.style.display = 'none';
+        document.getElementById('success-message-eliminar').style.display = 'none';
+        btnConfirmarEliminar.style.display = 'block';
+        btnCancelarEliminar.style.display = 'block';
         alumnoAEliminar = null;
     });
     
     modalEliminarAlumno.addEventListener('click', (e) => {
         if (e.target === modalEliminarAlumno) {
             modalEliminarAlumno.style.display = 'none';
+            document.getElementById('success-message-eliminar').style.display = 'none';
+            btnConfirmarEliminar.style.display = 'block';
+            btnCancelarEliminar.style.display = 'block';
             alumnoAEliminar = null;
         }
     });
@@ -846,6 +853,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const apiUrl = tipo === 'bachillerato'
             ? `https://asistencia-edec.onrender.com/api/alumnos/bachillerato/${matricula}`
             : `https://asistencia-edec.onrender.com/api/alumnos/universidad/${matricula}`;
+        
+        const successMsgEliminar = document.getElementById('success-message-eliminar');
         
         try {
             const response = await fetch(apiUrl, {
@@ -857,13 +866,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.detail || 'Error al eliminar alumno.');
             }
             
-            alert('Alumno eliminado exitosamente.');
+            // Mostrar mensaje de éxito en el modal
+            successMsgEliminar.textContent = 'Alumno eliminado exitosamente.';
+            successMsgEliminar.style.display = 'block';
+            
+            // Recargar alumnos
             await cargarAlumnos(tipo);
             inputBuscarAlumno.value = '';
             
+            // Cerrar modal después de 2 segundos
+            setTimeout(() => {
+                modalEliminarAlumno.style.display = 'none';
+                successMsgEliminar.style.display = 'none';
+                btnConfirmarEliminar.style.display = 'block';
+                btnCancelarEliminar.style.display = 'block';
+                alumnoAEliminar = null;
+            }, 2000);
+            
         } catch (error) {
             console.error('Error al eliminar alumno:', error);
-            alert(error.message || 'Error al eliminar alumno. Intenta nuevamente.');
+            // Mostrar error en el modal
+            successMsgEliminar.textContent = error.message || 'Error al eliminar alumno. Intenta nuevamente.';
+            successMsgEliminar.style.display = 'block';
+            successMsgEliminar.style.backgroundColor = '#dc3545';
+            // Restaurar botones
+            btnConfirmarEliminar.style.display = 'block';
+            btnCancelarEliminar.style.display = 'block';
         }
     }
     
