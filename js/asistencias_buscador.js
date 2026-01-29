@@ -50,7 +50,7 @@ let mensajeExitoExcel;
 // ==============================
 //   CARGAR TODAS LAS ASISTENCIAS AL INICIO
 // ==============================
-async function cargarTodasLasAsistencias() {
+async function cargarTodasLasAsistencias(mantenerPagina = false) {
     try {
         const response = await fetch(API_TODAS_ASISTENCIAS_APODACA);
         
@@ -60,8 +60,10 @@ async function cargarTodasLasAsistencias() {
 
         const data = await response.json();
         todasLasAsistencias = data.asistencias || [];
-        paginaActual = 1; // Resetear a la primera página al cargar
-        aplicarFiltros();
+        if (!mantenerPagina) {
+            paginaActual = 1; // Resetear a la primera página al cargar
+        }
+        aplicarFiltros(mantenerPagina);
     } catch (error) {
         console.error('Error:', error);
         mostrarMensajeError('Error al cargar las asistencias del día.');
@@ -71,10 +73,10 @@ async function cargarTodasLasAsistencias() {
 // ==============================
 //   BUSCAR POR MATRÍCULA
 // ==============================
-async function buscarPorMatricula(matricula) {
+async function buscarPorMatricula(matricula, mantenerPagina = false) {
     if (!matricula || matricula.trim() === '') {
         // Si está vacío, cargar todas las asistencias
-        cargarTodasLasAsistencias();
+        cargarTodasLasAsistencias(mantenerPagina);
         return;
     }
 
@@ -84,8 +86,10 @@ async function buscarPorMatricula(matricula) {
         if (!response.ok) {
             if (response.status === 404) {
                 todasLasAsistencias = [];
-                paginaActual = 1; // Resetear a la primera página
-                aplicarFiltros();
+                if (!mantenerPagina) {
+                    paginaActual = 1; // Resetear a la primera página
+                }
+                aplicarFiltros(mantenerPagina);
                 return;
             }
             throw new Error('Error al buscar la matrícula.');
@@ -93,8 +97,10 @@ async function buscarPorMatricula(matricula) {
 
         const data = await response.json();
         todasLasAsistencias = data.asistencias || [];
-        paginaActual = 1; // Resetear a la primera página al buscar
-        aplicarFiltros();
+        if (!mantenerPagina) {
+            paginaActual = 1; // Resetear a la primera página al buscar
+        }
+        aplicarFiltros(mantenerPagina);
     } catch (error) {
         console.error('Error:', error);
         mostrarMensajeError('Error al buscar la matrícula.');
@@ -104,11 +110,13 @@ async function buscarPorMatricula(matricula) {
 // ==============================
 //   APLICAR FILTROS
 // ==============================
-function aplicarFiltros() {
+function aplicarFiltros(mantenerPagina = false) {
     // Verificar que los elementos del DOM estén inicializados
     if (!filtroDia || !filtroMes) {
         asistenciasFiltradas = [...todasLasAsistencias];
-        paginaActual = 1;
+        if (!mantenerPagina) {
+            paginaActual = 1;
+        }
         mostrarAsistencias(asistenciasFiltradas);
         return;
     }
@@ -177,7 +185,10 @@ function aplicarFiltros() {
         });
     }
 
-    paginaActual = 1; // Resetear a la primera página cuando se aplican filtros
+    // Solo resetear página si no se debe mantener
+    if (!mantenerPagina) {
+        paginaActual = 1;
+    }
     mostrarAsistencias(asistenciasFiltradas);
 }
 
@@ -351,21 +362,20 @@ function actualizarTabla() {
     const paginaAnterior = paginaActual;
     
     if (matricula === '') {
-        // Si no hay búsqueda activa, cargar todas las asistencias
-        cargarTodasLasAsistencias();
+        // Si no hay búsqueda activa, cargar todas las asistencias manteniendo la página
+        cargarTodasLasAsistencias(true);
     } else {
-        // Si hay una búsqueda activa, actualizar esa búsqueda
-        buscarPorMatricula(matricula);
+        // Si hay una búsqueda activa, actualizar esa búsqueda manteniendo la página
+        buscarPorMatricula(matricula, true);
     }
     
-    // Después de aplicar filtros, intentar mantener la página actual si es posible
-    // Si la página actual ya no existe (por ejemplo, se eliminaron registros), ir a la última página
+    // Después de aplicar filtros, verificar si la página actual sigue siendo válida
     setTimeout(() => {
         const totalPaginas = Math.ceil(asistenciasFiltradas.length / asistenciasPorPagina);
         if (paginaAnterior > totalPaginas && totalPaginas > 0) {
             paginaActual = totalPaginas;
             mostrarAsistencias(asistenciasFiltradas);
-        } else if (paginaAnterior <= totalPaginas) {
+        } else if (paginaAnterior <= totalPaginas && paginaAnterior > 0) {
             paginaActual = paginaAnterior;
             mostrarAsistencias(asistenciasFiltradas);
         }
