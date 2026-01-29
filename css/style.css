@@ -1765,6 +1765,16 @@ button[type="submit"]:hover {
     flex-wrap: wrap;
 }
 
+.paginacion-asistencias {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
 .btn-pagina {
     padding: 10px 15px;
     font-size: 16px;

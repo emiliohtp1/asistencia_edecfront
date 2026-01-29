@@ -18,6 +18,10 @@ let filtroMes;
 let btnLimpiarDia;
 let btnLimpiarMes;
 let todasLasAsistencias = []; // Almacenar todas las asistencias cargadas
+let asistenciasFiltradas = []; // Almacenar asistencias filtradas para paginación
+let paginaActual = 1; // Página actual de la paginación
+const asistenciasPorPagina = 10; // Cantidad de asistencias por página
+let paginacionAsistencias; // Elemento del DOM para la paginación
 
 // Elementos para fichados
 let contenedorFichados;
@@ -52,6 +56,7 @@ async function cargarTodasLasAsistencias() {
 
         const data = await response.json();
         todasLasAsistencias = data.asistencias || [];
+        paginaActual = 1; // Resetear a la primera página al cargar
         aplicarFiltros();
     } catch (error) {
         console.error('Error:', error);
@@ -75,6 +80,7 @@ async function buscarPorMatricula(matricula) {
         if (!response.ok) {
             if (response.status === 404) {
                 todasLasAsistencias = [];
+                paginaActual = 1; // Resetear a la primera página
                 aplicarFiltros();
                 return;
             }
@@ -83,6 +89,7 @@ async function buscarPorMatricula(matricula) {
 
         const data = await response.json();
         todasLasAsistencias = data.asistencias || [];
+        paginaActual = 1; // Resetear a la primera página al buscar
         aplicarFiltros();
     } catch (error) {
         console.error('Error:', error);
@@ -96,11 +103,13 @@ async function buscarPorMatricula(matricula) {
 function aplicarFiltros() {
     // Verificar que los elementos del DOM estén inicializados
     if (!filtroDia || !filtroMes) {
-        mostrarAsistencias(todasLasAsistencias);
+        asistenciasFiltradas = [...todasLasAsistencias];
+        paginaActual = 1;
+        mostrarAsistencias(asistenciasFiltradas);
         return;
     }
 
-    let asistenciasFiltradas = [...todasLasAsistencias];
+    asistenciasFiltradas = [...todasLasAsistencias];
 
     // Filtrar por día (número del 1 al 31)
     if (filtroDia && filtroDia.value) {
@@ -164,6 +173,7 @@ function aplicarFiltros() {
         });
     }
 
+    paginaActual = 1; // Resetear a la primera página cuando se aplican filtros
     mostrarAsistencias(asistenciasFiltradas);
 }
 
@@ -172,15 +182,26 @@ function aplicarFiltros() {
 // ==============================
 function mostrarAsistencias(asistencias) {
     tbodyAsistencias.innerHTML = '';
+    
+    // Guardar las asistencias filtradas para la paginación
+    asistenciasFiltradas = asistencias;
 
     if (asistencias.length === 0) {
         mensajeSinResultados.style.display = 'block';
+        if (paginacionAsistencias) {
+            paginacionAsistencias.innerHTML = '';
+        }
         return;
     }
 
     mensajeSinResultados.style.display = 'none';
+    
+    // Calcular índices para la paginación
+    const inicio = (paginaActual - 1) * asistenciasPorPagina;
+    const fin = inicio + asistenciasPorPagina;
+    const asistenciasPagina = asistencias.slice(inicio, fin);
 
-    asistencias.forEach(asistencia => {
+    asistenciasPagina.forEach(asistencia => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
             <td>${asistencia.Matricula || ''}</td>
@@ -190,6 +211,120 @@ function mostrarAsistencias(asistencias) {
         `;
         tbodyAsistencias.appendChild(fila);
     });
+    
+    // Renderizar paginación
+    renderizarPaginacionAsistencias();
+}
+
+// ==============================
+//   RENDERIZAR PAGINACIÓN DE ASISTENCIAS
+// ==============================
+function renderizarPaginacionAsistencias() {
+    if (!paginacionAsistencias) return;
+    
+    paginacionAsistencias.innerHTML = '';
+    
+    if (asistenciasFiltradas.length === 0) {
+        return;
+    }
+    
+    const totalPaginas = Math.ceil(asistenciasFiltradas.length / asistenciasPorPagina);
+    
+    // Botón "Anterior"
+    const btnAnterior = document.createElement('button');
+    btnAnterior.className = 'btn-pagina';
+    btnAnterior.textContent = '←';
+    btnAnterior.disabled = paginaActual === 1;
+    btnAnterior.addEventListener('click', () => {
+        if (paginaActual > 1) {
+            paginaActual--;
+            mostrarAsistencias(asistenciasFiltradas);
+            // Scroll al inicio de la tabla
+            document.querySelector('.tabla-container').scrollTop = 0;
+        }
+    });
+    paginacionAsistencias.appendChild(btnAnterior);
+    
+    // Botones de páginas
+    const maxBotones = 5; // Máximo de botones de página a mostrar
+    let inicioPagina = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    let finPagina = Math.min(totalPaginas, inicioPagina + maxBotones - 1);
+    
+    // Ajustar inicio si estamos cerca del final
+    if (finPagina - inicioPagina < maxBotones - 1) {
+        inicioPagina = Math.max(1, finPagina - maxBotones + 1);
+    }
+    
+    // Mostrar "..." al inicio si es necesario
+    if (inicioPagina > 1) {
+        const btnPrimera = document.createElement('button');
+        btnPrimera.className = 'btn-pagina';
+        btnPrimera.textContent = '1';
+        btnPrimera.addEventListener('click', () => {
+            paginaActual = 1;
+            mostrarAsistencias(asistenciasFiltradas);
+            document.querySelector('.tabla-container').scrollTop = 0;
+        });
+        paginacionAsistencias.appendChild(btnPrimera);
+        
+        if (inicioPagina > 2) {
+            const span = document.createElement('span');
+            span.textContent = '...';
+            span.style.padding = '0 5px';
+            paginacionAsistencias.appendChild(span);
+        }
+    }
+    
+    // Botones de páginas
+    for (let i = inicioPagina; i <= finPagina; i++) {
+        const btnPagina = document.createElement('button');
+        btnPagina.className = 'btn-pagina';
+        if (i === paginaActual) {
+            btnPagina.classList.add('active');
+        }
+        btnPagina.textContent = i;
+        btnPagina.addEventListener('click', () => {
+            paginaActual = i;
+            mostrarAsistencias(asistenciasFiltradas);
+            document.querySelector('.tabla-container').scrollTop = 0;
+        });
+        paginacionAsistencias.appendChild(btnPagina);
+    }
+    
+    // Mostrar "..." al final si es necesario
+    if (finPagina < totalPaginas) {
+        if (finPagina < totalPaginas - 1) {
+            const span = document.createElement('span');
+            span.textContent = '...';
+            span.style.padding = '0 5px';
+            paginacionAsistencias.appendChild(span);
+        }
+        
+        const btnUltima = document.createElement('button');
+        btnUltima.className = 'btn-pagina';
+        btnUltima.textContent = totalPaginas;
+        btnUltima.addEventListener('click', () => {
+            paginaActual = totalPaginas;
+            mostrarAsistencias(asistenciasFiltradas);
+            document.querySelector('.tabla-container').scrollTop = 0;
+        });
+        paginacionAsistencias.appendChild(btnUltima);
+    }
+    
+    // Botón "Siguiente"
+    const btnSiguiente = document.createElement('button');
+    btnSiguiente.className = 'btn-pagina';
+    btnSiguiente.textContent = '→';
+    btnSiguiente.disabled = paginaActual === totalPaginas;
+    btnSiguiente.addEventListener('click', () => {
+        if (paginaActual < totalPaginas) {
+            paginaActual++;
+            mostrarAsistencias(asistenciasFiltradas);
+            // Scroll al inicio de la tabla
+            document.querySelector('.tabla-container').scrollTop = 0;
+        }
+    });
+    paginacionAsistencias.appendChild(btnSiguiente);
 }
 
 // ==============================
@@ -207,6 +342,9 @@ function mostrarMensajeError(mensaje) {
 function actualizarTabla() {
     const matricula = inputBuscarMatricula.value.trim();
     
+    // Guardar la página actual antes de actualizar
+    const paginaAnterior = paginaActual;
+    
     if (matricula === '') {
         // Si no hay búsqueda activa, cargar todas las asistencias
         cargarTodasLasAsistencias();
@@ -214,6 +352,19 @@ function actualizarTabla() {
         // Si hay una búsqueda activa, actualizar esa búsqueda
         buscarPorMatricula(matricula);
     }
+    
+    // Después de aplicar filtros, intentar mantener la página actual si es posible
+    // Si la página actual ya no existe (por ejemplo, se eliminaron registros), ir a la última página
+    setTimeout(() => {
+        const totalPaginas = Math.ceil(asistenciasFiltradas.length / asistenciasPorPagina);
+        if (paginaAnterior > totalPaginas && totalPaginas > 0) {
+            paginaActual = totalPaginas;
+            mostrarAsistencias(asistenciasFiltradas);
+        } else if (paginaAnterior <= totalPaginas) {
+            paginaActual = paginaAnterior;
+            mostrarAsistencias(asistenciasFiltradas);
+        }
+    }, 100);
 }
 
 function iniciarActualizacionAutomatica() {
@@ -363,16 +514,21 @@ document.addEventListener('DOMContentLoaded', () => {
     excelFiltroFecha = document.getElementById("excelFiltroFecha");
     btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
     mensajeExitoExcel = document.getElementById("mensajeExitoExcel");
+    
+    // Elemento para paginación
+    paginacionAsistencias = document.getElementById("paginacionAsistencias");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
         const matricula = inputBuscarMatricula.value.trim();
+        paginaActual = 1; // Resetear a la primera página al buscar
         buscarPorMatricula(matricula);
     });
 
     inputBuscarMatricula.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
             const matricula = inputBuscarMatricula.value.trim();
+            paginaActual = 1; // Resetear a la primera página al buscar
             buscarPorMatricula(matricula);
         }
     });
@@ -380,6 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Permitir buscar todas si se limpia el campo
     inputBuscarMatricula.addEventListener("input", (e) => {
         if (e.target.value.trim() === '') {
+            paginaActual = 1; // Resetear a la primera página al limpiar
             cargarTodasLasAsistencias();
         }
     });
