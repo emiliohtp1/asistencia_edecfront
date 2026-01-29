@@ -760,17 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
         successMsg.style.display = 'none';
         
         const curso = document.getElementById('cursoCrear').value;
-        const datos = {
-            matricula: document.getElementById('matriculaCrear').value,
-            nombre: document.getElementById('nombreCrear').value,
-            coordinador: document.getElementById('coordinadorCrear').value,
-            graduado: document.getElementById('graduadoCrear').value,
-            correo: document.getElementById('correoCrearAlumno').value,
-            campus: document.getElementById('campusCrearAlumno').value,
-            programa: document.getElementById('programaCrear').value,
-            ciclo: document.getElementById('cicloCrear').value,
-            turno: document.getElementById('turnoCrear').value
-        };
         
         if (!curso) {
             errorMsg.textContent = 'Por favor seleccione un curso.';
@@ -778,9 +767,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        // Crear objeto con las claves en mayúscula como espera la API
+        // NO incluir el campo "Curso" en los datos
+        const datos = {
+            Matricula: document.getElementById('matriculaCrear').value,
+            Nombre: document.getElementById('nombreCrear').value,
+            Coordinador: document.getElementById('coordinadorCrear').value,
+            Graduado: document.getElementById('graduadoCrear').value,
+            Correo: document.getElementById('correoCrearAlumno').value,
+            Campus: document.getElementById('campusCrearAlumno').value,
+            Programa: document.getElementById('programaCrear').value,
+            Ciclo: document.getElementById('cicloCrear').value,
+            Turno: document.getElementById('turnoCrear').value
+        };
+        
+        // Usar los endpoints especificados por el usuario
         const apiUrl = curso === 'Bachillerato' 
-            ? 'https://asistencia-edec.onrender.com/api/bachillerato/crear'
-            : 'https://asistencia-edec.onrender.com/api/universidad/crear';
+            ? 'https://asistencia-edec.onrender.com/api/alumnos/bachillerato/crear'
+            : 'https://asistencia-edec.onrender.com/api/alumnos/universidad/crear';
         
         try {
             const response = await fetch(apiUrl, {
