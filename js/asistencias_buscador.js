@@ -31,6 +31,10 @@ let tbodyFichados;
 let btnExcelFichados;
 let mensajeExitoFichados;
 let todosLosFichados = []; // Almacenar todos los fichados cargados
+let fichadosFiltrados = []; // Almacenar fichados para paginación
+let paginaActualFichados = 1; // Página actual de la paginación de fichados
+const fichadosPorPagina = 10; // Cantidad de fichados por página
+let paginacionFichados; // Elemento del DOM para la paginación de fichados
 
 // Elementos para Excel
 let btnExcel;
@@ -223,6 +227,7 @@ function renderizarPaginacionAsistencias() {
     if (!paginacionAsistencias) return;
     
     paginacionAsistencias.innerHTML = '';
+    paginacionAsistencias.style.display = 'flex';
     
     if (asistenciasFiltradas.length === 0) {
         return;
@@ -405,31 +410,189 @@ async function cargarFichados() {
         // Almacenar fichados globalmente
         todosLosFichados = fichados;
         
-        if (fichados.length === 0) {
-            tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos fichados.</td></tr>';
-            return;
-        }
-        
-        tbodyFichados.innerHTML = '';
-        
-        fichados.forEach(fichado => {
-            const fila = document.createElement('tr');
-            const cantidadFichas = fichado.cantidad_fichas || 0;
-            const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
-            
-            fila.innerHTML = `
-                <td>${fichado.matricula || ''}</td>
-                <td>${fichado.nombre || ''}</td>
-                <td>${fichado.programa || ''}</td>
-                <td class="${claseFichas}">${cantidadFichas}</td>
-            `;
-            tbodyFichados.appendChild(fila);
+        // Ordenar de mayor a menor por cantidad_fichas
+        todosLosFichados.sort((a, b) => {
+            const fichasA = a.cantidad_fichas || 0;
+            const fichasB = b.cantidad_fichas || 0;
+            return fichasB - fichasA; // Orden descendente
         });
+        
+        fichadosFiltrados = [...todosLosFichados];
+        paginaActualFichados = 1; // Resetear a la primera página
+        
+        mostrarFichados();
         
     } catch (error) {
         console.error('Error al cargar fichados:', error);
         tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar fichados.</td></tr>';
+        if (paginacionFichados) {
+            paginacionFichados.innerHTML = '';
+        }
     }
+}
+
+// ==============================
+//   MOSTRAR FICHADOS EN LA TABLA
+// ==============================
+function mostrarFichados() {
+    tbodyFichados.innerHTML = '';
+    
+    if (fichadosFiltrados.length === 0) {
+        tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos fichados.</td></tr>';
+        if (paginacionFichados) {
+            paginacionFichados.innerHTML = '';
+        }
+        return;
+    }
+    
+    // Calcular índices para la paginación
+    const inicio = (paginaActualFichados - 1) * fichadosPorPagina;
+    const fin = inicio + fichadosPorPagina;
+    const fichadosPagina = fichadosFiltrados.slice(inicio, fin);
+    
+    fichadosPagina.forEach(fichado => {
+        const fila = document.createElement('tr');
+        const cantidadFichas = fichado.cantidad_fichas || 0;
+        const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
+        
+        fila.innerHTML = `
+            <td>${fichado.matricula || ''}</td>
+            <td>${fichado.nombre || ''}</td>
+            <td>${fichado.programa || ''}</td>
+            <td class="${claseFichas}">${cantidadFichas}</td>
+        `;
+        tbodyFichados.appendChild(fila);
+    });
+    
+    // Renderizar paginación
+    renderizarPaginacionFichados();
+}
+
+// ==============================
+//   RENDERIZAR PAGINACIÓN DE FICHADOS
+// ==============================
+function renderizarPaginacionFichados() {
+    if (!paginacionFichados) return;
+    
+    paginacionFichados.innerHTML = '';
+    paginacionFichados.style.display = 'flex';
+    
+    if (fichadosFiltrados.length === 0) {
+        return;
+    }
+    
+    const totalPaginas = Math.ceil(fichadosFiltrados.length / fichadosPorPagina);
+    
+    // Botón "Anterior"
+    const btnAnterior = document.createElement('button');
+    btnAnterior.className = 'btn-pagina';
+    btnAnterior.textContent = '←';
+    btnAnterior.disabled = paginaActualFichados === 1;
+    btnAnterior.addEventListener('click', () => {
+        if (paginaActualFichados > 1) {
+            paginaActualFichados--;
+            mostrarFichados();
+            // Scroll al inicio de la tabla
+            const tablaContainer = contenedorFichados.querySelector('.tabla-container');
+            if (tablaContainer) {
+                tablaContainer.scrollTop = 0;
+            }
+        }
+    });
+    paginacionFichados.appendChild(btnAnterior);
+    
+    // Botones de páginas
+    const maxBotones = 5; // Máximo de botones de página a mostrar
+    let inicioPagina = Math.max(1, paginaActualFichados - Math.floor(maxBotones / 2));
+    let finPagina = Math.min(totalPaginas, inicioPagina + maxBotones - 1);
+    
+    // Ajustar inicio si estamos cerca del final
+    if (finPagina - inicioPagina < maxBotones - 1) {
+        inicioPagina = Math.max(1, finPagina - maxBotones + 1);
+    }
+    
+    // Mostrar "..." al inicio si es necesario
+    if (inicioPagina > 1) {
+        const btnPrimera = document.createElement('button');
+        btnPrimera.className = 'btn-pagina';
+        btnPrimera.textContent = '1';
+        btnPrimera.addEventListener('click', () => {
+            paginaActualFichados = 1;
+            mostrarFichados();
+            const tablaContainer = contenedorFichados.querySelector('.tabla-container');
+            if (tablaContainer) {
+                tablaContainer.scrollTop = 0;
+            }
+        });
+        paginacionFichados.appendChild(btnPrimera);
+        
+        if (inicioPagina > 2) {
+            const span = document.createElement('span');
+            span.textContent = '...';
+            span.style.padding = '0 5px';
+            paginacionFichados.appendChild(span);
+        }
+    }
+    
+    // Botones de páginas
+    for (let i = inicioPagina; i <= finPagina; i++) {
+        const btnPagina = document.createElement('button');
+        btnPagina.className = 'btn-pagina';
+        if (i === paginaActualFichados) {
+            btnPagina.classList.add('active');
+        }
+        btnPagina.textContent = i;
+        btnPagina.addEventListener('click', () => {
+            paginaActualFichados = i;
+            mostrarFichados();
+            const tablaContainer = contenedorFichados.querySelector('.tabla-container');
+            if (tablaContainer) {
+                tablaContainer.scrollTop = 0;
+            }
+        });
+        paginacionFichados.appendChild(btnPagina);
+    }
+    
+    // Mostrar "..." al final si es necesario
+    if (finPagina < totalPaginas) {
+        if (finPagina < totalPaginas - 1) {
+            const span = document.createElement('span');
+            span.textContent = '...';
+            span.style.padding = '0 5px';
+            paginacionFichados.appendChild(span);
+        }
+        
+        const btnUltima = document.createElement('button');
+        btnUltima.className = 'btn-pagina';
+        btnUltima.textContent = totalPaginas;
+        btnUltima.addEventListener('click', () => {
+            paginaActualFichados = totalPaginas;
+            mostrarFichados();
+            const tablaContainer = contenedorFichados.querySelector('.tabla-container');
+            if (tablaContainer) {
+                tablaContainer.scrollTop = 0;
+            }
+        });
+        paginacionFichados.appendChild(btnUltima);
+    }
+    
+    // Botón "Siguiente"
+    const btnSiguiente = document.createElement('button');
+    btnSiguiente.className = 'btn-pagina';
+    btnSiguiente.textContent = '→';
+    btnSiguiente.disabled = paginaActualFichados === totalPaginas;
+    btnSiguiente.addEventListener('click', () => {
+        if (paginaActualFichados < totalPaginas) {
+            paginaActualFichados++;
+            mostrarFichados();
+            // Scroll al inicio de la tabla
+            const tablaContainer = contenedorFichados.querySelector('.tabla-container');
+            if (tablaContainer) {
+                tablaContainer.scrollTop = 0;
+            }
+        }
+    });
+    paginacionFichados.appendChild(btnSiguiente);
 }
 
 // ==============================
@@ -445,6 +608,11 @@ function mostrarVistaFichados() {
     mensajeSinResultados.style.display = 'none';
     buscadorHeader.style.display = 'none';
     
+    // Ocultar paginación de asistencias
+    if (paginacionAsistencias) {
+        paginacionAsistencias.style.display = 'none';
+    }
+    
     // Detener actualización automática
     detenerActualizacionAutomatica();
     
@@ -452,6 +620,7 @@ function mostrarVistaFichados() {
     contenedorFichados.style.display = 'block';
     
     // Cargar fichados
+    paginaActualFichados = 1; // Resetear a la primera página
     cargarFichados();
 }
 
@@ -462,12 +631,22 @@ function mostrarVistaAsistencias() {
     // Ocultar contenedor de fichados
     contenedorFichados.style.display = 'none';
     
+    // Ocultar paginación de fichados
+    if (paginacionFichados) {
+        paginacionFichados.style.display = 'none';
+    }
+    
     // Mostrar contenedor de asistencias
     const tablaAsistencias = document.getElementById('tablaAsistencias');
     const buscadorHeader = document.querySelector('.buscador-header');
     
     buscadorHeader.style.display = 'flex';
     tablaAsistencias.style.display = 'table';
+    
+    // Mostrar paginación de asistencias
+    if (paginacionAsistencias) {
+        paginacionAsistencias.style.display = 'flex';
+    }
     
     // Reiniciar actualización automática
     iniciarActualizacionAutomatica();
@@ -515,8 +694,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
     mensajeExitoExcel = document.getElementById("mensajeExitoExcel");
     
-    // Elemento para paginación
+    // Elementos para paginación
     paginacionAsistencias = document.getElementById("paginacionAsistencias");
+    paginacionFichados = document.getElementById("paginacionFichados");
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -967,12 +1147,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Ordenar de mayor a menor por cantidad_fichas
-            const fichadosOrdenados = [...todosLosFichados].sort((a, b) => {
-                const fichasA = a.cantidad_fichas || 0;
-                const fichasB = b.cantidad_fichas || 0;
-                return fichasB - fichasA; // Orden descendente
-            });
+            // Usar fichadosFiltrados que ya están ordenados
+            const fichadosOrdenados = [...fichadosFiltrados];
             
             // Crear un nuevo libro de trabajo
             const workbook = new ExcelJS.Workbook();
