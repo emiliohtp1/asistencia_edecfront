@@ -132,56 +132,62 @@
             <button class="btn-cerrar-modal" id="btnCerrarCrearAlumno">×</button>
             <h2>Crear Nuevo Alumno</h2>
             <form id="formCrearAlumno">
-                <div class="input-group">
-                    <label for="cursoCrear">Curso:</label>
-                    <select id="cursoCrear" name="cursoCrear" required>
-                        <option value="">Seleccione un curso</option>
-                        <option value="Bachillerato">Bachillerato</option>
-                        <option value="Universidad">Universidad</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="matriculaCrear">Matrícula:</label>
-                    <input type="text" id="matriculaCrear" name="matriculaCrear" required>
-                </div>
-                <div class="input-group">
-                    <label for="nombreCrear">Nombre:</label>
-                    <input type="text" id="nombreCrear" name="nombreCrear" required>
-                </div>
-                <div class="input-group">
-                    <label for="coordinadorCrear">Coordinador:</label>
-                    <input type="text" id="coordinadorCrear" name="coordinadorCrear" required>
-                </div>
-                <div class="input-group">
-                    <label for="graduadoCrear">Graduado:</label>
-                    <select id="graduadoCrear" name="graduadoCrear" required>
-                        <option value="No" selected>No</option>
-                        <option value="Si">Sí</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="correoCrearAlumno">Correo:</label>
-                    <input type="email" id="correoCrearAlumno" name="correoCrearAlumno" required>
-                </div>
-                <div class="input-group">
-                    <label for="campusCrearAlumno">Campus:</label>
-                    <input type="text" id="campusCrearAlumno" name="campusCrearAlumno" value="Apodaca" required>
-                </div>
-                <div class="input-group">
-                    <label for="programaCrear">Programa:</label>
-                    <input type="text" id="programaCrear" name="programaCrear" required>
-                </div>
-                <div class="input-group">
-                    <label for="cicloCrear">Ciclo:</label>
-                    <input type="text" id="cicloCrear" name="cicloCrear" required>
-                </div>
-                <div class="input-group">
-                    <label for="turnoCrear">Turno:</label>
-                    <select id="turnoCrear" name="turnoCrear" required>
-                        <option value="Matutino" selected>Matutino</option>
-                        <option value="Vespertino">Vespertino</option>
-                        <option value="Nocturno">Nocturno</option>
-                    </select>
+                <div class="form-columns">
+                    <div class="form-column">
+                        <div class="input-group">
+                            <label for="cursoCrear">Curso:</label>
+                            <select id="cursoCrear" name="cursoCrear" required>
+                                <option value="">Seleccione un curso</option>
+                                <option value="Bachillerato">Bachillerato</option>
+                                <option value="Universidad">Universidad</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="matriculaCrear">Matrícula:</label>
+                            <input type="text" id="matriculaCrear" name="matriculaCrear" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="nombreCrear">Nombre:</label>
+                            <input type="text" id="nombreCrear" name="nombreCrear" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="coordinadorCrear">Coordinador:</label>
+                            <input type="text" id="coordinadorCrear" name="coordinadorCrear" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="graduadoCrear">Graduado:</label>
+                            <select id="graduadoCrear" name="graduadoCrear" required>
+                                <option value="No" selected>No</option>
+                                <option value="Si">Sí</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="input-group">
+                            <label for="correoCrearAlumno">Correo:</label>
+                            <input type="email" id="correoCrearAlumno" name="correoCrearAlumno" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="campusCrearAlumno">Campus:</label>
+                            <input type="text" id="campusCrearAlumno" name="campusCrearAlumno" value="Apodaca" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="programaCrear">Programa:</label>
+                            <input type="text" id="programaCrear" name="programaCrear" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="cicloCrear">Ciclo:</label>
+                            <input type="text" id="cicloCrear" name="cicloCrear" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="turnoCrear">Turno:</label>
+                            <select id="turnoCrear" name="turnoCrear" required>
+                                <option value="Matutino" selected>Matutino</option>
+                                <option value="Vespertino">Vespertino</option>
+                                <option value="Nocturno">Nocturno</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <p id="error-message-crear-alumno" class="error-text" style="display: none;"></p>
                 <p id="success-message-crear-alumno" class="success-message-crear-alumno" style="display: none;"></p>

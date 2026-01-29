@@ -1064,6 +1064,17 @@ button[type="submit"]:hover {
     font-size: 32px;
 }
 
+/* Estilos específicos para el container de alumnos */
+#containerAlumnos {
+    padding: 25px;
+    margin-top: 60px;
+}
+
+#containerAlumnos h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
 .admin-header-buttons {
     position: fixed;
     top: 20px;
@@ -1199,6 +1210,11 @@ button[type="submit"]:hover {
     text-align: center;
 }
 
+.modal-crear-alumno h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
 .btn-cerrar-modal {
     position: absolute;
     top: 10px;
@@ -1223,7 +1239,11 @@ button[type="submit"]:hover {
 }
 
 .modal-content .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+}
+
+.modal-crear-alumno .input-group {
+    margin-bottom: 12px;
 }
 
 .modal-content .input-group label {
@@ -1513,9 +1533,9 @@ button[type="submit"]:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 15px;
 }
 
 .alumnos-controls-right {
@@ -1586,7 +1606,7 @@ button[type="submit"]:hover {
 }
 
 .buscador-alumnos-container {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .input-buscar-alumno {
@@ -1604,9 +1624,10 @@ button[type="submit"]:hover {
 }
 
 .tabla-alumnos-container {
-    max-height: 600px;
+    max-height: 400px;
     overflow-y: auto;
-    margin-top: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
@@ -1615,7 +1636,7 @@ button[type="submit"]:hover {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .tabla-alumnos thead {
@@ -1627,17 +1648,17 @@ button[type="submit"]:hover {
 }
 
 .tabla-alumnos th {
-    padding: 12px;
+    padding: 8px 10px;
     text-align: left;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     white-space: nowrap;
 }
 
 .tabla-alumnos td {
-    padding: 12px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
-    font-size: 15px;
+    font-size: 13px;
     word-wrap: break-word;
 }
 
@@ -1713,9 +1734,25 @@ button[type="submit"]:hover {
 }
 
 .modal-crear-alumno {
-    max-width: 600px;
+    max-width: 900px;
     max-height: 90vh;
     overflow-y: auto;
+}
+
+.form-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-column .input-group {
+    margin-bottom: 15px;
 }
 
 .paginacion-alumnos {
@@ -1723,7 +1760,8 @@ button[type="submit"]:hover {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-top: 30px;
+    margin-top: 15px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
 }
 
@@ -1809,5 +1847,34 @@ button[type="submit"]:hover {
     
     .input-buscar-alumno {
         font-size: 14px;
+    }
+    
+    .form-columns {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    #containerAlumnos {
+        padding: 15px;
+        margin-top: 40px;
+    }
+    
+    #containerAlumnos h1 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .tabla-alumnos-container {
+        max-height: 300px;
+    }
+    
+    .tabla-alumnos th {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    
+    .tabla-alumnos td {
+        padding: 6px 8px;
+        font-size: 12px;
     }
 }
