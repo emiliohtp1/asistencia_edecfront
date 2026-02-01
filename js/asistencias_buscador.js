@@ -934,6 +934,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
     
+    // Función para extraer año de una fecha
+    function extraerAnio(fecha) {
+        if (!fecha) return null;
+        const fechaAsistencia = fecha.split(' ')[0];
+        
+        if (fechaAsistencia.includes('-')) {
+            const partes = fechaAsistencia.split('-');
+            // Si el primer número es mayor a 31, es año (formato YYYY-MM-DD)
+            if (parseInt(partes[0]) > 31) {
+                return parseInt(partes[0]);
+            } else {
+                // Formato DD-MM-YYYY
+                return parseInt(partes[2]);
+            }
+        } else if (fechaAsistencia.includes('/')) {
+            const partes = fechaAsistencia.split('/');
+            // Si el primer número es mayor a 31, es año (formato YYYY/MM/DD)
+            if (parseInt(partes[0]) > 31) {
+                return parseInt(partes[0]);
+            } else {
+                // Formato DD/MM/YYYY
+                return parseInt(partes[2]);
+            }
+        }
+        return null;
+    }
+    
     // Función para convertir fecha a formato YYYY-MM-DD
     function formatearFechaParaComparacion(fecha) {
         if (!fecha) return null;
@@ -966,26 +993,102 @@ document.addEventListener('DOMContentLoaded', () => {
     function filtrarAsistenciasParaExcel() {
         let asistenciasFiltradas = [...todasLasAsistencias];
         
-        const fechaSeleccionada = excelFiltroFecha.value;
+        const fechaInput = excelFiltroFecha.value.trim();
         
-        // Si hay una fecha seleccionada, filtrar por esa fecha
-        if (fechaSeleccionada && fechaSeleccionada !== '') {
+        // Si está vacío, retornar todas las asistencias
+        if (!fechaInput || fechaInput === '') {
+            return asistenciasFiltradas;
+        }
+        
+        // Parsear el input del usuario (formato dd/mm/aaaa)
+        const partesInput = fechaInput.split('/');
+        
+        // Validar que tenga el formato correcto
+        if (partesInput.length < 1 || partesInput.length > 3) {
+            alert('Formato de fecha inválido. Use: dd/mm/aaaa, mm/aaaa, o aaaa');
+            return [];
+        }
+        
+        // Caso 1: Solo año (aaaa)
+        if (partesInput.length === 1) {
+            const anioFiltro = parseInt(partesInput[0]);
+            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
+                alert('Año inválido. Debe estar entre 1900 y 2100.');
+                return [];
+            }
             asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
-                return fechaAsistencia === fechaSeleccionada;
+                const anioAsistencia = extraerAnio(asistencia.Fecha);
+                return anioAsistencia === anioFiltro;
             });
         }
-        // Si no hay fecha seleccionada, retornar todas las asistencias
+        // Caso 2: Mes y año (mm/aaaa)
+        else if (partesInput.length === 2) {
+            const mesFiltro = parseInt(partesInput[0]);
+            const anioFiltro = parseInt(partesInput[1]);
+            if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
+                alert('Mes inválido. Debe estar entre 1 y 12.');
+                return [];
+            }
+            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
+                alert('Año inválido. Debe estar entre 1900 y 2100.');
+                return [];
+            }
+            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                const mesAsistencia = extraerMes(asistencia.Fecha);
+                const anioAsistencia = extraerAnio(asistencia.Fecha);
+                return mesAsistencia === mesFiltro && anioAsistencia === anioFiltro;
+            });
+        }
+        // Caso 3: Día, mes y año (dd/mm/aaaa)
+        else if (partesInput.length === 3) {
+            const diaFiltro = parseInt(partesInput[0]);
+            const mesFiltro = parseInt(partesInput[1]);
+            const anioFiltro = parseInt(partesInput[2]);
+            if (isNaN(diaFiltro) || diaFiltro < 1 || diaFiltro > 31) {
+                alert('Día inválido. Debe estar entre 1 y 31.');
+                return [];
+            }
+            if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
+                alert('Mes inválido. Debe estar entre 1 y 12.');
+                return [];
+            }
+            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
+                alert('Año inválido. Debe estar entre 1900 y 2100.');
+                return [];
+            }
+            // Formatear la fecha del filtro para comparar
+            const fechaFiltroFormateada = `${anioFiltro}-${String(mesFiltro).padStart(2, '0')}-${String(diaFiltro).padStart(2, '0')}`;
+            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
+                return fechaAsistencia === fechaFiltroFormateada;
+            });
+        }
         
         return asistenciasFiltradas;
     }
     
-    // Función para ordenar por matrícula (valores numéricos en string, de menor a mayor)
-    function ordenarPorMatricula(asistencias) {
+    // Función para ordenar por fecha (de más reciente a menos reciente)
+    function ordenarPorFecha(asistencias) {
         return asistencias.sort((a, b) => {
-            const matriculaA = parseInt(a.Matricula || '0') || 0;
-            const matriculaB = parseInt(b.Matricula || '0') || 0;
-            return matriculaA - matriculaB;
+            const fechaA = formatearFechaParaComparacion(a.Fecha);
+            const fechaB = formatearFechaParaComparacion(b.Fecha);
+            
+            // Si alguna fecha es null, ponerla al final
+            if (!fechaA && !fechaB) return 0;
+            if (!fechaA) return 1;
+            if (!fechaB) return -1;
+            
+            // Comparar fechas (más reciente primero = orden descendente)
+            if (fechaA > fechaB) return -1;
+            if (fechaA < fechaB) return 1;
+            
+            // Si las fechas son iguales, ordenar por hora (más reciente primero)
+            const horaA = a.Hora || '';
+            const horaB = b.Hora || '';
+            if (horaA > horaB) return -1;
+            if (horaA < horaB) return 1;
+            
+            return 0;
         });
     }
     
@@ -1000,8 +1103,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Ordenar por matrícula
-            asistenciasFiltradas = ordenarPorMatricula(asistenciasFiltradas);
+            // Ordenar por fecha (de más reciente a menos reciente)
+            asistenciasFiltradas = ordenarPorFecha(asistenciasFiltradas);
             
             // Crear un nuevo libro de trabajo
             const workbook = new ExcelJS.Workbook();

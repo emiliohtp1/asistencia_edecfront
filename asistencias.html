@@ -53,10 +53,11 @@
                     <label for="excelFiltroFecha">Seleccionar fecha (opcional):</label>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <input 
-                            type="date" 
+                            type="text" 
                             id="excelFiltroFecha" 
                             class="input-filtro"
                             style="flex: 1; max-width: none;"
+                            placeholder="dd/mm/aaaa"
                         >
                         <button 
                             type="button" 
@@ -68,7 +69,7 @@
                         </button>
                     </div>
                     <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
-                        Deja vacío o haz clic en "Limpiar / Todos" para exportar todos los datos
+                        Formato: dd/mm/aaaa. Vacío = todas | dd/mm/aaaa = día específico | mm/aaaa = mes completo | aaaa = año completo
                     </small>
                 </div>
                 <div class="modal-buttons">
