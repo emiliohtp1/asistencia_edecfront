@@ -50,31 +50,29 @@
                     Archivo generado exitosamente
                 </div>
                 <div class="input-group">
-                    <label for="excelFiltroFecha">Seleccionar fecha (opcional):</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="display: flex; align-items: center; flex: 1; position: relative;">
-                            <input 
-                                type="text" 
-                                id="excelFiltroFecha" 
-                                class="input-filtro"
-                                style="flex: 1; max-width: none; padding-right: 45px;"
-                                placeholder="dd/mm/aaaa"
-                                value="dd/mm/aaaa"
-                            >
-                            <label 
-                                for="excelFiltroFechaCalendario"
-                                style="position: absolute; right: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #f0f0f0; border-radius: 4px; border: 1px solid #ddd;"
-                                title="Seleccionar fecha del calendario"
-                            >
-                                <span style="font-size: 16px;">📅</span>
-                            </label>
-                            <input 
-                                type="date" 
-                                id="excelFiltroFechaCalendario" 
-                                style="position: absolute; right: 8px; width: 32px; height: 32px; opacity: 0; cursor: pointer; z-index: 1;"
-                                title="Seleccionar fecha del calendario"
-                            >
-                        </div>
+                    <label>Seleccionar fecha (opcional):</label>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <select 
+                            id="excelFiltroDia" 
+                            class="input-filtro"
+                            style="min-width: 80px;"
+                        >
+                            <option value="">Día</option>
+                        </select>
+                        <select 
+                            id="excelFiltroMes" 
+                            class="input-filtro"
+                            style="min-width: 100px;"
+                        >
+                            <option value="">Mes</option>
+                        </select>
+                        <select 
+                            id="excelFiltroAnio" 
+                            class="input-filtro"
+                            style="min-width: 100px;"
+                        >
+                            <option value="">Año</option>
+                        </select>
                         <button 
                             type="button" 
                             id="btnLimpiarFechaExcel" 
@@ -85,7 +83,7 @@
                         </button>
                     </div>
                     <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
-                        Formato: dd/mm/aaaa. Vacío = todas | dd/mm/aaaa = día específico | dd/mm/aaaa (con "dd") = mes completo | mm/aaaa = mes completo | aaaa = año completo. Haz clic en el icono 📅 para usar el calendario.
+                        Selecciona día, mes y/o año para filtrar. Deja alguno vacío para incluir todos los valores de ese campo. Si todos están vacíos, se exportarán todas las asistencias.
                     </small>
                 </div>
                 <div class="modal-buttons">

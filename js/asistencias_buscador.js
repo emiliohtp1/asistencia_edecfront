@@ -700,8 +700,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
     btnCancelarExcel = document.getElementById("btnCancelarExcel");
     btnGenerarExcel = document.getElementById("btnGenerarExcel");
-    excelFiltroFecha = document.getElementById("excelFiltroFecha");
-    const excelFiltroFechaCalendario = document.getElementById("excelFiltroFechaCalendario");
+    const excelFiltroDia = document.getElementById("excelFiltroDia");
+    const excelFiltroMes = document.getElementById("excelFiltroMes");
+    const excelFiltroAnio = document.getElementById("excelFiltroAnio");
     btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
     mensajeExitoExcel = document.getElementById("mensajeExitoExcel");
     
@@ -842,17 +843,59 @@ document.addEventListener('DOMContentLoaded', () => {
     //   FUNCIONALIDAD DE EXCEL
     // ==============================
     
+    // Función para poblar los selectores de fecha
+    function poblarSelectoresFecha() {
+        // Poblar selector de día (01-31)
+        if (excelFiltroDia) {
+            excelFiltroDia.innerHTML = '<option value="">Día</option>';
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString().padStart(2, '0');
+                option.textContent = i.toString().padStart(2, '0');
+                excelFiltroDia.appendChild(option);
+            }
+        }
+        
+        // Poblar selector de mes (01-12)
+        if (excelFiltroMes) {
+            excelFiltroMes.innerHTML = '<option value="">Mes</option>';
+            const meses = [
+                '01 - Enero', '02 - Febrero', '03 - Marzo', '04 - Abril',
+                '05 - Mayo', '06 - Junio', '07 - Julio', '08 - Agosto',
+                '09 - Septiembre', '10 - Octubre', '11 - Noviembre', '12 - Diciembre'
+            ];
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString().padStart(2, '0');
+                option.textContent = meses[i - 1];
+                excelFiltroMes.appendChild(option);
+            }
+        }
+        
+        // Poblar selector de año (2025-2030)
+        if (excelFiltroAnio) {
+            excelFiltroAnio.innerHTML = '<option value="">Año</option>';
+            for (let i = 2025; i <= 2030; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.textContent = i.toString();
+                excelFiltroAnio.appendChild(option);
+            }
+        }
+    }
+    
     // Función para abrir el modal de Excel
     function abrirModalExcel() {
         if (modalExcelOverlay && modalExcel) {
             modalExcelOverlay.style.display = 'flex';
-            // Resetear valores a los valores por defecto
-            if (excelFiltroFecha) {
-                excelFiltroFecha.value = 'dd/mm/aaaa';
+            // Poblar selectores si no están poblados
+            if (excelFiltroDia && excelFiltroDia.options.length <= 1) {
+                poblarSelectoresFecha();
             }
-            if (excelFiltroFechaCalendario) {
-                excelFiltroFechaCalendario.value = '';
-            }
+            // Resetear valores
+            if (excelFiltroDia) excelFiltroDia.value = '';
+            if (excelFiltroMes) excelFiltroMes.value = '';
+            if (excelFiltroAnio) excelFiltroAnio.value = '';
         }
     }
     
@@ -1001,104 +1044,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function filtrarAsistenciasParaExcel() {
         let asistenciasFiltradas = [...todasLasAsistencias];
         
-        // Priorizar el input de calendario si tiene valor
-        let fechaInput = '';
-        if (excelFiltroFechaCalendario && excelFiltroFechaCalendario.value) {
-            // Convertir fecha del calendario (YYYY-MM-DD) a formato dd/mm/aaaa
-            const fechaCalendario = excelFiltroFechaCalendario.value;
-            const partes = fechaCalendario.split('-');
-            fechaInput = `${partes[2]}/${partes[1]}/${partes[0]}`;
-        } else {
-            fechaInput = excelFiltroFecha.value.trim();
-        }
+        // Obtener valores de los selectores
+        const diaSeleccionado = excelFiltroDia ? excelFiltroDia.value : '';
+        const mesSeleccionado = excelFiltroMes ? excelFiltroMes.value : '';
+        const anioSeleccionado = excelFiltroAnio ? excelFiltroAnio.value : '';
         
-        // Si está vacío o es el valor por defecto, retornar todas las asistencias
-        if (!fechaInput || fechaInput === '' || fechaInput === 'dd/mm/aaaa') {
+        // Si todos están vacíos, retornar todas las asistencias
+        if (!diaSeleccionado && !mesSeleccionado && !anioSeleccionado) {
             return asistenciasFiltradas;
         }
         
-        // Parsear el input del usuario (formato dd/mm/aaaa)
-        const partesInput = fechaInput.split('/');
-        
-        // Validar que tenga el formato correcto
-        if (partesInput.length < 1 || partesInput.length > 3) {
-            alert('Formato de fecha inválido. Use: dd/mm/aaaa, mm/aaaa, o aaaa');
-            return [];
-        }
-        
-        // Caso 1: Solo año (aaaa)
-        if (partesInput.length === 1) {
-            const anioFiltro = parseInt(partesInput[0]);
-            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
-                alert('Año inválido. Debe estar entre 1900 y 2100.');
-                return [];
-            }
+        // Filtrar por año si está seleccionado
+        if (anioSeleccionado) {
+            const anioFiltro = parseInt(anioSeleccionado);
             asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
                 const anioAsistencia = extraerAnio(asistencia.Fecha);
                 return anioAsistencia === anioFiltro;
             });
         }
-        // Caso 2: Mes y año (mm/aaaa)
-        else if (partesInput.length === 2) {
-            const mesFiltro = parseInt(partesInput[0]);
-            const anioFiltro = parseInt(partesInput[1]);
-            if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
-                alert('Mes inválido. Debe estar entre 1 y 12.');
-                return [];
-            }
-            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
-                alert('Año inválido. Debe estar entre 1900 y 2100.');
-                return [];
-            }
+        
+        // Filtrar por mes si está seleccionado
+        if (mesSeleccionado) {
+            const mesFiltro = parseInt(mesSeleccionado);
             asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
                 const mesAsistencia = extraerMes(asistencia.Fecha);
-                const anioAsistencia = extraerAnio(asistencia.Fecha);
-                return mesAsistencia === mesFiltro && anioAsistencia === anioFiltro;
+                return mesAsistencia === mesFiltro;
             });
         }
-        // Caso 3: Día, mes y año (dd/mm/aaaa)
-        else if (partesInput.length === 3) {
-            const diaInput = partesInput[0].toLowerCase();
-            const mesFiltro = parseInt(partesInput[1]);
-            const anioFiltro = parseInt(partesInput[2]);
-            
-            // Si el día es "dd" (literal), filtrar solo por mes y año
-            if (diaInput === 'dd') {
-                if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
-                    alert('Mes inválido. Debe estar entre 1 y 12.');
-                    return [];
-                }
-                if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
-                    alert('Año inválido. Debe estar entre 1900 y 2100.');
-                    return [];
-                }
-                asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                    const mesAsistencia = extraerMes(asistencia.Fecha);
-                    const anioAsistencia = extraerAnio(asistencia.Fecha);
-                    return mesAsistencia === mesFiltro && anioAsistencia === anioFiltro;
-                });
-            } else {
-                // Día específico
-                const diaFiltro = parseInt(partesInput[0]);
-                if (isNaN(diaFiltro) || diaFiltro < 1 || diaFiltro > 31) {
-                    alert('Día inválido. Debe estar entre 1 y 31.');
-                    return [];
-                }
-                if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
-                    alert('Mes inválido. Debe estar entre 1 y 12.');
-                    return [];
-                }
-                if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
-                    alert('Año inválido. Debe estar entre 1900 y 2100.');
-                    return [];
-                }
-                // Formatear la fecha del filtro para comparar
-                const fechaFiltroFormateada = `${anioFiltro}-${String(mesFiltro).padStart(2, '0')}-${String(diaFiltro).padStart(2, '0')}`;
-                asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                    const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
-                    return fechaAsistencia === fechaFiltroFormateada;
-                });
-            }
+        
+        // Filtrar por día si está seleccionado
+        if (diaSeleccionado) {
+            const diaFiltro = parseInt(diaSeleccionado);
+            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                const diaAsistencia = extraerDia(asistencia.Fecha);
+                return diaAsistencia === diaFiltro;
+            });
         }
         
         return asistenciasFiltradas;
@@ -1273,79 +1253,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Función para convertir fecha de texto (dd/mm/aaaa) a formato de calendario (YYYY-MM-DD)
-    function convertirTextoAFechaCalendario(textoFecha) {
-        if (!textoFecha || textoFecha === '' || textoFecha === 'dd/mm/aaaa') {
-            return '';
-        }
-        
-        const partes = textoFecha.split('/');
-        if (partes.length === 3) {
-            const dia = partes[0].toLowerCase();
-            // Si es "dd", no podemos convertir a fecha específica
-            if (dia === 'dd') {
-                return '';
-            }
-            const diaNum = parseInt(partes[0]);
-            const mesNum = parseInt(partes[1]);
-            const anioNum = parseInt(partes[2]);
-            
-            if (!isNaN(diaNum) && !isNaN(mesNum) && !isNaN(anioNum) && 
-                diaNum >= 1 && diaNum <= 31 && 
-                mesNum >= 1 && mesNum <= 12 && 
-                anioNum >= 1900 && anioNum <= 2100) {
-                return `${anioNum}-${String(mesNum).padStart(2, '0')}-${String(diaNum).padStart(2, '0')}`;
-            }
-        }
-        return '';
-    }
-    
-    // Función para convertir fecha de calendario (YYYY-MM-DD) a formato de texto (dd/mm/aaaa)
-    function convertirFechaCalendarioATexto(fechaCalendario) {
-        if (!fechaCalendario || fechaCalendario === '') {
-            return 'dd/mm/aaaa';
-        }
-        
-        const partes = fechaCalendario.split('-');
-        if (partes.length === 3) {
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        }
-        return 'dd/mm/aaaa';
-    }
-    
-    // Sincronizar calendario con input de texto
-    if (excelFiltroFechaCalendario) {
-        excelFiltroFechaCalendario.addEventListener("change", () => {
-            if (excelFiltroFechaCalendario.value) {
-                excelFiltroFecha.value = convertirFechaCalendarioATexto(excelFiltroFechaCalendario.value);
-            } else {
-                excelFiltroFecha.value = 'dd/mm/aaaa';
-            }
-        });
-        
-        // Hacer que el input de fecha sea clickeable a través del icono
-        excelFiltroFechaCalendario.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
-    }
-    
-    // Sincronizar input de texto con calendario (solo si es una fecha válida completa)
-    if (excelFiltroFecha) {
-        excelFiltroFecha.addEventListener("blur", () => {
-            const fechaCalendario = convertirTextoAFechaCalendario(excelFiltroFecha.value);
-            if (excelFiltroFechaCalendario && fechaCalendario) {
-                excelFiltroFechaCalendario.value = fechaCalendario;
-            }
-        });
-    }
-    
     // Event listener para limpiar fecha
     if (btnLimpiarFechaExcel) {
         btnLimpiarFechaExcel.addEventListener("click", () => {
-            excelFiltroFecha.value = 'dd/mm/aaaa';
-            if (excelFiltroFechaCalendario) {
-                excelFiltroFechaCalendario.value = '';
-            }
+            if (excelFiltroDia) excelFiltroDia.value = '';
+            if (excelFiltroMes) excelFiltroMes.value = '';
+            if (excelFiltroAnio) excelFiltroAnio.value = '';
         });
     }
     
@@ -1504,4 +1417,7 @@ document.addEventListener('DOMContentLoaded', () => {
             generarExcelFichados();
         });
     }
+    
+    // Poblar selectores de fecha al cargar la página
+    poblarSelectoresFecha();
 });
