@@ -1322,13 +1322,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 excelFiltroFecha.value = 'dd/mm/aaaa';
             }
         });
+        
+        // Hacer que el input de fecha sea clickeable a través del icono
+        excelFiltroFechaCalendario.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
     }
     
-    // Sincronizar input de texto con calendario
+    // Sincronizar input de texto con calendario (solo si es una fecha válida completa)
     if (excelFiltroFecha) {
         excelFiltroFecha.addEventListener("blur", () => {
             const fechaCalendario = convertirTextoAFechaCalendario(excelFiltroFecha.value);
-            if (excelFiltroFechaCalendario) {
+            if (excelFiltroFechaCalendario && fechaCalendario) {
                 excelFiltroFechaCalendario.value = fechaCalendario;
             }
         });
