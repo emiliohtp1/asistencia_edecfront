@@ -701,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCancelarExcel = document.getElementById("btnCancelarExcel");
     btnGenerarExcel = document.getElementById("btnGenerarExcel");
     excelFiltroFecha = document.getElementById("excelFiltroFecha");
+    const excelFiltroFechaCalendario = document.getElementById("excelFiltroFechaCalendario");
     btnLimpiarFechaExcel = document.getElementById("btnLimpiarFechaExcel");
     mensajeExitoExcel = document.getElementById("mensajeExitoExcel");
     
@@ -845,6 +846,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function abrirModalExcel() {
         if (modalExcelOverlay && modalExcel) {
             modalExcelOverlay.style.display = 'flex';
+            // Resetear valores a los valores por defecto
+            if (excelFiltroFecha) {
+                excelFiltroFecha.value = 'dd/mm/aaaa';
+            }
+            if (excelFiltroFechaCalendario) {
+                excelFiltroFechaCalendario.value = '';
+            }
         }
     }
     
@@ -993,10 +1001,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function filtrarAsistenciasParaExcel() {
         let asistenciasFiltradas = [...todasLasAsistencias];
         
-        const fechaInput = excelFiltroFecha.value.trim();
+        // Priorizar el input de calendario si tiene valor
+        let fechaInput = '';
+        if (excelFiltroFechaCalendario && excelFiltroFechaCalendario.value) {
+            // Convertir fecha del calendario (YYYY-MM-DD) a formato dd/mm/aaaa
+            const fechaCalendario = excelFiltroFechaCalendario.value;
+            const partes = fechaCalendario.split('-');
+            fechaInput = `${partes[2]}/${partes[1]}/${partes[0]}`;
+        } else {
+            fechaInput = excelFiltroFecha.value.trim();
+        }
         
-        // Si está vacío, retornar todas las asistencias
-        if (!fechaInput || fechaInput === '') {
+        // Si está vacío o es el valor por defecto, retornar todas las asistencias
+        if (!fechaInput || fechaInput === '' || fechaInput === 'dd/mm/aaaa') {
             return asistenciasFiltradas;
         }
         
@@ -1041,27 +1058,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Caso 3: Día, mes y año (dd/mm/aaaa)
         else if (partesInput.length === 3) {
-            const diaFiltro = parseInt(partesInput[0]);
+            const diaInput = partesInput[0].toLowerCase();
             const mesFiltro = parseInt(partesInput[1]);
             const anioFiltro = parseInt(partesInput[2]);
-            if (isNaN(diaFiltro) || diaFiltro < 1 || diaFiltro > 31) {
-                alert('Día inválido. Debe estar entre 1 y 31.');
-                return [];
+            
+            // Si el día es "dd" (literal), filtrar solo por mes y año
+            if (diaInput === 'dd') {
+                if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
+                    alert('Mes inválido. Debe estar entre 1 y 12.');
+                    return [];
+                }
+                if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
+                    alert('Año inválido. Debe estar entre 1900 y 2100.');
+                    return [];
+                }
+                asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                    const mesAsistencia = extraerMes(asistencia.Fecha);
+                    const anioAsistencia = extraerAnio(asistencia.Fecha);
+                    return mesAsistencia === mesFiltro && anioAsistencia === anioFiltro;
+                });
+            } else {
+                // Día específico
+                const diaFiltro = parseInt(partesInput[0]);
+                if (isNaN(diaFiltro) || diaFiltro < 1 || diaFiltro > 31) {
+                    alert('Día inválido. Debe estar entre 1 y 31.');
+                    return [];
+                }
+                if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
+                    alert('Mes inválido. Debe estar entre 1 y 12.');
+                    return [];
+                }
+                if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
+                    alert('Año inválido. Debe estar entre 1900 y 2100.');
+                    return [];
+                }
+                // Formatear la fecha del filtro para comparar
+                const fechaFiltroFormateada = `${anioFiltro}-${String(mesFiltro).padStart(2, '0')}-${String(diaFiltro).padStart(2, '0')}`;
+                asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
+                    const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
+                    return fechaAsistencia === fechaFiltroFormateada;
+                });
             }
-            if (isNaN(mesFiltro) || mesFiltro < 1 || mesFiltro > 12) {
-                alert('Mes inválido. Debe estar entre 1 y 12.');
-                return [];
-            }
-            if (isNaN(anioFiltro) || anioFiltro < 1900 || anioFiltro > 2100) {
-                alert('Año inválido. Debe estar entre 1900 y 2100.');
-                return [];
-            }
-            // Formatear la fecha del filtro para comparar
-            const fechaFiltroFormateada = `${anioFiltro}-${String(mesFiltro).padStart(2, '0')}-${String(diaFiltro).padStart(2, '0')}`;
-            asistenciasFiltradas = asistenciasFiltradas.filter(asistencia => {
-                const fechaAsistencia = formatearFechaParaComparacion(asistencia.Fecha);
-                return fechaAsistencia === fechaFiltroFormateada;
-            });
         }
         
         return asistenciasFiltradas;
@@ -1236,10 +1273,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Función para convertir fecha de texto (dd/mm/aaaa) a formato de calendario (YYYY-MM-DD)
+    function convertirTextoAFechaCalendario(textoFecha) {
+        if (!textoFecha || textoFecha === '' || textoFecha === 'dd/mm/aaaa') {
+            return '';
+        }
+        
+        const partes = textoFecha.split('/');
+        if (partes.length === 3) {
+            const dia = partes[0].toLowerCase();
+            // Si es "dd", no podemos convertir a fecha específica
+            if (dia === 'dd') {
+                return '';
+            }
+            const diaNum = parseInt(partes[0]);
+            const mesNum = parseInt(partes[1]);
+            const anioNum = parseInt(partes[2]);
+            
+            if (!isNaN(diaNum) && !isNaN(mesNum) && !isNaN(anioNum) && 
+                diaNum >= 1 && diaNum <= 31 && 
+                mesNum >= 1 && mesNum <= 12 && 
+                anioNum >= 1900 && anioNum <= 2100) {
+                return `${anioNum}-${String(mesNum).padStart(2, '0')}-${String(diaNum).padStart(2, '0')}`;
+            }
+        }
+        return '';
+    }
+    
+    // Función para convertir fecha de calendario (YYYY-MM-DD) a formato de texto (dd/mm/aaaa)
+    function convertirFechaCalendarioATexto(fechaCalendario) {
+        if (!fechaCalendario || fechaCalendario === '') {
+            return 'dd/mm/aaaa';
+        }
+        
+        const partes = fechaCalendario.split('-');
+        if (partes.length === 3) {
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+        return 'dd/mm/aaaa';
+    }
+    
+    // Sincronizar calendario con input de texto
+    if (excelFiltroFechaCalendario) {
+        excelFiltroFechaCalendario.addEventListener("change", () => {
+            if (excelFiltroFechaCalendario.value) {
+                excelFiltroFecha.value = convertirFechaCalendarioATexto(excelFiltroFechaCalendario.value);
+            } else {
+                excelFiltroFecha.value = 'dd/mm/aaaa';
+            }
+        });
+    }
+    
+    // Sincronizar input de texto con calendario
+    if (excelFiltroFecha) {
+        excelFiltroFecha.addEventListener("blur", () => {
+            const fechaCalendario = convertirTextoAFechaCalendario(excelFiltroFecha.value);
+            if (excelFiltroFechaCalendario) {
+                excelFiltroFechaCalendario.value = fechaCalendario;
+            }
+        });
+    }
+    
     // Event listener para limpiar fecha
     if (btnLimpiarFechaExcel) {
         btnLimpiarFechaExcel.addEventListener("click", () => {
-            excelFiltroFecha.value = '';
+            excelFiltroFecha.value = 'dd/mm/aaaa';
+            if (excelFiltroFechaCalendario) {
+                excelFiltroFechaCalendario.value = '';
+            }
         });
     }
     
