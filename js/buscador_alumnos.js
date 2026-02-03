@@ -88,6 +88,7 @@ function mostrarAlumnos(alumnos) {
             <td>${alumno.matricula || ''}</td>
             <td>${alumno.nombre || ''}</td>
             <td>${alumno.programa || ''}</td>
+            <td>${alumno.coordinador || ''}</td>
             <td>
                 <button class="btn-fichar" data-matricula="${alumno.matricula || ''}">
                     Fichar
