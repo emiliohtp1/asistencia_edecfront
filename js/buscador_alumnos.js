@@ -115,12 +115,14 @@ async function mostrarAlumnos(alumnos) {
         const fila = document.createElement('tr');
         const cantidadFichas = fichadosMap[alumno.matricula] || 0;
         const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
+        // Manejar coordinador en minúscula o mayúscula
+        const coordinador = alumno.coordinador || alumno.Coordinador || '';
         
         fila.innerHTML = `
             <td>${alumno.matricula || ''}</td>
             <td>${alumno.nombre || ''}</td>
             <td>${alumno.programa || ''}</td>
-            <td>${alumno.Coordinador || ''}</td>
+            <td>${coordinador}</td>
             <td class="${claseFichas}">${cantidadFichas}</td>
             <td>
                 <button class="btn-fichar" data-matricula="${alumno.matricula || ''}">
