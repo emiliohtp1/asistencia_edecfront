@@ -1,6 +1,7 @@
 const API_BACHILLERATO = "https://asistencia-edec.onrender.com/api/alumnos/bachillerato";
 const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/universidad";
 const API_FICHAR_ALUMNO = "https://asistencia-edec.onrender.com/api/fichados/apodaca/registrar";
+const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
 
 let inputBuscarAlumno;
 let btnBuscarAlumno;
@@ -76,23 +77,51 @@ async function buscarAlumno(termino) {
 }
 
 // ==============================
+//   OBTENER FICHADOS
+// ==============================
+async function obtenerFichados() {
+    try {
+        const response = await fetch(API_FICHADOS);
+        if (!response.ok) {
+            throw new Error('Error al obtener fichados');
+        }
+        const data = await response.json();
+        const fichados = data.fichados || [];
+        
+        // Crear un mapa de fichados por matrícula para acceso rápido
+        const fichadosMap = {};
+        fichados.forEach(fichado => {
+            fichadosMap[fichado.matricula] = fichado.cantidad_fichas || 0;
+        });
+        
+        return fichadosMap;
+    } catch (error) {
+        console.error('Error al obtener fichados:', error);
+        return {};
+    }
+}
+
+// ==============================
 //   MOSTRAR ALUMNOS EN LA TABLA
 // ==============================
-function mostrarAlumnos(alumnos) {
+async function mostrarAlumnos(alumnos) {
     tbodyAlumnos.innerHTML = '';
     tablaAlumnos.style.display = 'table';
 
+    // Obtener fichados
+    const fichadosMap = await obtenerFichados();
+
     alumnos.forEach(alumno => {
         const fila = document.createElement('tr');
+        const cantidadFichas = fichadosMap[alumno.matricula] || 0;
+        const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
+        
         fila.innerHTML = `
             <td>${alumno.matricula || ''}</td>
             <td>${alumno.nombre || ''}</td>
             <td>${alumno.programa || ''}</td>
-<<<<<<< HEAD
             <td>${alumno.Coordinador || ''}</td>
-=======
-            <td>${alumno.coordinador || ''}</td>
->>>>>>> a7c6864469da7e74a2c0de493f28912a0e8e3a38
+            <td class="${claseFichas}">${cantidadFichas}</td>
             <td>
                 <button class="btn-fichar" data-matricula="${alumno.matricula || ''}">
                     Fichar
