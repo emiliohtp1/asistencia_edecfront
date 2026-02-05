@@ -215,7 +215,10 @@
                 </div>
                 <div class="input-group">
                     <label for="contraseñaCrear">Contraseña:</label>
-                    <input type="password" id="contraseñaCrear" name="contraseñaCrear" required>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="contraseñaCrear" name="contraseñaCrear" required>
+                        <span class="password-toggle-icon" aria-label="Mostrar contraseña">👁️</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="rolCrear">Rol:</label>
@@ -271,15 +274,24 @@
             <form id="formCambiarContraseña">
                 <div class="input-group">
                     <label for="contraseñaActual">Contraseña Actual:</label>
-                    <input type="password" id="contraseñaActual" name="contraseñaActual" required>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="contraseñaActual" name="contraseñaActual" required>
+                        <span class="password-toggle-icon" aria-label="Mostrar contraseña">👁️</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="nuevaContraseña">Nueva Contraseña:</label>
-                    <input type="password" id="nuevaContraseña" name="nuevaContraseña" required>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="nuevaContraseña" name="nuevaContraseña" required>
+                        <span class="password-toggle-icon" aria-label="Mostrar contraseña">👁️</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="confirmarContraseña">Confirmar Nueva Contraseña:</label>
-                    <input type="password" id="confirmarContraseña" name="confirmarContraseña" required>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="confirmarContraseña" name="confirmarContraseña" required>
+                        <span class="password-toggle-icon" aria-label="Mostrar contraseña">👁️</span>
+                    </div>
                 </div>
                 <p id="error-message-password" class="error-text" style="display: none;"></p>
                 <p id="success-message-password" class="success-text" style="display: none;"></p>
@@ -320,6 +332,7 @@
         </div>
     </div>
 
+    <script src="js/password-toggle.js"></script>
     <script src="js/authGuard_administrador.js"></script>
     <script src="js/administrador.js"></script>
 </body>

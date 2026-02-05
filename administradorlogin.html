@@ -16,7 +16,10 @@
             </div>
             <div class="input-group">
                 <label for="contraseña">Contraseña:</label>
-                <input type="password" id="contraseña" name="contraseña" required>
+                <div class="password-input-wrapper">
+                    <input type="password" id="contraseña" name="contraseña" required>
+                    <span class="password-toggle-icon" aria-label="Mostrar contraseña">👁️</span>
+                </div>
             </div>
             <p id="error-message" class="error-text" style="display: none;">
                 Las credenciales no son correctas.
@@ -24,6 +27,7 @@
             <button type="submit">Ingresar</button>
         </form>
     </div>
+    <script src="js/password-toggle.js"></script>
     <script src="js/login_administrador.js"></script>
 </body>
 </html>

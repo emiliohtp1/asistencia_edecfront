@@ -248,6 +248,49 @@ body {
     font-size: 16px;
 }
 
+/* Contenedor para input de contraseña con icono de ojo */
+.password-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    user-select: none;
+    z-index: 1;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+
+.password-toggle-icon:hover {
+    color: #333;
+}
+
+/* Ajuste para inputs de password en modales */
+.modal-content .password-input-wrapper {
+    width: 100%;
+}
+
+.modal-content .password-input-wrapper input {
+    width: 100%;
+}
+
 button[type="submit"] {
     width: 100%;
     padding: 12px;
