@@ -1,8 +1,6 @@
 const API_BACHILLERATO = "https://asistencia-edec.onrender.com/api/alumnos/bachillerato";
 const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/universidad";
 const API_FICHAR_ALUMNO = "https://asistencia-edec.onrender.com/api/fichados/apodaca/registrar";
-const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
-const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
 
 let inputBuscarAlumno;
 let btnBuscarAlumno;
@@ -40,7 +38,7 @@ async function buscarAlumno(termino) {
             });
 
             if (alumnosEncontrados.length > 0) {
-                await mostrarAlumnos(alumnosEncontrados);
+                mostrarAlumnos(alumnosEncontrados);
                 return;
             }
         }
@@ -62,7 +60,7 @@ async function buscarAlumno(termino) {
             });
 
             if (alumnosEncontrados.length > 0) {
-                await mostrarAlumnos(alumnosEncontrados);
+                mostrarAlumnos(alumnosEncontrados);
                 return;
             }
         }
@@ -78,87 +76,25 @@ async function buscarAlumno(termino) {
 }
 
 // ==============================
-//   OBTENER TODOS LOS FICHADOS Y CONTAR POR MATRÍCULA
-// ==============================
-async function obtenerFichasPorMatricula() {
-    try {
-        const response = await fetch(API_FICHADOS);
-        if (!response.ok) {
-            return {};
-        }
-        const data = await response.json();
-        const fichados = data.fichados || [];
-        
-        // Crear un objeto que cuenta las fichas por matrícula
-        const fichasPorMatricula = {};
-        fichados.forEach(fichado => {
-            const matricula = fichado.matricula;
-            if (matricula) {
-                fichasPorMatricula[matricula] = (fichasPorMatricula[matricula] || 0) + 1;
-            }
-        });
-        
-        return fichasPorMatricula;
-    } catch (error) {
-        console.error("Error al obtener fichas:", error);
-        return {};
-    }
-}
-
-// ==============================
 //   MOSTRAR ALUMNOS EN LA TABLA
 // ==============================
-async function mostrarAlumnos(alumnos) {
+function mostrarAlumnos(alumnos) {
     tbodyAlumnos.innerHTML = '';
     tablaAlumnos.style.display = 'table';
 
-    // Obtener todas las fichas una sola vez
-    const fichasPorMatricula = await obtenerFichasPorMatricula();
-
-    // Crear las filas para cada alumno
     alumnos.forEach(alumno => {
-        const matricula = alumno.matricula || '';
-        const cantidadFichas = fichasPorMatricula[matricula] || 0;
-        
         const fila = document.createElement('tr');
-        
-        // Crear todas las celdas
-        const celdaMatricula = document.createElement('td');
-        celdaMatricula.textContent = matricula;
-        
-        const celdaNombre = document.createElement('td');
-        celdaNombre.textContent = alumno.nombre || '';
-        
-        const celdaPrograma = document.createElement('td');
-        celdaPrograma.textContent = alumno.programa || '';
-        
-        const celdaFichas = document.createElement('td');
-        celdaFichas.textContent = cantidadFichas;
-        
-        // Aplicar estilo rojo si la cantidad es >= 3
-        if (cantidadFichas >= 3) {
-            celdaFichas.style.backgroundColor = 'red';
-            celdaFichas.style.color = 'white';
-        }
-        
-        const celdaCoordinador = document.createElement('td');
-        celdaCoordinador.textContent = alumno.coordinador || '';
-        
-        const celdaAcciones = document.createElement('td');
-        const botonFichar = document.createElement('button');
-        botonFichar.className = 'btn-fichar';
-        botonFichar.setAttribute('data-matricula', matricula);
-        botonFichar.textContent = 'Fichar';
-        celdaAcciones.appendChild(botonFichar);
-        
-        // Agregar todas las celdas a la fila
-        fila.appendChild(celdaMatricula);
-        fila.appendChild(celdaNombre);
-        fila.appendChild(celdaPrograma);
-        fila.appendChild(celdaFichas);
-        fila.appendChild(celdaCoordinador);
-        fila.appendChild(celdaAcciones);
-        
+        fila.innerHTML = `
+            <td>${alumno.matricula || ''}</td>
+            <td>${alumno.nombre || ''}</td>
+            <td>${alumno.programa || ''}</td>
+            <td>${alumno.coordinador || ''}</td>
+            <td>
+                <button class="btn-fichar" data-matricula="${alumno.matricula || ''}">
+                    Fichar
+                </button>
+            </td>
+        `;
         tbodyAlumnos.appendChild(fila);
     });
     
