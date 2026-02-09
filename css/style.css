@@ -1461,7 +1461,8 @@ button[type="submit"]:hover {
 
 .usuarios-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -1478,6 +1479,37 @@ button[type="submit"]:hover {
 
 .btn-crear-usuario-modal:hover {
     background: #218838;
+}
+
+.btn-pendientes-aprobacion {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-pendientes-aprobacion:hover {
+    background: #218838;
+}
+
+.badge-pendientes {
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
 }
 
 /* Tabla de usuarios */
@@ -1544,6 +1576,41 @@ button[type="submit"]:hover {
 
 .tabla-usuarios tbody tr:last-child td {
     border-bottom: 1px solid #ddd;
+}
+
+.btn-autorizar {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    font-size: 18px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-right: 5px;
+}
+
+.btn-autorizar:hover {
+    background: #218838;
+}
+
+.btn-rechazar {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    font-size: 18px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-rechazar:hover {
+    background: #c82333;
 }
 
 .btn-eliminar-usuario {

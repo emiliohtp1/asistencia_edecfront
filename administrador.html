@@ -305,6 +305,10 @@
             <button class="btn-cerrar-modal" id="btnCerrarUsuarios">×</button>
             <h2>Gestión de Usuarios</h2>
             <div class="usuarios-header">
+                <button class="btn-pendientes-aprobacion" id="btnPendientesAprobacion">
+                    Usuarios Pendientes
+                    <span class="badge-pendientes" id="badgePendientes">0</span>
+                </button>
                 <button class="btn-crear-usuario-modal" id="btnCrearUsuarioModal">Crear Usuario</button>
             </div>
             <div class="tabla-usuarios-container">
@@ -321,6 +325,30 @@
                     <tbody id="tbodyUsuarios">
                         <tr>
                             <td colspan="5" style="text-align: center;">Cargando usuarios...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para usuarios pendientes de aprobación -->
+    <div class="modal-overlay" id="modalUsuariosPendientes" style="display: none;">
+        <div class="modal-content modal-usuarios">
+            <button class="btn-cerrar-modal" id="btnCerrarUsuariosPendientes">×</button>
+            <h2>Usuarios Pendientes de Aprobación</h2>
+            <div class="tabla-usuarios-container">
+                <table class="tabla-usuarios" id="tablaUsuariosPendientes">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Correo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsuariosPendientes">
+                        <tr>
+                            <td colspan="3" style="text-align: center;">Cargando usuarios pendientes...</td>
                         </tr>
                     </tbody>
                 </table>

@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalInfoUsuario = document.getElementById('modalInfoUsuario');
     const modalCambiarContraseña = document.getElementById('modalCambiarContraseña');
     const modalUsuarios = document.getElementById('modalUsuarios');
+    const modalUsuariosPendientes = document.getElementById('modalUsuariosPendientes');
     
     // Formularios
     const formCrearUsuario = document.getElementById('formCrearUsuario');
@@ -144,7 +145,35 @@ document.addEventListener('DOMContentLoaded', () => {
         modalUsuarios.style.display = 'flex';
         await cargarUsuarios();
         configurarOrdenamientoHeaders();
+        actualizarContadorPendientes();
     });
+    
+    // Abrir modal de usuarios pendientes
+    if (btnPendientesAprobacion) {
+        btnPendientesAprobacion.addEventListener('click', async () => {
+            modalUsuarios.style.display = 'none';
+            modalUsuariosPendientes.style.display = 'flex';
+            await cargarUsuariosPendientes();
+        });
+    }
+    
+    // Cerrar modal de usuarios pendientes
+    if (btnCerrarUsuariosPendientes) {
+        btnCerrarUsuariosPendientes.addEventListener('click', () => {
+            modalUsuariosPendientes.style.display = 'none';
+            modalUsuarios.style.display = 'flex';
+        });
+    }
+    
+    // Cerrar modal pendientes al hacer click fuera
+    if (modalUsuariosPendientes) {
+        modalUsuariosPendientes.addEventListener('click', (e) => {
+            if (e.target === modalUsuariosPendientes) {
+                modalUsuariosPendientes.style.display = 'none';
+                modalUsuarios.style.display = 'flex';
+            }
+        });
+    }
     
     // Configurar event listeners para ordenamiento en headers
     function configurarOrdenamientoHeaders() {
@@ -585,6 +614,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Función para actualizar contador de usuarios pendientes
+    function actualizarContadorPendientes() {
+        if (!badgePendientes) return;
+        const pendientes = usuariosGlobales.filter(u => !u.autorizado);
+        badgePendientes.textContent = pendientes.length;
+    }
+    
     async function cargarUsuarios() {
         tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando usuarios...</td></tr>';
         
@@ -602,10 +638,131 @@ document.addEventListener('DOMContentLoaded', () => {
             
             renderizarUsuarios(usuariosGlobales);
             actualizarIndicadoresOrdenamiento();
+            actualizarContadorPendientes();
             
         } catch (error) {
             console.error('Error al cargar usuarios:', error);
             tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar usuarios.</td></tr>';
+        }
+    }
+    
+    // Función para cargar usuarios pendientes de aprobación
+    async function cargarUsuariosPendientes() {
+        if (!tbodyUsuariosPendientes) return;
+        
+        tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center;">Cargando usuarios pendientes...</td></tr>';
+        
+        try {
+            const response = await fetch(API_USUARIOS);
+            if (!response.ok) {
+                throw new Error('Error al cargar usuarios pendientes.');
+            }
+            
+            const data = await response.json();
+            const usuariosPendientes = (data.usuarios || []).filter(u => !u.autorizado);
+            
+            if (usuariosPendientes.length === 0) {
+                tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay usuarios pendientes de aprobación.</td></tr>';
+                return;
+            }
+            
+            tbodyUsuariosPendientes.innerHTML = '';
+            
+            usuariosPendientes.forEach(usuario => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${usuario.nombre_completo || ''}</td>
+                    <td>${usuario.correo || ''}</td>
+                    <td>
+                        <button class="btn-autorizar" data-correo="${usuario.correo}" title="Autorizar usuario">✔️</button>
+                        <button class="btn-rechazar" data-correo="${usuario.correo}" title="Eliminar usuario">❌</button>
+                    </td>
+                `;
+                tbodyUsuariosPendientes.appendChild(fila);
+            });
+            
+            // Agregar event listeners a los botones
+            const botonesAutorizar = tbodyUsuariosPendientes.querySelectorAll('.btn-autorizar');
+            botonesAutorizar.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const correo = boton.getAttribute('data-correo');
+                    await autorizarUsuario(correo);
+                });
+            });
+            
+            const botonesRechazar = tbodyUsuariosPendientes.querySelectorAll('.btn-rechazar');
+            botonesRechazar.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const correo = boton.getAttribute('data-correo');
+                    await eliminarUsuarioPendiente(correo);
+                });
+            });
+            
+        } catch (error) {
+            console.error('Error al cargar usuarios pendientes:', error);
+            tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Error al cargar usuarios pendientes.</td></tr>';
+        }
+    }
+    
+    // Función para autorizar usuario
+    async function autorizarUsuario(correo) {
+        if (!correo) return;
+        
+        if (!confirm(`¿Estás seguro de que deseas autorizar al usuario con correo: ${correo}?`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API_USUARIOS}/${correo}/autorizar`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ autorizado: true })
+            });
+            
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.detail || 'Error al autorizar usuario.');
+            }
+            
+            alert('Usuario autorizado exitosamente.');
+            await cargarUsuariosPendientes();
+            await cargarUsuarios();
+            actualizarContadorPendientes();
+            
+        } catch (error) {
+            console.error('Error al autorizar usuario:', error);
+            alert(error.message || 'Error al autorizar usuario. Intenta nuevamente.');
+        }
+    }
+    
+    // Función para eliminar usuario pendiente
+    async function eliminarUsuarioPendiente(correo) {
+        if (!correo) return;
+        
+        if (!confirm(`¿Estás seguro de que deseas eliminar al usuario con correo: ${correo}?`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API_USUARIOS}/${correo}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.detail || 'Error al eliminar usuario.');
+            }
+            
+            alert('Usuario eliminado exitosamente.');
+            await cargarUsuariosPendientes();
+            await cargarUsuarios();
+            actualizarContadorPendientes();
+            
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+            alert(error.message || 'Error al eliminar usuario. Intenta nuevamente.');
         }
     }
     
@@ -629,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             alert('Usuario eliminado exitosamente.');
             await cargarUsuarios();
+            actualizarContadorPendientes();
             
         } catch (error) {
             console.error('Error al eliminar usuario:', error);
