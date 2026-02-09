@@ -1491,9 +1491,7 @@ button[type="submit"]:hover {
     cursor: pointer;
     transition: background 0.3s;
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: inline-block;
 }
 
 .btn-pendientes-aprobacion:hover {
@@ -1501,6 +1499,9 @@ button[type="submit"]:hover {
 }
 
 .badge-pendientes {
+    position: absolute;
+    top: -8px;
+    right: -8px;
     background-color: #dc3545;
     color: white;
     border-radius: 50%;
@@ -1508,8 +1509,12 @@ button[type="submit"]:hover {
     font-size: 12px;
     font-weight: bold;
     min-width: 20px;
+    height: 20px;
     text-align: center;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 /* Tabla de usuarios */

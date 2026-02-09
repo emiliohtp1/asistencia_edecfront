@@ -516,12 +516,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderizarUsuarios(usuarios) {
         tbodyUsuarios.innerHTML = '';
         
-        if (usuarios.length === 0) {
+        // Filtrar solo usuarios autorizados
+        const usuariosAutorizados = usuarios.filter(u => u.autorizado === true);
+        
+        if (usuariosAutorizados.length === 0) {
             tbodyUsuarios.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
             return;
         }
         
-        usuarios.forEach(usuario => {
+        usuariosAutorizados.forEach(usuario => {
             const fila = document.createElement('tr');
             fila.innerHTML = `
                 <td>${usuario.nombre_completo || ''}</td>
@@ -708,10 +711,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function autorizarUsuario(correo) {
         if (!correo) return;
         
-        if (!confirm(`¿Estás seguro de que deseas autorizar al usuario con correo: ${correo}?`)) {
-            return;
-        }
-        
         try {
             const response = await fetch(`${API_USUARIOS}/${correo}/autorizar`, {
                 method: 'PUT',
@@ -726,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.detail || 'Error al autorizar usuario.');
             }
             
-            alert('Usuario autorizado exitosamente.');
+            // Actualizar tablas automáticamente
             await cargarUsuariosPendientes();
             await cargarUsuarios();
             actualizarContadorPendientes();
@@ -741,10 +740,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function eliminarUsuarioPendiente(correo) {
         if (!correo) return;
         
-        if (!confirm(`¿Estás seguro de que deseas eliminar al usuario con correo: ${correo}?`)) {
-            return;
-        }
-        
         try {
             const response = await fetch(`${API_USUARIOS}/${correo}`, {
                 method: 'DELETE'
@@ -755,7 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.detail || 'Error al eliminar usuario.');
             }
             
-            alert('Usuario eliminado exitosamente.');
+            // Actualizar tablas automáticamente
             await cargarUsuariosPendientes();
             await cargarUsuarios();
             actualizarContadorPendientes();
@@ -784,7 +779,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.detail || 'Error al eliminar usuario.');
             }
             
-            alert('Usuario eliminado exitosamente.');
             await cargarUsuarios();
             actualizarContadorPendientes();
             
