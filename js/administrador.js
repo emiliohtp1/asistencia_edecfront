@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!correo) return;
         
         try {
-            const response = await fetch(`${API_USUARIOS}/${correo}/autorizar`, {
+            const response = await fetch(`${API_USUARIOS}/${correo}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -721,8 +721,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
-                throw new Error(data.detail || 'Error al autorizar usuario.');
+                console.error('Error al autorizar usuario:', response.status, response.statusText);
+                return;
             }
             
             // Actualizar tablas automáticamente
@@ -732,7 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error al autorizar usuario:', error);
-            alert(error.message || 'Error al autorizar usuario. Intenta nuevamente.');
         }
     }
     
@@ -746,8 +745,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
-                throw new Error(data.detail || 'Error al eliminar usuario.');
+                console.error('Error al eliminar usuario:', response.status, response.statusText);
+                return;
             }
             
             // Actualizar tablas automáticamente
@@ -757,7 +756,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error al eliminar usuario:', error);
-            alert(error.message || 'Error al eliminar usuario. Intenta nuevamente.');
         }
     }
     
@@ -775,8 +773,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
-                throw new Error(data.detail || 'Error al eliminar usuario.');
+                console.error('Error al eliminar usuario:', response.status, response.statusText);
+                return;
             }
             
             await cargarUsuarios();
@@ -784,7 +782,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error al eliminar usuario:', error);
-            alert(error.message || 'Error al eliminar usuario. Intenta nuevamente.');
         }
     }
     
