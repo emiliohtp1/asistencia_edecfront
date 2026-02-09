@@ -25,8 +25,68 @@
             </p>
             <button type="submit">Ingresar</button>
         </form>
+        <p style="margin-top: 15px; text-align: center;">
+            <a href="#" id="btnCrearCuenta" class="link-crear-cuenta">Crear cuenta</a>
+        </p>
     </div>
+
+    <!-- Modal para registro de usuario -->
+    <div class="modal-overlay" id="modalRegistro" style="display: none;">
+        <div class="modal-content">
+            <button class="btn-cerrar-modal" id="btnCerrarModalRegistro">×</button>
+            <h2>Crear Cuenta</h2>
+            <div class="form-registro-container">
+                <form id="formRegistro">
+                    <div class="input-group">
+                        <label for="nombreCompletoRegistro">Nombre Completo:</label>
+                        <input type="text" id="nombreCompletoRegistro" name="nombreCompletoRegistro" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="correoRegistro">Correo:</label>
+                        <input type="email" id="correoRegistro" name="correoRegistro" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="contraseñaRegistro">Contraseña:</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="contraseñaRegistro" name="contraseñaRegistro" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="rolRegistro">Rol:</label>
+                        <select id="rolRegistro" name="rolRegistro" required>
+                            <option value="">Seleccione un rol</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="director">Director</option>
+                            <option value="coordinador">Coordinador</option>
+                            <option value="maestro">Maestro</option>
+                            <option value="alumno">Alumno</option>
+                            <option value="servicio social">Servicio Social</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="campusRegistro">Campus:</label>
+                        <select id="campusRegistro" name="campusRegistro" required>
+                            <option value="">Seleccione un campus</option>
+                            <option value="apodaca">Apodaca</option>
+                            <option value="miguel aleman">Miguel Alemán</option>
+                            <option value="eloy cavazos">Eloy Cavazos</option>
+                        </select>
+                    </div>
+                    <p id="error-message-registro" class="error-text" style="display: none;"></p>
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn-modal-submit btn-registrarse">Registrarse</button>
+                        <button type="button" class="btn-modal-cancel" id="btnCancelarRegistro">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+            <div id="mensajeExitoRegistro" class="mensaje-exito-registro" style="display: none;">
+                Su cuenta ha sido creada con éxito. Pendiente de aprobación.
+            </div>
+        </div>
+    </div>
+
     <script src="js/password-toggle.js"></script>
+    <script src="js/registro-usuario.js"></script>
     <script src="js/login_buscador.js"></script>
 </body>
 </html>

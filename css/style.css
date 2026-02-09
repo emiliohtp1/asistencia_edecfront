@@ -334,6 +334,36 @@ button[type="submit"]:hover {
     font-weight: bold;
 }
 
+/* Enlace "Crear cuenta" */
+.link-crear-cuenta {
+    color: #0b0b63;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.link-crear-cuenta:hover {
+    color: #050545;
+}
+
+/* Botón Registrarse */
+.btn-registrarse {
+    background: #0b0b63 !important;
+}
+
+.btn-registrarse:hover {
+    background: #050545 !important;
+}
+
+/* Mensaje de éxito en registro */
+.mensaje-exito-registro {
+    text-align: center;
+    padding: 20px;
+    color: #28a745;
+    font-weight: bold;
+    font-size: 16px;
+}
+
 /* ================================
    ESTILOS PARA ASISTENCIAS (asistencias.html)
    ================================ */

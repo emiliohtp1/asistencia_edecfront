@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userResponse.ok) {
                     const usuario = await userResponse.json();
                     
+                    // Verificar si el usuario está autorizado
+                    if (!usuario.autorizado) {
+                        errorMessage.textContent = 'Usuario no aprobado todavía.';
+                        errorMessage.style.display = 'block';
+                        errorMessage.style.color = 'red';
+                        return;
+                    }
+                    
                     // Roles permitidos: administrador, director, coordinador, servicio social
                     const rolesPermitidos = ['administrador', 'director', 'coordinador', 'servicio social'];
                     
