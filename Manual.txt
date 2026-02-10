@@ -1,0 +1,679 @@
+================================================================================
+                    MANUAL DEL PROYECTO - SISTEMA DE ASISTENCIA EDEC
+================================================================================
+
+Este documento describe cada archivo del proyecto, su funcionalidad, librerías
+utilizadas, lógicas importantes y detalles específicos de implementación.
+
+================================================================================
+                            ESTRUCTURA DEL PROYECTO
+================================================================================
+
+frontend/
+├── css/
+│   └── style.css                    # Estilos globales del proyecto
+├── js/
+│   ├── administrador.js             # Lógica del dashboard administrador
+│   ├── asistencias_buscador.js      # Lógica de visualización de asistencias
+│   ├── authGuard_administrador.js   # Guard de autenticación para admin
+│   ├── authGuard_asistencias.js     # Guard de autenticación para asistencias
+│   ├── authGuard_buscador.js        # Guard de autenticación para buscador
+│   ├── authGuard_registrador.js     # Guard de autenticación para registrador
+│   ├── buscador_alumnos.js          # Lógica de búsqueda de alumnos
+│   ├── login_administrador.js       # Lógica de login para administrador
+│   ├── login_asistencias.js         # Lógica de login para asistencias
+│   ├── login_buscador.js            # Lógica de login para buscador
+│   ├── login_registrador.js         # Lógica de login para registrador
+│   ├── password-toggle.js           # Toggle de visibilidad de contraseñas
+│   ├── registrador.js               # Lógica de registro de asistencias
+│   └── registro-usuario.js          # Lógica de registro de nuevos usuarios
+├── images/
+│   └── logo.png                     # Logo de la institución
+├── administrador.html               # Dashboard del administrador
+├── administradorlogin.html          # Página de login para administrador
+├── asistencias.html                 # Página de visualización de asistencias
+├── asistenciaslogin.html            # Página de login para asistencias
+├── buscador.html                    # Página de búsqueda de alumnos
+├── buscadorlogin.html               # Página de login para buscador
+├── home.html                        # Página principal del registrador
+└── index.html                       # Página de login del registrador
+
+================================================================================
+                            ARCHIVOS HTML
+================================================================================
+
+1. index.html
+   Propósito: Página de login para usuarios con rol de registrador.
+   Funcionalidad:
+   - Formulario de login con validación de credenciales
+   - Enlace para crear nueva cuenta (abre modal de registro)
+   - Redirige a home.html después de login exitoso
+   - Verifica que el usuario esté autorizado (autorizado: true)
+   - Verifica rol permitido: administrador, director, coordinador, servicio social
+   
+   Scripts incluidos:
+   - password-toggle.js: Para mostrar/ocultar contraseña
+   - registro-usuario.js: Para manejar el registro de nuevos usuarios
+   - login_registrador.js: Lógica de autenticación
+
+   Detalles importantes:
+   - Usa localStorage para guardar sesión: isLoggedIn, registradorCorreo, registradorRol
+   - Modal de registro incluido en el mismo archivo
+   - Validación de autorización antes de permitir login
+
+2. home.html
+   Propósito: Página principal del registrador de asistencias.
+   Funcionalidad:
+   - Muestra un teclado numérico virtual para ingresar matrículas
+   - Permite registrar asistencias de alumnos
+   - Input de matrícula limitado a 5 dígitos
+   - Botón "Registrar" que valida y envía la asistencia
+   - Mensaje de éxito al registrar asistencia
+   - Botón para cerrar sesión
+   
+   Scripts incluidos:
+   - authGuard_registrador.js: Verifica autenticación antes de mostrar contenido
+   - registrador.js: Lógica de registro de asistencias
+
+   Detalles importantes:
+   - Verificación inmediata de sesión antes de renderizar (visibility: hidden)
+   - Busca alumnos primero en bachillerato, luego en universidad
+   - Teclado virtual con botones: números 0-9, borrar (←), limpiar (C)
+
+3. asistencias.html
+   Propósito: Visualización y exportación de asistencias registradas.
+   Funcionalidad:
+   - Muestra todas las asistencias o permite buscar por matrícula
+   - Filtros por día y mes
+   - Vista de fichados (alumnos con 3+ fichas)
+   - Exportación a Excel con filtros de fecha flexibles
+   - Paginación de resultados (10 por página)
+   - Ordenamiento de Excel por fecha (más reciente primero)
+   
+   Scripts incluidos:
+   - ExcelJS (CDN): Librería para generar archivos Excel
+   - authGuard_asistencias.js: Verificación de autenticación
+   - asistencias_buscador.js: Lógica principal
+
+   Detalles importantes:
+   - Usa ExcelJS v4.4.0 desde CDN
+   - Filtros de fecha con 3 selectores: día, mes, año
+   - Ordenamiento descendente por fecha y hora en Excel
+   - Actualización automática de datos cada cierto tiempo
+   - Modal para exportar a Excel con opciones de filtrado
+
+4. asistenciaslogin.html
+   Propósito: Página de login para usuarios que acceden a asistencias.
+   Funcionalidad:
+   - Similar a index.html pero para rol de asistencias
+   - Redirige a asistencias.html después de login exitoso
+   - Verifica autorización y rol del usuario
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - registro-usuario.js
+   - login_asistencias.js
+
+   Detalles importantes:
+   - Usa localStorage: isLoggedInBuscador, asistenciasCorreo, asistenciasRol
+
+5. buscador.html
+   Propósito: Búsqueda de alumnos y registro de fichas.
+   Funcionalidad:
+   - Búsqueda de alumnos por matrícula o nombre
+   - Muestra información del alumno: matrícula, nombre, programa, coordinador
+   - Columna "Fichas" que muestra cantidad de fichas del alumno
+   - Celda roja si fichas >= 3
+   - Botón "Fichar" para registrar fichas
+   - Botón para cerrar sesión
+   
+   Scripts incluidos:
+   - authGuard_buscador.js: Verificación de autenticación
+   - buscador_alumnos.js: Lógica de búsqueda y fichado
+
+   Detalles importantes:
+   - Integración con API de fichados para obtener cantidad_fichas
+   - Busca en ambas APIs (bachillerato y universidad)
+   - Modal de confirmación para fichar alumnos
+
+6. buscadorlogin.html
+   Propósito: Página de login para usuarios que acceden al buscador.
+   Funcionalidad:
+   - Similar a index.html pero para rol de buscador
+   - Redirige a buscador.html después de login exitoso
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - registro-usuario.js
+   - login_buscador.js
+
+   Detalles importantes:
+   - Usa localStorage: isLoggedInBuscadorAlumnos, buscadorCorreo, buscadorRol
+
+7. administrador.html
+   Propósito: Dashboard completo para administradores, directores y coordinadores.
+   Funcionalidad:
+   - Gestión de usuarios (crear, editar, eliminar, cambiar contraseña)
+   - Gestión de alumnos (bachillerato y universidad)
+   - Vista de usuarios pendientes de aprobación
+   - Autorización/rechazo de usuarios nuevos
+   - Navegación a otras secciones (buscador, asistencias, registrador)
+   - Botón circular con inicial del usuario
+   - Tablas con ordenamiento por columnas
+   - Paginación en todas las tablas
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - authGuard_administrador.js: Verificación de autenticación y rol
+   - administrador.js: Lógica completa del dashboard
+
+   Detalles importantes:
+   - Roles permitidos: administrador, director, coordinador
+   - Filtrado de roles disponibles según el usuario logueado
+   - Badge con contador de usuarios pendientes
+   - Modal separado para usuarios pendientes de aprobación
+   - Botón "Actualizar lista" en modal de pendientes
+   - Ordenamiento dinámico en tablas de usuarios y alumnos
+
+8. administradorlogin.html
+   Propósito: Página de login para administradores, directores y coordinadores.
+   Funcionalidad:
+   - Similar a index.html pero para rol de administrador
+   - Redirige a administrador.html después de login exitoso
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - registro-usuario.js
+   - login_administrador.js
+
+   Detalles importantes:
+   - Usa localStorage: isLoggedInAdmin, adminCorreo, adminRol, adminContraseña
+   - Verifica roles: administrador, director, coordinador, servicio social
+
+================================================================================
+                            ARCHIVOS JAVASCRIPT
+================================================================================
+
+1. login_registrador.js
+   Propósito: Maneja el proceso de autenticación para registradores.
+   Endpoint: POST /api/usuarios/apodaca/login
+   
+   Lógica importante:
+   - Valida credenciales con el backend
+   - Verifica que el usuario esté autorizado (autorizado: true)
+   - Verifica rol permitido antes de redirigir
+   - Guarda información en localStorage
+   - Muestra mensajes de error específicos
+
+2. login_asistencias.js
+   Propósito: Maneja el proceso de autenticación para usuarios de asistencias.
+   Similar a login_registrador.js pero con diferentes claves de localStorage.
+
+3. login_buscador.js
+   Propósito: Maneja el proceso de autenticación para usuarios del buscador.
+   Similar a login_registrador.js pero con diferentes claves de localStorage.
+
+4. login_administrador.js
+   Propósito: Maneja el proceso de autenticación para administradores.
+   Similar a login_registrador.js pero con diferentes claves de localStorage.
+   Verifica roles: administrador, director, coordinador, servicio social.
+
+5. authGuard_registrador.js
+   Propósito: Protege la página home.html verificando autenticación y rol.
+   Funcionalidad:
+   - Verifica localStorage antes de mostrar contenido
+   - Consulta API para verificar rol actualizado
+   - Redirige a index.html si no está autenticado o no tiene rol válido
+   - Limpia localStorage en caso de error o rol inválido
+
+6. authGuard_asistencias.js
+   Propósito: Protege asistencias.html verificando autenticación y rol.
+   Similar a authGuard_registrador.js pero para asistencias.
+   Roles permitidos: administrador, director, coordinador, servicio social.
+
+7. authGuard_buscador.js
+   Propósito: Protege buscador.html verificando autenticación y rol.
+   Similar a authGuard_registrador.js pero para buscador.
+
+8. authGuard_administrador.js
+   Propósito: Protege administrador.html verificando autenticación y rol.
+   Roles permitidos: administrador, director, coordinador.
+   Verificación más estricta que otros guards.
+
+9. registrador.js
+   Propósito: Lógica para registrar asistencias de alumnos.
+   Endpoints:
+   - GET /api/alumnos/bachillerato
+   - GET /api/alumnos/universidad
+   - POST /api/asistencias/registrar
+   
+   Funcionalidad:
+   - Teclado numérico virtual (0-9, ←, C)
+   - Validación de matrícula (exactamente 5 dígitos)
+   - Búsqueda secuencial: primero bachillerato, luego universidad
+   - Registro de asistencia con matrícula y nombre
+   - Mensaje de éxito visual
+   - Limpieza automática del input después de registrar
+
+10. asistencias_buscador.js
+    Propósito: Lógica completa para visualizar y exportar asistencias.
+    Endpoints:
+    - GET /api/asistencias/apodaca/todas
+    - GET /api/asistencias/apodaca/{matricula}
+    - GET /api/fichados/apodaca
+    
+    Funcionalidad:
+    - Carga todas las asistencias al iniciar
+    - Búsqueda por matrícula
+    - Filtros por día y mes
+    - Vista de fichados (alumnos con 3+ fichas)
+    - Paginación (10 elementos por página)
+    - Exportación a Excel con ExcelJS
+    - Filtros de fecha flexibles (día, mes, año) para Excel
+    - Ordenamiento por fecha descendente en Excel
+    
+    Librerías:
+    - ExcelJS v4.4.0 (desde CDN)
+    
+    Detalles importantes:
+    - Almacena todas las asistencias en memoria (todasLasAsistencias)
+    - Aplica filtros sobre los datos en memoria
+    - Genera archivos Excel con formato personalizado
+    - Selectores de fecha: día (01-31), mes (01-12), año (2025-2030)
+    - Función ordenarPorFecha() para ordenar por fecha y hora descendente
+
+11. buscador_alumnos.js
+    Propósito: Búsqueda de alumnos y registro de fichas.
+    Endpoints:
+    - GET /api/alumnos/bachillerato
+    - GET /api/alumnos/universidad
+    - GET /api/fichados/apodaca
+    - POST /api/fichados/apodaca/registrar
+    
+    Funcionalidad:
+    - Búsqueda por matrícula o nombre (case-insensitive)
+    - Búsqueda secuencial: primero bachillerato, luego universidad
+    - Integración con API de fichados para mostrar cantidad_fichas
+    - Aplicación de clase CSS "fichas-rojo" si cantidad_fichas >= 3
+    - Modal de confirmación para fichar alumnos
+    - Actualización automática de la tabla después de fichar
+    
+    Detalles importantes:
+    - Crea un mapa (objeto) de fichados por matrícula para acceso rápido
+    - Maneja casos donde el alumno no tiene fichas (devuelve 0)
+    - Verifica existencia del alumno antes de fichar
+
+12. administrador.js
+    Propósito: Lógica completa del dashboard de administración.
+    Endpoints:
+    - GET /api/usuarios/apodaca
+    - GET /api/usuarios/apodaca/{correo}
+    - POST /api/usuarios/apodaca/crear
+    - PUT /api/usuarios/apodaca/cambiar-contraseña
+    - PUT /api/usuarios/apodaca/cambiar-autorizado
+    - DELETE /api/usuarios/apodaca/{correo}
+    - GET /api/alumnos/bachillerato
+    - GET /api/alumnos/universidad
+    
+    Funcionalidad:
+    - Gestión completa de usuarios (CRUD)
+    - Gestión completa de alumnos (CRUD)
+    - Vista de usuarios pendientes de aprobación
+    - Autorización de usuarios (cambiar autorizado a true)
+    - Eliminación de usuarios pendientes
+    - Filtrado de roles disponibles según usuario logueado
+    - Ordenamiento dinámico en tablas
+    - Paginación en todas las tablas (10 elementos por página)
+    - Actualización de contador de usuarios pendientes
+    - Botón circular con inicial del usuario
+    
+    Detalles importantes:
+    - Excluye roles "administrador" y "director" del formulario de registro
+    - Filtra usuarios autorizados en la tabla principal
+    - Muestra solo usuarios no autorizados en modal de pendientes
+    - Badge con contador dinámico de usuarios pendientes
+    - Ordenamiento por múltiples columnas (nombre, correo, rol, fecha)
+    - Manejo de errores sin alertas (solo console.error)
+    - Actualización automática de tablas después de acciones
+
+13. password-toggle.js
+    Propósito: Script reutilizable para mostrar/ocultar contraseñas.
+    Funcionalidad:
+    - Detecta todos los inputs de tipo password
+    - Crea un botón con icono SVG (ojo/ojo-tachado)
+    - Alterna entre type="password" y type="text"
+    - Previene duplicados usando WeakSet
+    - Usa MutationObserver para inputs dinámicos
+    
+    Detalles importantes:
+    - Iconos SVG personalizados (eyeSvg y eyeSlashSvg)
+    - Posicionamiento absoluto del icono (no afecta ancho del input)
+    - Previene submit del formulario (type="button")
+    - Inicialización automática en DOMContentLoaded
+    - Observa cambios en el DOM para inputs agregados dinámicamente
+
+14. registro-usuario.js
+    Propósito: Maneja el registro de nuevos usuarios desde páginas de login.
+    Endpoint: POST /api/usuarios/apodaca/crear
+    
+    Funcionalidad:
+    - Abre/cierra modal de registro
+    - Valida y envía datos del formulario
+    - Muestra mensaje de éxito: "Su cuenta ha sido creada con éxito. Pendiente de aprobación."
+    - Cierra modal automáticamente después de 6 segundos
+    - Filtra roles "administrador" y "director" del select de roles
+    
+    Detalles importantes:
+    - Reutilizable en todas las páginas de login
+    - Maneja errores de conexión y validación
+    - Limpia formulario después de registro exitoso
+    - Mensaje de éxito temporal (6 segundos)
+
+================================================================================
+                            ARCHIVO CSS
+================================================================================
+
+style.css
+Propósito: Estilos globales para todo el proyecto.
+
+Secciones principales:
+1. Estilos generales (body, fuentes, colores base)
+2. Página de login (centrado, contenedor, formularios)
+3. Página de asistencia (teclado virtual, input de matrícula)
+4. Página de buscador (tablas, botones de búsqueda)
+5. Página de administrador (dashboard, modales, tablas)
+6. Componentes reutilizables (botones, inputs, modales)
+7. Estilos para password toggle (wrapper, icono)
+8. Estilos para badges y notificaciones
+9. Responsive design básico
+
+Colores principales:
+- Azul oscuro: #0b0b63 (fondo principal)
+- Verde Excel: #28a745 (botones de acción positiva)
+- Rojo: #dc3545 (botones de eliminación, badges)
+- Blanco: #ffffff (fondos de contenedores)
+- Gris: #666, #ccc (textos secundarios, bordes)
+
+Clases importantes:
+- .password-input-wrapper: Contenedor para inputs de contraseña con icono
+- .password-toggle-icon: Botón flotante para mostrar/ocultar contraseña
+- .fichas-rojo: Fondo rojo para celdas con 3+ fichas
+- .badge-pendientes: Badge circular rojo para contador de pendientes
+- .btn-actualizar-lista: Botón azul para actualizar listas
+- .modal-overlay: Overlay oscuro para modales
+- .modal-content: Contenedor del contenido del modal
+
+Detalles importantes:
+- Inputs de contraseña con padding-right para espacio del icono
+- Max-width de 280px para inputs de login (mismo ancho que botón "Registrar")
+- Estilos para tablas con hover y ordenamiento visual
+- Transiciones suaves en botones y elementos interactivos
+- Box-shadow para profundidad visual en modales y contenedores
+
+================================================================================
+                            ENDPOINTS DE API
+================================================================================
+
+Base URL: https://asistencia-edec.onrender.com
+
+USUARIOS:
+- POST /api/usuarios/apodaca/login
+  Body: { "correo": "...", "contraseña": "..." }
+  Respuesta: { "mensaje": "Login exitoso" }
+
+- POST /api/usuarios/apodaca/crear
+  Body: { "nombre_completo": "...", "correo": "...", "contraseña": "...", "rol": "...", "campus": "..." }
+  Respuesta: { "mensaje": "Usuario creado exitosamente", "usuario": {...} }
+
+- GET /api/usuarios/apodaca
+  Respuesta: { "usuarios": [...] }
+
+- GET /api/usuarios/apodaca/{correo}
+  Respuesta: { "nombre_completo": "...", "correo": "...", "rol": "...", "autorizado": true/false, ... }
+
+- PUT /api/usuarios/apodaca/cambiar-contraseña
+  Body: { "correo": "...", "contraseña_actual": "...", "contraseña_nueva": "..." }
+  Respuesta: { "mensaje": "Contraseña actualizada exitosamente" }
+
+- PUT /api/usuarios/apodaca/cambiar-autorizado
+  Body: { "correo": "...", "autorizado": true/false }
+  Respuesta: { "mensaje": "Estado de autorización actualizado exitosamente", "usuario": {...} }
+
+- DELETE /api/usuarios/apodaca/{correo}
+  Respuesta: { "mensaje": "Usuario eliminado exitosamente" }
+
+ALUMNOS:
+- GET /api/alumnos/bachillerato
+  Respuesta: { "alumnos": [{ "matricula": "...", "nombre": "...", "programa": "...", ... }] }
+
+- GET /api/alumnos/universidad
+  Respuesta: { "alumnos": [{ "matricula": "...", "nombre": "...", "programa": "...", ... }] }
+
+ASISTENCIAS:
+- POST /api/asistencias/registrar
+  Body: { "matricula": "...", "nombre": "..." }
+  Respuesta: { "mensaje": "Asistencia registrada exitosamente" }
+
+- GET /api/asistencias/apodaca/todas
+  Respuesta: { "asistencias": [{ "Matricula": "...", "Nombre": "...", "Fecha": "...", "Hora": "...", ... }] }
+
+- GET /api/asistencias/apodaca/{matricula}
+  Respuesta: { "asistencias": [{ "Matricula": "...", "Nombre": "...", "Fecha": "...", "Hora": "...", ... }] }
+
+FICHADOS:
+- GET /api/fichados/apodaca
+  Respuesta: { "total": 17, "fichados": [{ "matricula": "...", "nombre": "...", "cantidad_fichas": 1, ... }] }
+
+- POST /api/fichados/apodaca/registrar
+  Body: { "matricula": "...", "nombre": "..." }
+  Respuesta: { "mensaje": "Ficha registrada exitosamente" }
+
+================================================================================
+                            SISTEMA DE AUTENTICACIÓN
+================================================================================
+
+Flujo de autenticación:
+1. Usuario ingresa credenciales en página de login
+2. Frontend envía POST a /api/usuarios/apodaca/login
+3. Backend valida credenciales y devuelve respuesta
+4. Frontend obtiene información del usuario (GET /api/usuarios/apodaca/{correo})
+5. Frontend verifica:
+   - Que el usuario esté autorizado (autorizado: true)
+   - Que el rol del usuario sea permitido para la página
+6. Si todo es válido, guarda en localStorage y redirige
+7. Si no es válido, muestra mensaje de error
+
+LocalStorage keys por rol:
+- Registrador: isLoggedIn, registradorCorreo, registradorRol
+- Asistencias: isLoggedInBuscador, asistenciasCorreo, asistenciasRol
+- Buscador: isLoggedInBuscadorAlumnos, buscadorCorreo, buscadorRol
+- Administrador: isLoggedInAdmin, adminCorreo, adminRol, adminContraseña
+
+AuthGuards:
+Cada página protegida tiene un authGuard que:
+- Verifica localStorage antes de mostrar contenido
+- Consulta API para verificar rol actualizado
+- Redirige a login si no está autenticado
+- Limpia localStorage si el rol no es válido
+
+Roles y permisos:
+- administrador: Acceso completo a todas las páginas
+- director: Acceso completo a todas las páginas
+- coordinador: Acceso a todas las páginas excepto creación de admin/director
+- servicio social: Acceso a registrador, asistencias y buscador
+
+================================================================================
+                            SISTEMA DE AUTORIZACIÓN
+================================================================================
+
+Flujo de registro y autorización:
+1. Usuario nuevo crea cuenta desde cualquier página de login
+2. Frontend envía POST a /api/usuarios/apodaca/crear
+3. Backend crea usuario con autorizado: false
+4. Frontend muestra: "Su cuenta ha sido creada con éxito. Pendiente de aprobación."
+5. Administrador ve el usuario en "Usuarios Pendientes de Aprobación"
+6. Administrador puede:
+   - Autorizar (PUT /api/usuarios/apodaca/cambiar-autorizado con autorizado: true)
+   - Rechazar (DELETE /api/usuarios/apodaca/{correo})
+7. Una vez autorizado, el usuario puede hacer login
+
+Restricciones de registro:
+- No se pueden crear usuarios con rol "administrador" o "director" desde el frontend
+- Solo usuarios con rol administrador/director pueden crear estos roles desde administrador.html
+
+================================================================================
+                            FUNCIONALIDADES ESPECIALES
+================================================================================
+
+1. Exportación a Excel:
+   - Usa librería ExcelJS v4.4.0 (CDN)
+   - Genera archivos .xlsx con formato personalizado
+   - Filtros flexibles por día, mes y año
+   - Ordenamiento por fecha descendente (más reciente primero)
+   - Incluye todas las columnas de asistencias
+
+2. Paginación:
+   - Implementada en todas las tablas grandes
+   - 10 elementos por página
+   - Navegación con botones "Anterior" y "Siguiente"
+   - Muestra página actual y total de páginas
+
+3. Ordenamiento de tablas:
+   - Click en header de columna para ordenar
+   - Alterna entre ascendente y descendente
+   - Indicador visual de columna ordenada
+   - Funciona en tablas de usuarios y alumnos
+
+4. Filtros de fecha:
+   - Tres selectores independientes: día, mes, año
+   - Campos vacíos incluyen todos los valores de ese campo
+   - Botón "Limpiar / Todos" para resetear filtros
+   - Aplicado tanto en vista como en exportación Excel
+
+5. Sistema de fichas:
+   - Integración con API de fichados
+   - Muestra cantidad de fichas por alumno
+   - Celda roja si cantidad_fichas >= 3
+   - Registro de fichas desde buscador.html
+
+6. Toggle de contraseña:
+   - Icono SVG de ojo/ojo-tachado
+   - Posicionamiento absoluto (no afecta layout)
+   - Funciona con inputs dinámicos (MutationObserver)
+   - Previene duplicados (WeakSet)
+
+7. Badge de notificaciones:
+   - Muestra contador de usuarios pendientes
+   - Actualización automática después de acciones
+   - Diseño circular con fondo rojo
+
+================================================================================
+                            NOTAS TÉCNICAS
+================================================================================
+
+1. Verificación inmediata de sesión:
+   - Muchas páginas usan visibility: hidden en el body
+   - Script inline verifica sesión antes de mostrar contenido
+   - Previene "flash" de contenido no autorizado
+
+2. Manejo de errores:
+   - No se usan alert() para confirmaciones (solo console.error)
+   - Mensajes de error específicos por tipo de error
+   - Validación tanto en frontend como backend
+
+3. Búsqueda de alumnos:
+   - Estrategia secuencial: primero bachillerato, luego universidad
+   - Si encuentra en bachillerato, no busca en universidad
+   - Case-insensitive para búsqueda por nombre
+
+4. Actualización de datos:
+   - Algunas vistas tienen actualización automática periódica
+   - Botones "Actualizar lista" para actualización manual
+   - Tablas se actualizan después de acciones (crear, editar, eliminar)
+
+5. Responsive design:
+   - Diseño básico responsive
+   - Contenedores con max-width
+   - Tablas con scroll horizontal en pantallas pequeñas
+
+6. Seguridad:
+   - Validación de roles en frontend y backend
+   - Verificación de autorización antes de login
+   - Limpieza de localStorage en caso de error
+   - AuthGuards en todas las páginas protegidas
+
+================================================================================
+                            DEPENDENCIAS EXTERNAS
+================================================================================
+
+1. ExcelJS v4.4.0
+   - CDN: https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js
+   - Usado en: asistencias.html
+   - Propósito: Generar archivos Excel (.xlsx)
+
+2. No hay otras dependencias externas
+   - Todo el resto es JavaScript vanilla
+   - CSS puro (sin frameworks)
+   - HTML5 estándar
+
+================================================================================
+                            ESTRUCTURA DE DATOS
+================================================================================
+
+Usuario:
+{
+  "_id": "...",
+  "nombre_completo": "...",
+  "correo": "...",
+  "rol": "administrador|director|coordinador|servicio social",
+  "campus": "apodaca",
+  "fecha_creacion": "2026-02-06T17:23:12.039000",
+  "autorizado": true/false
+}
+
+Alumno:
+{
+  "matricula": "37796",
+  "nombre": "RODRIGUEZ PEDRAZA SAMUEL AARON",
+  "programa": "BGED - 2018 BACHILLERATO GENERAL...",
+  "coordinador": "Fernando",
+  "graduado": "No",
+  "correo": "al37796@edec.edu.mx",
+  "campus": "Apodaca",
+  "ciclo": "C1-2026",
+  "turno": "Matutino"
+}
+
+Asistencia:
+{
+  "Matricula": "37796",
+  "Nombre": "RODRIGUEZ PEDRAZA SAMUEL AARON",
+  "Fecha": "2026-02-06",
+  "Hora": "14:30:00",
+  ...
+}
+
+Fichado:
+{
+  "matricula": "37796",
+  "nombre": "RODRIGUEZ PEDRAZA SAMUEL AARON",
+  "coordinador": "Fernando",
+  "graduado": "No",
+  "correo": "al37796@edec.edu.mx",
+  "campus": "Apodaca",
+  "programa": "...",
+  "ciclo": "C1-2026",
+  "turno": "Matutino",
+  "cantidad_fichas": 1
+}
+
+================================================================================
+                            FIN DEL MANUAL
+================================================================================
+
+Este manual documenta la estructura, funcionalidad y detalles técnicos del
+Sistema de Asistencia EDEC. Para más información sobre endpoints específicos,
+consultar la documentación de la API del backend.
+
+Fecha de creación: 2026
+Versión: 1.0
