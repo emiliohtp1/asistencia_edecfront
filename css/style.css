@@ -1481,6 +1481,21 @@ button[type="submit"]:hover {
     background: #218838;
 }
 
+.btn-actualizar-lista {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #0b0b63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-actualizar-lista:hover {
+    background: #050545;
+}
+
 .btn-pendientes-aprobacion {
     padding: 10px 20px;
     font-size: 16px;

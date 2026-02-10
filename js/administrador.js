@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCambiarContraseña = document.getElementById('modalCambiarContraseña');
     const modalUsuarios = document.getElementById('modalUsuarios');
     const modalUsuariosPendientes = document.getElementById('modalUsuariosPendientes');
+    const btnActualizarListaPendientes = document.getElementById('btnActualizarListaPendientes');
     
     // Formularios
     const formCrearUsuario = document.getElementById('formCrearUsuario');
@@ -56,19 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Tabla de usuarios
     const tbodyUsuarios = document.getElementById('tbodyUsuarios');
-    const tbodyUsuariosPendientes = document.getElementById('tbodyUsuariosPendientes');
-    const btnPendientesAprobacion = document.getElementById('btnPendientesAprobacion');
-    const btnCerrarUsuariosPendientes = document.getElementById('btnCerrarUsuariosPendientes');
-    const badgePendientes = document.getElementById('badgePendientes');
     let usuariosGlobales = []; // Almacenar usuarios para ordenamiento
     let ordenActual = {
         columna: null,
         direccion: 'asc' // 'asc' o 'desc'
     };
-    
-    // Intervalos para actualización automática
-    let intervaloUsuarios = null;
-    let intervaloUsuariosPendientes = null;
     
     // Obtener correo del usuario logueado
     const correoUsuario = localStorage.getItem('adminCorreo');
@@ -154,20 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await cargarUsuarios();
         configurarOrdenamientoHeaders();
         actualizarContadorPendientes();
-        
-        // Iniciar actualización automática cada 5 segundos
-        if (intervaloUsuarios) {
-            clearInterval(intervaloUsuarios);
-        }
-        intervaloUsuarios = setInterval(async () => {
-            if (modalUsuarios.style.display === 'flex') {
-                await cargarUsuarios();
-                actualizarContadorPendientes();
-            } else {
-                clearInterval(intervaloUsuarios);
-                intervaloUsuarios = null;
-            }
-        }, 5000); // Actualizar cada 5 segundos
     });
     
     // Abrir modal de usuarios pendientes
@@ -176,59 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
             modalUsuarios.style.display = 'none';
             modalUsuariosPendientes.style.display = 'flex';
             await cargarUsuariosPendientes();
-            
-            // Limpiar intervalo de usuarios principales
-            if (intervaloUsuarios) {
-                clearInterval(intervaloUsuarios);
-                intervaloUsuarios = null;
-            }
-            
-            // Iniciar actualización automática cada 5 segundos
-            if (intervaloUsuariosPendientes) {
-                clearInterval(intervaloUsuariosPendientes);
-            }
-            intervaloUsuariosPendientes = setInterval(async () => {
-                if (modalUsuariosPendientes.style.display === 'flex') {
-                    await cargarUsuariosPendientes();
-                    await cargarUsuarios(); // También actualizar usuarios globales
-                    actualizarContadorPendientes();
-                } else {
-                    clearInterval(intervaloUsuariosPendientes);
-                    intervaloUsuariosPendientes = null;
-                }
-            }, 3000); // Actualizar cada 5 segundos
         });
-    }
-    
-    // Función para limpiar intervalos de actualización
-    function limpiarIntervalos() {
-        if (intervaloUsuarios) {
-            clearInterval(intervaloUsuarios);
-            intervaloUsuarios = null;
-        }
-        if (intervaloUsuariosPendientes) {
-            clearInterval(intervaloUsuariosPendientes);
-            intervaloUsuariosPendientes = null;
-        }
     }
     
     // Cerrar modal de usuarios pendientes
     if (btnCerrarUsuariosPendientes) {
         btnCerrarUsuariosPendientes.addEventListener('click', () => {
-            limpiarIntervalos();
             modalUsuariosPendientes.style.display = 'none';
             modalUsuarios.style.display = 'flex';
-            
-            // Reiniciar intervalo de usuarios principales
-            intervaloUsuarios = setInterval(async () => {
-                if (modalUsuarios.style.display === 'flex') {
-                    await cargarUsuarios();
-                    actualizarContadorPendientes();
-                } else {
-                    clearInterval(intervaloUsuarios);
-                    intervaloUsuarios = null;
-                }
-            }, 5000);
         });
     }
     
@@ -236,21 +170,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalUsuariosPendientes) {
         modalUsuariosPendientes.addEventListener('click', (e) => {
             if (e.target === modalUsuariosPendientes) {
-                limpiarIntervalos();
                 modalUsuariosPendientes.style.display = 'none';
                 modalUsuarios.style.display = 'flex';
-                
-                // Reiniciar intervalo de usuarios principales
-                intervaloUsuarios = setInterval(async () => {
-                    if (modalUsuarios.style.display === 'flex') {
-                        await cargarUsuarios();
-                        actualizarContadorPendientes();
-                    } else {
-                        clearInterval(intervaloUsuarios);
-                        intervaloUsuarios = null;
-                    }
-                }, 5000);
             }
+        });
+    }
+    
+    // Botón para actualizar lista de usuarios pendientes
+    if (btnActualizarListaPendientes) {
+        btnActualizarListaPendientes.addEventListener('click', async () => {
+            await cargarUsuariosPendientes();
+            await cargarUsuarios();
+            actualizarContadorPendientes();
         });
     }
     
@@ -363,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('btnCerrarUsuarios').addEventListener('click', () => {
-        limpiarIntervalos();
         modalUsuarios.style.display = 'none';
     });
     
@@ -388,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     modalUsuarios.addEventListener('click', (e) => {
         if (e.target === modalUsuarios) {
-            limpiarIntervalos();
             modalUsuarios.style.display = 'none';
         }
     });
