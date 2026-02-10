@@ -712,12 +712,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!correo) return;
         
         try {
-            const response = await fetch(`${API_USUARIOS}/${correo}`, {
+            const response = await fetch(`${API_USUARIOS}/cambiar-autorizado`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ autorizado: true })
+                body: JSON.stringify({ 
+                    correo: correo,
+                    autorizado: true 
+                })
             });
             
             if (!response.ok) {
