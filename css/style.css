@@ -2082,3 +2082,55 @@ button[type="submit"]:hover {
         font-size: 12px;
     }
 }
+
+/* ================================
+   ESTILOS PARA VINCULACIÓN
+   ================================ */
+
+.vinculacion-header-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    z-index: 1000;
+}
+
+.vinculacion-header-buttons .btn-excel {
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.vinculacion-header-buttons .btn-excel:hover {
+    background: #218838;
+}
+
+.vinculacion-header-buttons .btn-cerrar-sesion {
+    position: relative;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .vinculacion-header-buttons {
+        position: relative;
+        top: 0;
+        right: 0;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .vinculacion-header-buttons .btn-excel,
+    .vinculacion-header-buttons .btn-cerrar-sesion {
+        width: 100%;
+    }
+}
