@@ -54,6 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
     formRegistrarVinculacion.addEventListener('submit', registrarVinculacion);
     btnCerrarSesion.addEventListener('click', cerrarSesion);
     
+    // Capitalizar primera letra de cada palabra en el input de nombre
+    inputNombre.addEventListener('input', function(e) {
+        const cursorPosition = e.target.selectionStart;
+        const value = e.target.value;
+        const words = value.split(' ');
+        const capitalizedWords = words.map(word => {
+            if (word.length === 0) return word;
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+        const newValue = capitalizedWords.join(' ');
+        e.target.value = newValue;
+        // Restaurar posición del cursor
+        e.target.setSelectionRange(cursorPosition, cursorPosition);
+    });
+    
     // Event listeners para Excel
     btnImportarExcel.addEventListener('click', abrirModalExcel);
     btnCerrarModalExcel.addEventListener('click', cerrarModalExcel);

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRegistrador = document.getElementById('btnRegistrador');
     const btnUsuarios = document.getElementById('btnUsuarios');
     const btnAlumnos = document.getElementById('btnAlumnos');
+    const btnVinculacion = document.getElementById('btnVinculacion');
     
     // Elementos para la vista de alumnos
     const containerPrincipal = document.getElementById('containerPrincipal');
@@ -486,6 +487,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('registradorCorreo', correo);
                     localStorage.setItem('registradorRol', usuario.rol);
+                } else if (tipoPagina === 'vinculacion') {
+                    localStorage.setItem('isLoggedInVinculacion', 'true');
+                    localStorage.setItem('vinculacionCorreo', correo);
+                    localStorage.setItem('vinculacionRol', usuario.rol);
                 }
                 
                 return true;
@@ -500,24 +505,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Navegación a otras páginas (en nuevas pestañas) con validación de credenciales
-    btnBuscador.addEventListener('click', async () => {
-        const valido = await validarAdminAntesDeRedirigir(btnBuscador.getAttribute('data-url'), 'buscador');
-        if (valido) {
-            window.open(btnBuscador.getAttribute('data-url'), '_blank');
+    // Nota: En móviles, window.open debe ejecutarse inmediatamente (sincrónicamente)
+    // dentro del event handler para evitar bloqueo del navegador
+    btnBuscador.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btnBuscador.getAttribute('data-url');
+        // Abrir inmediatamente para evitar bloqueo en móviles
+        const nuevaVentana = window.open(url, '_blank');
+        const valido = await validarAdminAntesDeRedirigir(url, 'buscador');
+        if (!valido && nuevaVentana && !nuevaVentana.closed) {
+            nuevaVentana.close();
         }
     });
     
-    btnAsistencias.addEventListener('click', async () => {
-        const valido = await validarAdminAntesDeRedirigir(btnAsistencias.getAttribute('data-url'), 'asistencias');
-        if (valido) {
-            window.open(btnAsistencias.getAttribute('data-url'), '_blank');
+    btnAsistencias.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btnAsistencias.getAttribute('data-url');
+        // Abrir inmediatamente para evitar bloqueo en móviles
+        const nuevaVentana = window.open(url, '_blank');
+        const valido = await validarAdminAntesDeRedirigir(url, 'asistencias');
+        if (!valido && nuevaVentana && !nuevaVentana.closed) {
+            nuevaVentana.close();
         }
     });
     
-    btnRegistrador.addEventListener('click', async () => {
-        const valido = await validarAdminAntesDeRedirigir(btnRegistrador.getAttribute('data-url'), 'registrador');
-        if (valido) {
-            window.open(btnRegistrador.getAttribute('data-url'), '_blank');
+    btnRegistrador.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btnRegistrador.getAttribute('data-url');
+        // Abrir inmediatamente para evitar bloqueo en móviles
+        const nuevaVentana = window.open(url, '_blank');
+        const valido = await validarAdminAntesDeRedirigir(url, 'registrador');
+        if (!valido && nuevaVentana && !nuevaVentana.closed) {
+            nuevaVentana.close();
+        }
+    });
+    
+    btnVinculacion.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btnVinculacion.getAttribute('data-url');
+        // Abrir inmediatamente para evitar bloqueo en móviles
+        const nuevaVentana = window.open(url, '_blank');
+        const valido = await validarAdminAntesDeRedirigir(url, 'vinculacion');
+        if (!valido && nuevaVentana && !nuevaVentana.closed) {
+            nuevaVentana.close();
         }
     });
     
