@@ -495,10 +495,11 @@ async function generarExcel() {
         // Generar el nombre del archivo
         let nombreArchivo = 'Vinculacion_Registros';
         if (fechaFiltro) {
-            const fecha = new Date(fechaFiltro);
-            const dd = String(fecha.getDate()).padStart(2, '0');
-            const mm = String(fecha.getMonth() + 1).padStart(2, '0');
-            const aaaa = fecha.getFullYear();
+            // Parsear directamente el string YYYY-MM-DD para evitar problemas de zona horaria
+            const partesFecha = fechaFiltro.split('-');
+            const aaaa = partesFecha[0];
+            const mm = partesFecha[1];
+            const dd = partesFecha[2];
             nombreArchivo = `Vinculacion_Registros_${dd}-${mm}-${aaaa}`;
         } else {
             const fecha = new Date();
