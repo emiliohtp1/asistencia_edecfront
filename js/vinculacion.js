@@ -370,11 +370,34 @@ async function generarExcel() {
         const fechaFiltro = excelFiltroFecha.value;
         if (fechaFiltro) {
             registrosParaExcel = registrosParaExcel.filter(registro => {
-                // Convertir la fecha del registro a formato YYYY-MM-DD para comparar
-                const fechaRegistro = new Date(registro.timestamp || registro.fecha);
-                const fechaFiltroDate = new Date(fechaFiltro);
-                
-                return fechaRegistro.toISOString().split('T')[0] === fechaFiltroDate.toISOString().split('T')[0];
+                // Usar timestamp si está disponible (más confiable)
+                if (registro.timestamp) {
+                    // Parsear el timestamp del registro
+                    const fechaRegistro = new Date(registro.timestamp);
+                    // Parsear la fecha del filtro (formato YYYY-MM-DD)
+                    const fechaFiltroDate = new Date(fechaFiltro + 'T00:00:00');
+                    
+                    // Comparar solo año, mes y día (ignorar hora)
+                    return fechaRegistro.getFullYear() === fechaFiltroDate.getFullYear() &&
+                           fechaRegistro.getMonth() === fechaFiltroDate.getMonth() &&
+                           fechaRegistro.getDate() === fechaFiltroDate.getDate();
+                } else if (registro.fecha) {
+                    // Fallback: usar el campo fecha si timestamp no está disponible
+                    // Formato esperado: "17/02/2026 a las 17:16"
+                    const partesFecha = registro.fecha.split(' ')[0].split('/'); // ["17", "02", "2026"]
+                    if (partesFecha.length === 3) {
+                        const diaRegistro = parseInt(partesFecha[0]);
+                        const mesRegistro = parseInt(partesFecha[1]) - 1; // Los meses en JS son 0-indexed
+                        const anioRegistro = parseInt(partesFecha[2]);
+                        
+                        const fechaFiltroDate = new Date(fechaFiltro + 'T00:00:00');
+                        
+                        return anioRegistro === fechaFiltroDate.getFullYear() &&
+                               mesRegistro === fechaFiltroDate.getMonth() &&
+                               diaRegistro === fechaFiltroDate.getDate();
+                    }
+                }
+                return false;
             });
         }
         
