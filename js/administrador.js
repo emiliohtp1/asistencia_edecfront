@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Formularios
     const formCrearUsuario = document.getElementById('formCrearUsuario');
     const formCambiarContraseña = document.getElementById('formCambiarContraseña');
+    const inputNombreCompleto = document.getElementById('nombreCompleto');
     
     // Tabla de usuarios
     const tbodyUsuarios = document.getElementById('tbodyUsuarios');
@@ -220,6 +221,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('success-message-crear').style.display = 'none';
         configurarRolesDisponibles(); // Configurar roles según el usuario actual
     });
+    
+    // Capitalizar primera letra de cada palabra en el input de nombre completo
+    if (inputNombreCompleto) {
+        inputNombreCompleto.addEventListener('input', function(e) {
+            const cursorPosition = e.target.selectionStart;
+            const value = e.target.value;
+            const words = value.split(' ');
+            const capitalizedWords = words.map(word => {
+                if (word.length === 0) return word;
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            });
+            const newValue = capitalizedWords.join(' ');
+            e.target.value = newValue;
+            // Restaurar posición del cursor
+            e.target.setSelectionRange(cursorPosition, cursorPosition);
+        });
+    }
     
     btnUsuarioCircular.addEventListener('click', async () => {
         if (!correoUsuario) return;

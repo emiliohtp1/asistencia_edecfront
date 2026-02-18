@@ -8,6 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnCancelarRegistro = document.getElementById('btnCancelarRegistro');
     const formRegistro = document.getElementById('formRegistro');
     const mensajeExitoRegistro = document.getElementById('mensajeExitoRegistro');
+    const inputNombreCompletoRegistro = document.getElementById('nombreCompletoRegistro');
+    
+    // Capitalizar primera letra de cada palabra en el input de nombre completo
+    if (inputNombreCompletoRegistro) {
+        inputNombreCompletoRegistro.addEventListener('input', function(e) {
+            const cursorPosition = e.target.selectionStart;
+            const value = e.target.value;
+            const words = value.split(' ');
+            const capitalizedWords = words.map(word => {
+                if (word.length === 0) return word;
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            });
+            const newValue = capitalizedWords.join(' ');
+            e.target.value = newValue;
+            // Restaurar posición del cursor
+            e.target.setSelectionRange(cursorPosition, cursorPosition);
+        });
+    }
     
     // Abrir modal de registro
     if (btnCrearCuenta) {
