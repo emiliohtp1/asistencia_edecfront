@@ -2106,8 +2106,8 @@ button[type="submit"]:hover {
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.3s;
-    white-space: nowrap;
     margin: 0;
+    position: relative;
 }
 
 .vinculacion-header-buttons .btn-excel:hover {
@@ -2115,8 +2115,20 @@ button[type="submit"]:hover {
 }
 
 .vinculacion-header-buttons .btn-cerrar-sesion {
-    position: relative;
+    background: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
     margin: 0;
+    position: relative;
+}
+
+.vinculacion-header-buttons .btn-cerrar-sesion:hover {
+    background: #c82333;
 }
 
 @media (max-width: 768px) {
