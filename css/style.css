@@ -2092,9 +2092,18 @@ button[type="submit"]:hover {
     top: 20px;
     right: 20px;
     display: flex;
+    flex-direction: row;
     gap: 10px;
     align-items: center;
     z-index: 1000;
+}
+
+/* Sobrescribir estilos de buscador-container para botones dentro de vinculacion-header-buttons */
+.buscador-container .vinculacion-header-buttons .btn-excel,
+.buscador-container .vinculacion-header-buttons .btn-cerrar-sesion {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
 }
 
 .vinculacion-header-buttons .btn-excel {
@@ -2108,6 +2117,7 @@ button[type="submit"]:hover {
     transition: background 0.3s;
     margin: 0;
     position: relative;
+    flex-shrink: 0;
 }
 
 .vinculacion-header-buttons .btn-excel:hover {
@@ -2125,6 +2135,7 @@ button[type="submit"]:hover {
     transition: background 0.3s;
     margin: 0;
     position: relative;
+    flex-shrink: 0;
 }
 
 .vinculacion-header-buttons .btn-cerrar-sesion:hover {
