@@ -868,6 +868,37 @@ document.addEventListener('DOMContentLoaded', () => {
     paginacionAsistencias = document.getElementById("paginacionAsistencias");
     paginacionFichados = document.getElementById("paginacionFichados");
 
+    // Acortar texto de botones flotantes en móviles
+    if (window.innerWidth <= 768) {
+        const btnExcelFlotante = document.getElementById("btnExcel");
+        if (btnExcelFlotante && btnExcelFlotante.textContent.includes("Importar a Excel")) {
+            btnExcelFlotante.textContent = "Excel";
+        }
+        if (btnCerrarSesion && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+            btnCerrarSesion.textContent = "Cerrar";
+        }
+    }
+    
+    // También actualizar si se redimensiona la ventana
+    window.addEventListener('resize', () => {
+        const btnExcelFlotante = document.getElementById("btnExcel");
+        if (window.innerWidth <= 768) {
+            if (btnExcelFlotante && !btnExcelFlotante.textContent.includes("Excel") && btnExcelFlotante.textContent.includes("Importar a Excel")) {
+                btnExcelFlotante.textContent = "Excel";
+            }
+            if (btnCerrarSesion && !btnCerrarSesion.textContent.includes("Cerrar") && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+                btnCerrarSesion.textContent = "Cerrar";
+            }
+        } else {
+            if (btnExcelFlotante && btnExcelFlotante.textContent === "Excel") {
+                btnExcelFlotante.textContent = "Importar a Excel";
+            }
+            if (btnCerrarSesion && btnCerrarSesion.textContent === "Cerrar") {
+                btnCerrarSesion.textContent = "Cerrar Sesión";
+            }
+        }
+    });
+
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
         const matricula = inputBuscarMatricula.value.trim();
