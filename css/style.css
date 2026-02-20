@@ -409,13 +409,14 @@ button[type="submit"]:hover {
     }
     
     .buscador-container .btn-cerrar-sesion {
-        position: relative;
-        top: 0;
-        right: 0;
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px 16px;
-        font-size: 14px;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: auto;
+        margin-bottom: 0;
+        padding: 8px 12px;
+        font-size: 12px;
+        z-index: 1000;
     }
     
     .buscador-container h1 {
@@ -440,27 +441,109 @@ button[type="submit"]:hover {
     flex-wrap: wrap;
 }
 
+/* Botones flotantes para asistencias */
+.asistencias-header-buttons {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    z-index: 1000;
+}
+
+.asistencias-header-buttons .btn-fichados,
+.asistencias-header-buttons .btn-excel {
+    padding: 8px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.asistencias-header-buttons .btn-fichados {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.asistencias-header-buttons .btn-fichados:hover {
+    background: #c82333;
+}
+
+.asistencias-header-buttons .btn-excel {
+    background: #217346;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.asistencias-header-buttons .btn-excel:hover {
+    background: #1a5a37;
+}
+
+.asistencias-header-buttons .btn-cerrar-sesion {
+    background: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.asistencias-header-buttons .btn-cerrar-sesion:hover {
+    background: #c82333;
+}
+
 @media (max-width: 768px) {
     .buscador-header {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
         margin-bottom: 15px;
+        flex-wrap: nowrap;
+    }
+    
+    .buscador-header .btn-filtros {
+        flex-shrink: 0;
+        padding: 10px 16px;
+        font-size: 14px;
+        white-space: nowrap;
     }
     
     .buscador-header .input-buscar {
-        width: 100%;
-        max-width: 100%;
+        flex: 1;
+        min-width: 0;
         padding: 10px;
         font-size: 14px;
     }
     
-    .buscador-header .btn-buscar,
-    .buscador-header .btn-filtros,
-    .buscador-header .btn-fichados,
-    .buscador-header .btn-excel {
-        width: 100%;
+    .buscador-header .btn-buscar {
+        flex-shrink: 0;
         padding: 10px 16px;
         font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    /* Ocultar botones que ahora son flotantes */
+    .buscador-header .btn-fichados,
+    .buscador-header .btn-excel {
+        display: none;
+    }
+    
+    /* Asegurar que el botón Cerrar Sesión del container no interfiera */
+    .buscador-container > .btn-cerrar-sesion {
+        display: none;
     }
 }
 
@@ -2198,9 +2281,10 @@ button[type="submit"]:hover {
     }
     
     .vinculacion-header-buttons .btn-cerrar-sesion {
-        padding: 8px 16px;
-        font-size: 14px;
+        padding: 8px 12px;
+        font-size: 12px;
         white-space: nowrap;
+        max-width: 100px;
     }
     
     /* Formulario de registro en móvil */

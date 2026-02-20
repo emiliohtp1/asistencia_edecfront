@@ -968,9 +968,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listeners para fichados
-    btnFichados.addEventListener("click", () => {
+    // Event listener para botón Fichados (flotante y desktop)
+    const handleFichadosClick = () => {
         mostrarVistaFichados();
-    });
+    };
+    
+    if (btnFichados) {
+        btnFichados.addEventListener("click", handleFichadosClick);
+    }
+    
+    const btnFichadosDesktop = document.getElementById("btnFichadosDesktop");
+    if (btnFichadosDesktop) {
+        btnFichadosDesktop.addEventListener("click", handleFichadosClick);
+    }
     
     btnRegresar.addEventListener("click", () => {
         mostrarVistaAsistencias();
@@ -1079,13 +1089,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Event listeners para el modal de Excel
+    // Event listeners para el modal de Excel (flotante y desktop)
+    const handleExcelClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        abrirModalExcel();
+    };
+    
     if (btnExcel) {
-        btnExcel.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            abrirModalExcel();
-        });
+        btnExcel.addEventListener("click", handleExcelClick);
+    }
+    
+    const btnExcelDesktop = document.getElementById("btnExcelDesktop");
+    if (btnExcelDesktop) {
+        btnExcelDesktop.addEventListener("click", handleExcelClick);
     }
     
     if (btnCerrarModalExcel) {
