@@ -12,6 +12,7 @@ let modalFicharAlumno;
 let btnFicharSi;
 let btnFicharNo;
 let alumnoSeleccionado = null;
+let procesandoFichar = false; // Bandera para evitar múltiples registros
 
 // ==============================
 //   BUSCAR ALUMNO
@@ -158,6 +159,13 @@ function abrirModalFichar(alumno) {
         mensajeExito.style.display = 'none';
         mensajeExito.classList.remove('show');
     }
+    // Mostrar los botones al abrir el modal
+    if (btnFicharSi) {
+        btnFicharSi.style.display = 'block';
+    }
+    if (btnFicharNo) {
+        btnFicharNo.style.display = 'block';
+    }
 }
 
 // ==============================
@@ -166,18 +174,35 @@ function abrirModalFichar(alumno) {
 function cerrarModalFichar() {
     modalFicharAlumno.style.display = 'none';
     alumnoSeleccionado = null;
+    procesandoFichar = false; // Resetear bandera al cerrar
 }
 
 // ==============================
 //   FICHAR ALUMNO
 // ==============================
 async function ficharAlumno() {
+    // Evitar múltiples registros simultáneos
+    if (procesandoFichar) {
+        return;
+    }
+    
     if (!alumnoSeleccionado) return;
     
     // Validar que tenga al menos matrícula y nombre
     if (!alumnoSeleccionado.matricula || !alumnoSeleccionado.nombre) {
         alert('Error: El alumno no tiene la información necesaria para ser fichado.');
         return;
+    }
+    
+    // Marcar como procesando
+    procesandoFichar = true;
+    
+    // Ocultar botones inmediatamente para evitar múltiples registros
+    if (btnFicharSi) {
+        btnFicharSi.style.display = 'none';
+    }
+    if (btnFicharNo) {
+        btnFicharNo.style.display = 'none';
     }
     
     // Preparar los datos según el formato requerido
@@ -208,6 +233,14 @@ async function ficharAlumno() {
             throw new Error(data.detail || 'Error al fichar alumno.');
         }
         
+        // Ocultar botones inmediatamente para evitar múltiples registros
+        if (btnFicharSi) {
+            btnFicharSi.style.display = 'none';
+        }
+        if (btnFicharNo) {
+            btnFicharNo.style.display = 'none';
+        }
+        
         // Mostrar mensaje de éxito
         const mensajeExito = document.getElementById('mensajeExitoFichar');
         if (mensajeExito) {
@@ -233,6 +266,14 @@ async function ficharAlumno() {
     } catch (error) {
         console.error('Error al fichar alumno:', error);
         alert(error.message || 'Error al fichar alumno. Intenta nuevamente.');
+        // Restaurar botones en caso de error
+        if (btnFicharSi) {
+            btnFicharSi.style.display = 'block';
+        }
+        if (btnFicharNo) {
+            btnFicharNo.style.display = 'block';
+        }
+        procesandoFichar = false;
     }
 }
 
