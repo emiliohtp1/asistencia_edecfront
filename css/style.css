@@ -506,6 +506,8 @@ button[type="submit"]:hover {
         flex-wrap: nowrap;
         max-width: calc(100% - 20px);
         justify-content: flex-end;
+        width: auto;
+        min-width: auto;
     }
     
     .asistencias-header-buttons .btn-fichados,
@@ -515,6 +517,24 @@ button[type="submit"]:hover {
         font-size: 11px;
         flex-shrink: 0;
         min-width: auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Asegurar que el botón Excel no esté oculto */
+    .asistencias-header-buttons .btn-excel-mobile {
+        order: 2;
+        z-index: 2;
+    }
+    
+    .asistencias-header-buttons .btn-fichados {
+        order: 1;
+        z-index: 1;
+    }
+    
+    .asistencias-header-buttons .btn-cerrar-sesion {
+        order: 3;
+        z-index: 1;
     }
     
     .buscador-header {
