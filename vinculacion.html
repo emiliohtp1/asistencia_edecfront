@@ -45,7 +45,7 @@
 
         <!-- Formulario de registro -->
         <div class="formulario-registro-vinculacion" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h2 style="margin-top: 0; color: #0b0b63;">Registrar Nuevo</h2>
+            <h2 style="margin-top: 0; color: #0b0b63;">Registrar Nuevo Contacto</h2>
             <form id="formRegistrarVinculacion" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
                 <div class="input-group" style="flex: 1; min-width: 200px;">
                     <label for="inputNombre">Nombre:</label>
@@ -54,6 +54,29 @@
                 <div class="input-group" style="flex: 1; min-width: 200px;">
                     <label for="inputTelefono">Teléfono:</label>
                     <input type="number" id="inputTelefono" name="telefono" required style="width: 100%; padding: 10px; font-size: 16px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 200px;">
+                    <label for="inputPrograma">Programa:</label>
+                    <select id="inputPrograma" name="programa" required style="width: 100%; padding: 10px; font-size: 16px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                        <option value="">Seleccione un programa</option>
+                        <option value="Bachillerato">Bachillerato</option>
+                        <option value="Lic. Administracion de Empresas">Lic. Administracion de Empresas</option>
+                        <option value="Lic. Contaduría Pública">Lic. Contaduría Pública</option>
+                        <option value="Lic. Ciencias de la Educación con Acentuación en Enseñanza Bilingue">Lic. Ciencias de la Educación con Acentuación en Enseñanza Bilingue</option>
+                        <option value="Lic. Relaciones Internacionales">Lic. Relaciones Internacionales</option>
+                        <option value="Lic. Ciencias Jurídicas">Lic. Ciencias Jurídicas</option>
+                        <option value="Lic. Diseño Gráfico">Lic. Diseño Gráfico</option>
+                        <option value="Lic. Mercadotecnia Digital">Lic. Mercadotecnia Digital</option>
+                        <option value="Lic. Comercio Internacional">Lic. Comercio Internacional</option>
+                        <option value="Ing. Multimedia y Animación Digital">Ing. Multimedia y Animación Digital</option>
+                        <option value="Ing. Tecnologías Computacionales">Ing. Tecnologías Computacionales</option>
+                        <option value="Ing. Sistemas Computacionales">Ing. Sistemas Computacionales</option>
+                        <option value="Ing. Industrial y de Sistemas">Ing. Industrial y de Sistemas</option>
+                        <option value="Ing. Liderazgo y Gestión Empresarial.">Ing. Liderazgo y Gestión Empresarial.</option>
+                        <option value="Lic. (ONLINE) Administración de Negocios Internacionales">Lic. (ONLINE) Administración de Negocios Internacionales</option>
+                        <option value="Lic. (ONLINE) Derecho">Lic. (ONLINE) Derecho</option>
+                        <option value="Lic. (ONLINE) Contador Publico">Lic. (ONLINE) Contador Publico</option>
+                    </select>
                 </div>
                 <button type="submit" style="padding: 12px 24px; font-size: 16px; background: #0b0b63; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.3s; white-space: nowrap;">
                     Registrar

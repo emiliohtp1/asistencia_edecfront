@@ -5,6 +5,7 @@ const API_VINCULACION_BORRAR = 'https://asistencia-edec.onrender.com/api/vincula
 let formRegistrarVinculacion;
 let inputNombre;
 let inputTelefono;
+let inputPrograma;
 let tbodyVinculacion;
 let paginacionVinculacion;
 let mensajeSinResultados;
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formRegistrarVinculacion = document.getElementById('formRegistrarVinculacion');
     inputNombre = document.getElementById('inputNombre');
     inputTelefono = document.getElementById('inputTelefono');
+    inputPrograma = document.getElementById('inputPrograma');
     tbodyVinculacion = document.getElementById('tbodyVinculacion');
     paginacionVinculacion = document.getElementById('paginacionVinculacion');
     mensajeSinResultados = document.getElementById('mensajeSinResultados');
@@ -271,8 +273,9 @@ async function registrarVinculacion(e) {
     
     const nombre = inputNombre.value.trim();
     const telefono = parseInt(inputTelefono.value.trim());
+    const programa = inputPrograma.value.trim();
     
-    if (!nombre || !telefono) {
+    if (!nombre || !telefono || !programa) {
         errorMsg.textContent = 'Por favor, completa todos los campos.';
         errorMsg.style.display = 'block';
         return;
@@ -286,7 +289,8 @@ async function registrarVinculacion(e) {
             },
             body: JSON.stringify({
                 nombre: nombre,
-                telefono: telefono
+                telefono: telefono,
+                programa: programa
             })
         });
         
