@@ -865,6 +865,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
     btnExcelMobile = document.getElementById("btnExcelMobile"); // Variable global, igual que btnFichados y btnCerrarSesion
+    
+    // DEBUG: Alert inmediato cuando se obtiene el botón
+    if (window.innerWidth <= 768) {
+        alert(`DEBUG 1 - Al obtener botón:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nbtnFichados existe: ${btnFichados !== null}\nbtnCerrarSesion existe: ${btnCerrarSesion !== null}`);
+    }
+    
     modalExcelOverlay = document.getElementById("modalExcelOverlay");
     modalExcel = document.getElementById("modalExcel");
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
@@ -1052,24 +1058,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Configurar botón Excel móvil (EXACTAMENTE igual que btnFichados y btnCerrarSesion)
-    // Agregar logs de depuración para móviles
+    // DEBUG 2: Antes de configurar el botón
     if (window.innerWidth <= 768) {
-        console.log('=== DEBUG MÓVIL ===');
-        console.log('btnExcelMobile existe?', btnExcelMobile !== null);
-        console.log('btnExcelMobile:', btnExcelMobile);
-        if (btnExcelMobile) {
-            console.log('btnExcelMobile.textContent:', btnExcelMobile.textContent);
-            console.log('btnExcelMobile.style.display:', window.getComputedStyle(btnExcelMobile).display);
-            console.log('btnExcelMobile.parentElement:', btnExcelMobile.parentElement);
-            console.log('Contenedor .asistencias-header-buttons display:', window.getComputedStyle(btnExcelMobile.parentElement).display);
-            
-            // Alert para depuración en móviles
-            setTimeout(() => {
-                alert(`DEBUG MÓVIL:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nTexto: ${btnExcelMobile ? btnExcelMobile.textContent : 'N/A'}\nDisplay: ${btnExcelMobile ? window.getComputedStyle(btnExcelMobile).display : 'N/A'}\nContenedor display: ${btnExcelMobile && btnExcelMobile.parentElement ? window.getComputedStyle(btnExcelMobile.parentElement).display : 'N/A'}`);
-            }, 1000);
-        } else {
-            alert('ERROR: btnExcelMobile NO EXISTE en el DOM');
-        }
+        alert(`DEBUG 2 - Antes de configurar:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nbtnExcelMobile en DOM: ${btnExcelMobile && document.body.contains(btnExcelMobile)}\nDisplay computed: ${btnExcelMobile ? window.getComputedStyle(btnExcelMobile).display : 'N/A'}`);
     }
     
     if (btnExcelMobile) {
@@ -1083,12 +1074,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Event listener para el botón móvil (EXACTAMENTE igual que btnFichados)
         btnExcelMobile.addEventListener("click", handleExcelClick);
         
-        console.log('Event listener agregado a btnExcelMobile');
+        // DEBUG 3: Después de agregar event listener
+        if (window.innerWidth <= 768) {
+            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\nDisplay: ${window.getComputedStyle(btnExcelMobile).display}\nVisibility: ${window.getComputedStyle(btnExcelMobile).visibility}\nOpacity: ${window.getComputedStyle(btnExcelMobile).opacity}`);
+        }
     } else {
-        console.error('btnExcelMobile no encontrado en el DOM');
         if (window.innerWidth <= 768) {
             alert('ERROR: btnExcelMobile no encontrado. ID correcto?');
         }
+    }
+    
+    // DEBUG 4: Después de todo el DOMContentLoaded (con setTimeout)
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            const btnExcelMobileCheck = document.getElementById("btnExcelMobile");
+            const contenedorCheck = document.querySelector('.asistencias-header-buttons');
+            alert(`DEBUG 4 - Después de 500ms:\nbtnExcelMobile existe: ${btnExcelMobileCheck !== null}\nbtnExcelMobile en DOM: ${btnExcelMobileCheck && document.body.contains(btnExcelMobileCheck)}\nDisplay: ${btnExcelMobileCheck ? window.getComputedStyle(btnExcelMobileCheck).display : 'N/A'}\nContenedor display: ${contenedorCheck ? window.getComputedStyle(contenedorCheck).display : 'N/A'}\nHijos del contenedor: ${contenedorCheck ? contenedorCheck.children.length : 'N/A'}`);
+        }, 500);
+        
+        // DEBUG 5: Después de más tiempo
+        setTimeout(() => {
+            const btnExcelMobileCheck = document.getElementById("btnExcelMobile");
+            const contenedorCheck = document.querySelector('.asistencias-header-buttons');
+            const hijos = contenedorCheck ? Array.from(contenedorCheck.children).map((child, idx) => `${idx}: ${child.id || child.className} (display: ${window.getComputedStyle(child).display})`).join('\n') : 'N/A';
+            alert(`DEBUG 5 - Después de 2000ms:\nbtnExcelMobile existe: ${btnExcelMobileCheck !== null}\nDisplay: ${btnExcelMobileCheck ? window.getComputedStyle(btnExcelMobileCheck).display : 'N/A'}\nHijos del contenedor:\n${hijos}`);
+        }, 2000);
     }
 
     // Cargar todas las asistencias al iniciar
