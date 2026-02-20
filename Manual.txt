@@ -24,9 +24,12 @@ frontend/
 │   ├── login_asistencias.js         # Lógica de login para asistencias
 │   ├── login_buscador.js            # Lógica de login para buscador
 │   ├── login_registrador.js         # Lógica de login para registrador
+│   ├── login_vinculacion.js         # Lógica de login para vinculación
 │   ├── password-toggle.js           # Toggle de visibilidad de contraseñas
 │   ├── registrador.js               # Lógica de registro de asistencias
-│   └── registro-usuario.js          # Lógica de registro de nuevos usuarios
+│   ├── registro-usuario.js          # Lógica de registro de nuevos usuarios
+│   ├── vinculacion.js               # Lógica de gestión de vinculación
+│   ├── authGuard_vinculacion.js     # Guard de autenticación para vinculación
 ├── images/
 │   └── logo.png                     # Logo de la institución
 ├── administrador.html               # Dashboard del administrador
@@ -36,7 +39,9 @@ frontend/
 ├── buscador.html                    # Página de búsqueda de alumnos
 ├── buscadorlogin.html               # Página de login para buscador
 ├── home.html                        # Página principal del registrador
-└── index.html                       # Página de login del registrador
+├── index.html                       # Página de login del registrador
+├── vinculacion.html                 # Página de gestión de vinculación
+└── vinculacionlogin.html            # Página de login para vinculación
 
 ================================================================================
                             ARCHIVOS HTML
@@ -86,6 +91,8 @@ frontend/
    - Muestra todas las asistencias o permite buscar por matrícula
    - Filtros por día y mes
    - Vista de fichados (alumnos con 3+ fichas)
+   - Columna "Acciones" en tabla de fichados con botón de eliminar registro
+   - Modal de confirmación para eliminar registros de fichados
    - Exportación a Excel con filtros de fecha flexibles
    - Paginación de resultados (10 por página)
    - Ordenamiento de Excel por fecha (más reciente primero)
@@ -135,6 +142,8 @@ frontend/
    - Integración con API de fichados para obtener cantidad_fichas
    - Busca en ambas APIs (bachillerato y universidad)
    - Modal de confirmación para fichar alumnos
+   - Al hacer click en "Sí", los botones se ocultan inmediatamente para evitar múltiples registros
+   - Muestra mensaje de éxito "¡Alumno fichado exitosamente!" después de fichar
 
 6. buscadorlogin.html
    Propósito: Página de login para usuarios que acceden al buscador.
@@ -189,6 +198,46 @@ frontend/
    Detalles importantes:
    - Usa localStorage: isLoggedInAdmin, adminCorreo, adminRol, adminContraseña
    - Verifica roles: administrador, director, coordinador, servicio social
+   - Botón "Registros Vinculación" que abre vinculacion.html en nueva pestaña
+   - Capitalización automática de nombres en formulario de creación de usuarios
+
+9. vinculacion.html
+   Propósito: Gestión de registros de vinculación (nombre y teléfono).
+   Funcionalidad:
+   - Formulario para registrar nuevos contactos (nombre y teléfono)
+   - Tabla que muestra los 10 registros más recientes
+   - Paginación de registros (10 por página)
+   - Botón de eliminar por registro (botón rojo con X blanca)
+   - Exportación a Excel con filtro por fecha
+   - Botones "Importar a Excel" y "Cerrar Sesión" alineados horizontalmente
+   
+   Scripts incluidos:
+   - ExcelJS (CDN): Librería para generar archivos Excel
+   - authGuard_vinculacion.js: Verificación de autenticación y rol
+   - vinculacion.js: Lógica principal de vinculación
+   
+   Detalles importantes:
+   - Roles permitidos: administrador, director, coordinador, vinculacion
+   - Capitalización automática de nombres al escribir
+   - Formato de Excel: "Vinculacion_Registros_dd-mm-aaaa.xlsx"
+   - Headers azules en Excel (Teléfono, Nombre, Fecha)
+   - Usa localStorage: isLoggedInVinculacion, vinculacionCorreo, vinculacionRol
+
+10. vinculacionlogin.html
+   Propósito: Página de login para usuarios con rol de vinculación.
+   Funcionalidad:
+   - Similar a index.html pero para rol de vinculación
+   - Redirige a vinculacion.html después de login exitoso
+   - Verifica autorización y rol del usuario
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - registro-usuario.js
+   - login_vinculacion.js
+   
+   Detalles importantes:
+   - Usa localStorage: isLoggedInVinculacion, vinculacionCorreo, vinculacionRol
+   - Verifica roles: administrador, director, coordinador, vinculacion
 
 ================================================================================
                             ARCHIVOS JAVASCRIPT
@@ -267,6 +316,8 @@ frontend/
     - Búsqueda por matrícula
     - Filtros por día y mes
     - Vista de fichados (alumnos con 3+ fichas)
+    - Columna "Acciones" en tabla de fichados con funcionalidad de eliminar
+    - Eliminación de registros de fichados con confirmación modal
     - Paginación (10 elementos por página)
     - Exportación a Excel con ExcelJS
     - Filtros de fecha flexibles (día, mes, año) para Excel
@@ -302,6 +353,9 @@ frontend/
     - Crea un mapa (objeto) de fichados por matrícula para acceso rápido
     - Maneja casos donde el alumno no tiene fichas (devuelve 0)
     - Verifica existencia del alumno antes de fichar
+    - Protección contra múltiples registros simultáneos (bandera procesandoFichar)
+    - Ocultación inmediata de botones al hacer click en "Sí"
+    - Mensaje de éxito con animación después de fichar exitosamente
 
 12. administrador.js
     Propósito: Lógica completa del dashboard de administración.
@@ -335,6 +389,9 @@ frontend/
     - Ordenamiento por múltiples columnas (nombre, correo, rol, fecha)
     - Manejo de errores sin alertas (solo console.error)
     - Actualización automática de tablas después de acciones
+    - Capitalización automática de nombres en formulario de creación de usuarios
+    - Botón "Registros Vinculación" que abre vinculacion.html en nueva pestaña
+    - Fix para mobile: window.open() se ejecuta antes de validación async para evitar bloqueo de pop-ups
 
 13. password-toggle.js
     Propósito: Script reutilizable para mostrar/ocultar contraseñas.
@@ -368,6 +425,43 @@ frontend/
     - Maneja errores de conexión y validación
     - Limpia formulario después de registro exitoso
     - Mensaje de éxito temporal (6 segundos)
+    - Capitalización automática de nombres al escribir en el campo "Nombre Completo"
+    - Incluye rol "vinculacion" en el selector de roles
+
+15. vinculacion.js
+    Propósito: Lógica completa para gestión de registros de vinculación.
+    Endpoints:
+    - POST /api/vinculacion/registrar
+    - GET /api/vinculacion/datos
+    - DELETE /api/vinculacion/borrar/{telefono}
+    
+    Funcionalidad:
+    - Registro de nuevos contactos (nombre y teléfono)
+    - Visualización de registros con paginación (10 por página)
+    - Eliminación de registros individuales
+    - Exportación a Excel con filtro por fecha
+    - Capitalización automática de nombres al escribir
+    - Actualización automática de tabla después de registrar/eliminar
+    
+    Librerías:
+    - ExcelJS v4.4.0 (desde CDN)
+    
+    Detalles importantes:
+    - Formato de nombre de archivo Excel: "Vinculacion_Registros_dd-mm-aaaa.xlsx"
+    - Parsing directo de fecha para evitar problemas de timezone
+    - Headers azules en Excel (#0b0b63)
+    - Filtro por fecha usando campo "timestamp" de la API
+    - Botones "Importar a Excel" y "Cerrar Sesión" en contenedor flex horizontal
+
+16. login_vinculacion.js
+    Propósito: Maneja el proceso de autenticación para usuarios de vinculación.
+    Similar a login_registrador.js pero con diferentes claves de localStorage.
+    Verifica roles: administrador, director, coordinador, vinculacion.
+
+17. authGuard_vinculacion.js
+    Propósito: Protege vinculacion.html verificando autenticación y rol.
+    Similar a authGuard_registrador.js pero para vinculación.
+    Roles permitidos: administrador, director, coordinador, vinculacion.
 
 ================================================================================
                             ARCHIVO CSS
@@ -468,6 +562,20 @@ FICHADOS:
   Body: { "matricula": "...", "nombre": "..." }
   Respuesta: { "mensaje": "Ficha registrada exitosamente" }
 
+- DELETE /api/fichados/apodaca/{matricula}
+  Respuesta: { "mensaje": "Registro eliminado exitosamente" }
+
+VINCULACIÓN:
+- POST /api/vinculacion/registrar
+  Body: { "nombre": "...", "telefono": 1234567890 }
+  Respuesta: { "mensaje": "Registro creado exitosamente" }
+
+- GET /api/vinculacion/datos
+  Respuesta: { "total": 22, "registros": [{ "_id": "...", "nombre": "...", "telefono": 1234567890, "fecha": "17/02/2026 a las 17:16", "timestamp": "2026-02-17T23:16:59.881000" }] }
+
+- DELETE /api/vinculacion/borrar/{telefono}
+  Respuesta: { "mensaje": "Registro eliminado exitosamente" }
+
 ================================================================================
                             SISTEMA DE AUTENTICACIÓN
 ================================================================================
@@ -488,6 +596,7 @@ LocalStorage keys por rol:
 - Asistencias: isLoggedInBuscador, asistenciasCorreo, asistenciasRol
 - Buscador: isLoggedInBuscadorAlumnos, buscadorCorreo, buscadorRol
 - Administrador: isLoggedInAdmin, adminCorreo, adminRol, adminContraseña
+- Vinculación: isLoggedInVinculacion, vinculacionCorreo, vinculacionRol
 
 AuthGuards:
 Cada página protegida tiene un authGuard que:
@@ -501,6 +610,7 @@ Roles y permisos:
 - director: Acceso completo a todas las páginas
 - coordinador: Acceso a todas las páginas excepto creación de admin/director
 - servicio social: Acceso a registrador, asistencias y buscador
+- vinculacion: Acceso exclusivo a página de vinculación
 
 ================================================================================
                             SISTEMA DE AUTORIZACIÓN
@@ -520,6 +630,7 @@ Flujo de registro y autorización:
 Restricciones de registro:
 - No se pueden crear usuarios con rol "administrador" o "director" desde el frontend
 - Solo usuarios con rol administrador/director pueden crear estos roles desde administrador.html
+- El rol "vinculacion" está disponible en todos los formularios de registro de usuarios
 
 ================================================================================
                             FUNCIONALIDADES ESPECIALES
@@ -555,6 +666,9 @@ Restricciones de registro:
    - Muestra cantidad de fichas por alumno
    - Celda roja si cantidad_fichas >= 3
    - Registro de fichas desde buscador.html
+   - Eliminación de registros de fichados desde asistencias.html
+   - Modal de confirmación para eliminar registros
+   - Protección contra múltiples registros simultáneos
 
 6. Toggle de contraseña:
    - Icono SVG de ojo/ojo-tachado
@@ -566,6 +680,23 @@ Restricciones de registro:
    - Muestra contador de usuarios pendientes
    - Actualización automática después de acciones
    - Diseño circular con fondo rojo
+
+8. Capitalización automática de nombres:
+   - Implementada en todos los formularios de registro
+   - Capitaliza la primera letra de cada palabra automáticamente
+   - Aplicada en: vinculacion.html, administrador.html, y todos los modales de registro
+
+9. Sistema de vinculación:
+   - Gestión de contactos (nombre y teléfono)
+   - Exportación a Excel con filtro por fecha
+   - Eliminación individual de registros
+   - Paginación de resultados
+   - Formato de fecha en nombre de archivo: dd-mm-aaaa
+
+10. Mejoras en modales:
+    - Ocultación inmediata de botones para prevenir múltiples acciones
+    - Mensajes de éxito con animación
+    - Protección contra clics múltiples con banderas de estado
 
 ================================================================================
                             NOTAS TÉCNICAS
@@ -667,6 +798,15 @@ Fichado:
   "cantidad_fichas": 1
 }
 
+Registro de Vinculación:
+{
+  "_id": "6994f6eb6e622ea21e9f5a99",
+  "nombre": "Alberto Ortiz Delgado",
+  "telefono": 8144316908,
+  "fecha": "17/02/2026 a las 17:16",
+  "timestamp": "2026-02-17T23:16:59.881000"
+}
+
 ================================================================================
                             FIN DEL MANUAL
 ================================================================================
@@ -676,4 +816,16 @@ Sistema de Asistencia EDEC. Para más información sobre endpoints específicos,
 consultar la documentación de la API del backend.
 
 Fecha de creación: 2026
-Versión: 1.0
+Versión: 2.0
+Última actualización: Febrero 2026
+
+Cambios en versión 2.0:
+- Agregada página de vinculación (vinculacion.html y vinculacionlogin.html)
+- Nuevo rol "vinculacion" agregado al sistema
+- Funcionalidad de eliminación de registros fichados en asistencias.html
+- Capitalización automática de nombres en todos los formularios
+- Mejoras en modales para prevenir múltiples registros
+- Botón "Registros Vinculación" en administrador.html
+- Correcciones de formato de fecha en exportación Excel
+- Mejoras en layout de botones (vinculación)
+- Fix para apertura de ventanas en dispositivos móviles
