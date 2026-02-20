@@ -707,11 +707,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Función para formatear fecha de ISO 8601 a dd/mm/aaaa
+    function formatearFecha(fechaISO) {
+        if (!fechaISO) return '';
+        try {
+            const fecha = new Date(fechaISO);
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const año = fecha.getFullYear();
+            return `${dia}/${mes}/${año}`;
+        } catch (error) {
+            console.error('Error al formatear fecha:', error);
+            return '';
+        }
+    }
+
     // Función para cargar usuarios pendientes de aprobación
     async function cargarUsuariosPendientes() {
         if (!tbodyUsuariosPendientes) return;
         
-        tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center;">Cargando usuarios pendientes...</td></tr>';
+        tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="6" style="text-align: center;">Cargando usuarios pendientes...</td></tr>';
         
         try {
             const response = await fetch(API_USUARIOS);
@@ -723,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuariosPendientes = (data.usuarios || []).filter(u => !u.autorizado);
             
             if (usuariosPendientes.length === 0) {
-                tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay usuarios pendientes de aprobación.</td></tr>';
+                tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay usuarios pendientes de aprobación.</td></tr>';
                 return;
             }
             
@@ -734,6 +749,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 fila.innerHTML = `
                     <td>${usuario.nombre_completo || ''}</td>
                     <td>${usuario.correo || ''}</td>
+                    <td>${usuario.rol || ''}</td>
+                    <td>${usuario.campus || ''}</td>
+                    <td>${formatearFecha(usuario.fecha_creacion)}</td>
                     <td>
                         <button class="btn-autorizar" data-correo="${usuario.correo}" title="Autorizar usuario">✔️</button>
                         <button class="btn-rechazar" data-correo="${usuario.correo}" title="Eliminar usuario">❌</button>
@@ -761,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error al cargar usuarios pendientes:', error);
-            tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Error al cargar usuarios pendientes.</td></tr>';
+            tbodyUsuariosPendientes.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Error al cargar usuarios pendientes.</td></tr>';
         }
     }
     
