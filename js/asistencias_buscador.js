@@ -777,24 +777,14 @@ function mostrarVistaFichados() {
     contenedorFichados.style.display = 'block';
     
     // Obtener y configurar el botón de Excel de fichados ahora que el contenedor está visible
-    // Usar setTimeout para asegurar que el DOM esté completamente renderizado
-    setTimeout(() => {
-        btnExcelFichados = document.getElementById("btnExcelFichados");
-        if (btnExcelFichados) {
-            // Remover listener anterior si existe
-            const newBtn = btnExcelFichados.cloneNode(true);
-            btnExcelFichados.parentNode.replaceChild(newBtn, btnExcelFichados);
-            btnExcelFichados = newBtn;
-            
-            // Agregar nuevo listener
-            btnExcelFichados.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Botón Excel Fichados clickeado');
-                generarExcelFichados();
-            });
-        }
-    }, 100);
+    btnExcelFichados = document.getElementById("btnExcelFichados");
+    if (btnExcelFichados) {
+        btnExcelFichados.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            generarExcelFichados();
+        });
+    }
     
     // Cargar fichados
     paginaActualFichados = 1; // Resetear a la primera página
@@ -906,7 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Configurar botón Excel móvil después de que todo esté cargado
+    // Configurar botón Excel móvil (igual que los otros botones que funcionan)
     if (btnExcelMobile) {
         // Acortar texto en móviles
         if (window.innerWidth <= 768) {
@@ -918,27 +908,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Event listener para el botón móvil
+        // Event listener para el botón móvil (igual que btnFichados)
         btnExcelMobile.addEventListener("click", handleExcelClick);
-        
-        // También actualizar si se redimensiona la ventana
-        window.addEventListener('resize', () => {
-            if (window.innerWidth <= 768) {
-                if (btnExcelMobile && !btnExcelMobile.textContent.includes("Excel") && btnExcelMobile.textContent.includes("Importar a Excel")) {
-                    btnExcelMobile.textContent = "Excel";
-                }
-                if (btnCerrarSesion && !btnCerrarSesion.textContent.includes("Cerrar") && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
-                    btnCerrarSesion.textContent = "Cerrar";
-                }
-            } else {
-                if (btnExcelMobile && btnExcelMobile.textContent === "Excel") {
-                    btnExcelMobile.textContent = "Importar a Excel";
-                }
-                if (btnCerrarSesion && btnCerrarSesion.textContent === "Cerrar") {
-                    btnCerrarSesion.textContent = "Cerrar Sesión";
-                }
-            }
-        });
     }
 
     // Configurar event listeners
@@ -1547,13 +1518,15 @@ document.addEventListener('DOMContentLoaded', () => {
         generarExcel();
     });
     
-    // ==============================
-    //   FUNCIONALIDAD DE EXCEL PARA FICHADOS
-    // ==============================
-    
-    // Función para generar el archivo Excel de fichados
-    async function generarExcelFichados() {
-        try {
+    // Poblar selectores de fecha al cargar la página
+    poblarSelectoresFecha();
+});
+
+// ==============================
+//   FUNCIÓN GLOBAL PARA GENERAR EXCEL DE FICHADOS
+// ==============================
+async function generarExcelFichados() {
+    try {
             if (todosLosFichados.length === 0) {
                 alert('No hay datos de fichados para exportar.');
                 return;
@@ -1697,12 +1670,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     mensajeTemporal.remove();
                 }, 2000);
             }
-        } catch (error) {
-            console.error('Error al generar Excel de fichados:', error);
-            alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
-        }
+    } catch (error) {
+        console.error('Error al generar Excel de fichados:', error);
+        alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
     }
-    
-    // Poblar selectores de fecha al cargar la página
-    poblarSelectoresFecha();
-});
+}
