@@ -865,12 +865,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
     btnExcelMobile = document.getElementById("btnExcelMobile"); // Variable global, igual que btnFichados y btnCerrarSesion
-    
-    // DEBUG: Alert inmediato cuando se obtiene el botón
-    if (window.innerWidth <= 768) {
-        alert(`DEBUG 1 - Al obtener botón:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nbtnFichados existe: ${btnFichados !== null}\nbtnCerrarSesion existe: ${btnCerrarSesion !== null}`);
-    }
-    
     modalExcelOverlay = document.getElementById("modalExcelOverlay");
     modalExcel = document.getElementById("modalExcel");
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
@@ -1058,11 +1052,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Configurar botón Excel móvil (EXACTAMENTE igual que btnFichados y btnCerrarSesion)
-    // DEBUG 2: Antes de configurar el botón
-    if (window.innerWidth <= 768) {
-        alert(`DEBUG 2 - Antes de configurar:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nbtnExcelMobile en DOM: ${btnExcelMobile && document.body.contains(btnExcelMobile)}\nDisplay computed: ${btnExcelMobile ? window.getComputedStyle(btnExcelMobile).display : 'N/A'}`);
-    }
-    
     if (btnExcelMobile) {
         // Acortar texto en móviles
         if (window.innerWidth <= 768) {
@@ -1074,76 +1063,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Event listener para el botón móvil (EXACTAMENTE igual que btnFichados)
         btnExcelMobile.addEventListener("click", handleExcelClick);
         
-        // DEBUG 3: Después de agregar event listener
-        if (window.innerWidth <= 768) {
-            const style = window.getComputedStyle(btnExcelMobile);
-            const rect = btnExcelMobile.getBoundingClientRect();
-            const contenedor = btnExcelMobile.parentElement;
-            const contenedorStyle = window.getComputedStyle(contenedor);
-            const contenedorRect = contenedor.getBoundingClientRect();
-            
-            // Verificar si está dentro del viewport
-            const enViewport = rect.top >= 0 && rect.left >= 0 && 
-                              rect.bottom <= window.innerHeight && 
-                              rect.right <= window.innerWidth;
-            
-            // Verificar si hay elementos superpuestos
-            const elementosEnPosicion = document.elementsFromPoint(rect.left + rect.width/2, rect.top + rect.height/2);
-            const elementoSuperior = elementosEnPosicion[0];
-            
-            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\n\nBOTÓN:\nDisplay: ${style.display}\nVisibility: ${style.visibility}\nOpacity: ${style.opacity}\nWidth: ${style.width} (${rect.width}px)\nHeight: ${style.height} (${rect.height}px)\nPosition: ${style.position}\nTop: ${style.top}\nLeft: ${style.left}\nZ-index: ${style.zIndex}\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}, width=${rect.width.toFixed(0)}, height=${rect.height.toFixed(0)}\nEn viewport: ${enViewport}\n\nElemento superior en posición: ${elementoSuperior ? (elementoSuperior.id || elementoSuperior.className || elementoSuperior.tagName) : 'N/A'}\nEs el botón?: ${elementoSuperior === btnExcelMobile}\n\nCONTENEDOR:\nDisplay: ${contenedorStyle.display}\nWidth: ${contenedorStyle.width}\nHeight: ${contenedorStyle.height}\nGap: ${contenedorStyle.gap}\nRect: top=${contenedorRect.top.toFixed(0)}, left=${contenedorRect.left.toFixed(0)}, width=${contenedorRect.width.toFixed(0)}, height=${contenedorRect.height.toFixed(0)}\n\nViewport: ${window.innerWidth}x${window.innerHeight}`);
-            
-            // DEBUG 3.5: Verificar inmediatamente después del alert
-            setTimeout(() => {
-                const btnCheck = document.getElementById("btnExcelMobile");
-                if (btnCheck) {
-                    const checkStyle = window.getComputedStyle(btnCheck);
-                    const checkRect = btnCheck.getBoundingClientRect();
-                    const elementosAhora = document.elementsFromPoint(checkRect.left + checkRect.width/2, checkRect.top + checkRect.height/2);
-                    alert(`DEBUG 3.5 - Inmediatamente después del alert:\nDisplay: ${checkStyle.display}\nVisibility: ${checkStyle.visibility}\nOpacity: ${checkStyle.opacity}\nRect: top=${checkRect.top.toFixed(0)}, left=${checkRect.left.toFixed(0)}\nElemento superior ahora: ${elementosAhora[0] ? (elementosAhora[0].id || elementosAhora[0].className || elementosAhora[0].tagName) : 'N/A'}\nEs el botón?: ${elementosAhora[0] === btnCheck}`);
+        // También actualizar si se redimensiona la ventana
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 768) {
+                if (btnExcelMobile && !btnExcelMobile.textContent.includes("Excel") && btnExcelMobile.textContent.includes("Importar a Excel")) {
+                    btnExcelMobile.textContent = "Excel";
                 }
-            }, 100);
-        }
-    } else {
-        if (window.innerWidth <= 768) {
-            alert('ERROR: btnExcelMobile no encontrado. ID correcto?');
-        }
-    }
-    
-    // DEBUG 4: Después de todo el DOMContentLoaded (con setTimeout)
-    if (window.innerWidth <= 768) {
-        setTimeout(() => {
-            const btnExcelMobileCheck = document.getElementById("btnExcelMobile");
-            const contenedorCheck = document.querySelector('.asistencias-header-buttons');
-            alert(`DEBUG 4 - Después de 500ms:\nbtnExcelMobile existe: ${btnExcelMobileCheck !== null}\nbtnExcelMobile en DOM: ${btnExcelMobileCheck && document.body.contains(btnExcelMobileCheck)}\nDisplay: ${btnExcelMobileCheck ? window.getComputedStyle(btnExcelMobileCheck).display : 'N/A'}\nContenedor display: ${contenedorCheck ? window.getComputedStyle(contenedorCheck).display : 'N/A'}\nHijos del contenedor: ${contenedorCheck ? contenedorCheck.children.length : 'N/A'}`);
-        }, 500);
-        
-        // DEBUG 5: Después de más tiempo
-        setTimeout(() => {
-            const btnExcelMobileCheck = document.getElementById("btnExcelMobile");
-            const contenedorCheck = document.querySelector('.asistencias-header-buttons');
-            
-            if (btnExcelMobileCheck) {
-                const style = window.getComputedStyle(btnExcelMobileCheck);
-                const rect = btnExcelMobileCheck.getBoundingClientRect();
-                const enViewport = rect.top >= 0 && rect.left >= 0 && 
-                                  rect.bottom <= window.innerHeight && 
-                                  rect.right <= window.innerWidth;
-                
-                const hijos = contenedorCheck ? Array.from(contenedorCheck.children).map((child, idx) => {
-                    const childStyle = window.getComputedStyle(child);
-                    const childRect = child.getBoundingClientRect();
-                    const childEnViewport = childRect.top >= 0 && childRect.left >= 0 && 
-                                           childRect.bottom <= window.innerHeight && 
-                                           childRect.right <= window.innerWidth;
-                    return `${idx}: ${child.id || child.className}\n  Display: ${childStyle.display}\n  Width: ${childStyle.width} (${childRect.width.toFixed(0)}px)\n  Height: ${childStyle.height} (${childRect.height.toFixed(0)}px)\n  Rect: top=${childRect.top.toFixed(0)}, left=${childRect.left.toFixed(0)}\n  En viewport: ${childEnViewport}`;
-                }).join('\n\n') : 'N/A';
-                
-                alert(`DEBUG 5 - Después de 2000ms:\nbtnExcelMobile existe: true\nDisplay: ${style.display}\nWidth: ${style.width} (${rect.width.toFixed(0)}px)\nHeight: ${style.height} (${rect.height.toFixed(0)}px)\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}\nEn viewport: ${enViewport}\n\nHijos del contenedor:\n${hijos}`);
+                if (btnCerrarSesion && !btnCerrarSesion.textContent.includes("Cerrar") && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+                    btnCerrarSesion.textContent = "Cerrar";
+                }
             } else {
-                alert('DEBUG 5 - btnExcelMobile NO EXISTE después de 2000ms');
+                if (btnExcelMobile && btnExcelMobile.textContent === "Excel") {
+                    btnExcelMobile.textContent = "Importar a Excel";
+                }
+                if (btnCerrarSesion && btnCerrarSesion.textContent === "Cerrar") {
+                    btnCerrarSesion.textContent = "Cerrar Sesión";
+                }
             }
-        }, 2000);
+        });
     }
 
     // Cargar todas las asistencias al iniciar
