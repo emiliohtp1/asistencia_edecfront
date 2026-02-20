@@ -49,6 +49,7 @@ let vistaActual = 'asistencias'; // 'asistencias' o 'fichados'
 
 // Elementos para Excel
 let btnExcel;
+let btnExcelMobile; // Botón Excel para móviles
 let modalExcelOverlay;
 let modalExcel;
 let btnCerrarModalExcel;
@@ -863,8 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
-    // Botón Excel para móviles (nuevo)
-    const btnExcelMobile = document.getElementById("btnExcelMobile");
+    btnExcelMobile = document.getElementById("btnExcelMobile"); // Variable global, igual que btnFichados y btnCerrarSesion
     modalExcelOverlay = document.getElementById("modalExcelOverlay");
     modalExcel = document.getElementById("modalExcel");
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
@@ -895,22 +895,6 @@ document.addEventListener('DOMContentLoaded', () => {
             abrirModalExcel();
         }
     };
-
-    // Configurar botón Excel móvil (igual que los otros botones que funcionan)
-    if (btnExcelMobile) {
-        // Acortar texto en móviles
-        if (window.innerWidth <= 768) {
-            if (btnExcelMobile.textContent.includes("Importar a Excel")) {
-                btnExcelMobile.textContent = "Excel";
-            }
-            if (btnCerrarSesion && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
-                btnCerrarSesion.textContent = "Cerrar";
-            }
-        }
-        
-        // Event listener para el botón móvil (igual que btnFichados)
-        btnExcelMobile.addEventListener("click", handleExcelClick);
-    }
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -1066,6 +1050,46 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "asistenciaslogin.html";
         }
     });
+
+    // Configurar botón Excel móvil (EXACTAMENTE igual que btnFichados y btnCerrarSesion)
+    // Agregar logs de depuración para móviles
+    if (window.innerWidth <= 768) {
+        console.log('=== DEBUG MÓVIL ===');
+        console.log('btnExcelMobile existe?', btnExcelMobile !== null);
+        console.log('btnExcelMobile:', btnExcelMobile);
+        if (btnExcelMobile) {
+            console.log('btnExcelMobile.textContent:', btnExcelMobile.textContent);
+            console.log('btnExcelMobile.style.display:', window.getComputedStyle(btnExcelMobile).display);
+            console.log('btnExcelMobile.parentElement:', btnExcelMobile.parentElement);
+            console.log('Contenedor .asistencias-header-buttons display:', window.getComputedStyle(btnExcelMobile.parentElement).display);
+            
+            // Alert para depuración en móviles
+            setTimeout(() => {
+                alert(`DEBUG MÓVIL:\nbtnExcelMobile existe: ${btnExcelMobile !== null}\nTexto: ${btnExcelMobile ? btnExcelMobile.textContent : 'N/A'}\nDisplay: ${btnExcelMobile ? window.getComputedStyle(btnExcelMobile).display : 'N/A'}\nContenedor display: ${btnExcelMobile && btnExcelMobile.parentElement ? window.getComputedStyle(btnExcelMobile.parentElement).display : 'N/A'}`);
+            }, 1000);
+        } else {
+            alert('ERROR: btnExcelMobile NO EXISTE en el DOM');
+        }
+    }
+    
+    if (btnExcelMobile) {
+        // Acortar texto en móviles
+        if (window.innerWidth <= 768) {
+            if (btnExcelMobile.textContent.includes("Importar a Excel")) {
+                btnExcelMobile.textContent = "Excel";
+            }
+        }
+        
+        // Event listener para el botón móvil (EXACTAMENTE igual que btnFichados)
+        btnExcelMobile.addEventListener("click", handleExcelClick);
+        
+        console.log('Event listener agregado a btnExcelMobile');
+    } else {
+        console.error('btnExcelMobile no encontrado en el DOM');
+        if (window.innerWidth <= 768) {
+            alert('ERROR: btnExcelMobile no encontrado. ID correcto?');
+        }
+    }
 
     // Cargar todas las asistencias al iniciar
     cargarTodasLasAsistencias();
