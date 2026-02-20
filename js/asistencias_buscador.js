@@ -1076,7 +1076,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // DEBUG 3: Después de agregar event listener
         if (window.innerWidth <= 768) {
-            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\nDisplay: ${window.getComputedStyle(btnExcelMobile).display}\nVisibility: ${window.getComputedStyle(btnExcelMobile).visibility}\nOpacity: ${window.getComputedStyle(btnExcelMobile).opacity}`);
+            const style = window.getComputedStyle(btnExcelMobile);
+            const rect = btnExcelMobile.getBoundingClientRect();
+            const contenedor = btnExcelMobile.parentElement;
+            const contenedorStyle = window.getComputedStyle(contenedor);
+            const contenedorRect = contenedor.getBoundingClientRect();
+            
+            // Verificar si está dentro del viewport
+            const enViewport = rect.top >= 0 && rect.left >= 0 && 
+                              rect.bottom <= window.innerHeight && 
+                              rect.right <= window.innerWidth;
+            
+            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\n\nBOTÓN:\nDisplay: ${style.display}\nVisibility: ${style.visibility}\nOpacity: ${style.opacity}\nWidth: ${style.width} (${rect.width}px)\nHeight: ${style.height} (${rect.height}px)\nPosition: ${style.position}\nTop: ${style.top}\nLeft: ${style.left}\nZ-index: ${style.zIndex}\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}, width=${rect.width.toFixed(0)}, height=${rect.height.toFixed(0)}\nEn viewport: ${enViewport}\n\nCONTENEDOR:\nDisplay: ${contenedorStyle.display}\nWidth: ${contenedorStyle.width}\nHeight: ${contenedorStyle.height}\nGap: ${contenedorStyle.gap}\nRect: top=${contenedorRect.top.toFixed(0)}, left=${contenedorRect.left.toFixed(0)}, width=${contenedorRect.width.toFixed(0)}, height=${contenedorRect.height.toFixed(0)}\n\nViewport: ${window.innerWidth}x${window.innerHeight}`);
         }
     } else {
         if (window.innerWidth <= 768) {
@@ -1096,8 +1107,27 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const btnExcelMobileCheck = document.getElementById("btnExcelMobile");
             const contenedorCheck = document.querySelector('.asistencias-header-buttons');
-            const hijos = contenedorCheck ? Array.from(contenedorCheck.children).map((child, idx) => `${idx}: ${child.id || child.className} (display: ${window.getComputedStyle(child).display})`).join('\n') : 'N/A';
-            alert(`DEBUG 5 - Después de 2000ms:\nbtnExcelMobile existe: ${btnExcelMobileCheck !== null}\nDisplay: ${btnExcelMobileCheck ? window.getComputedStyle(btnExcelMobileCheck).display : 'N/A'}\nHijos del contenedor:\n${hijos}`);
+            
+            if (btnExcelMobileCheck) {
+                const style = window.getComputedStyle(btnExcelMobileCheck);
+                const rect = btnExcelMobileCheck.getBoundingClientRect();
+                const enViewport = rect.top >= 0 && rect.left >= 0 && 
+                                  rect.bottom <= window.innerHeight && 
+                                  rect.right <= window.innerWidth;
+                
+                const hijos = contenedorCheck ? Array.from(contenedorCheck.children).map((child, idx) => {
+                    const childStyle = window.getComputedStyle(child);
+                    const childRect = child.getBoundingClientRect();
+                    const childEnViewport = childRect.top >= 0 && childRect.left >= 0 && 
+                                           childRect.bottom <= window.innerHeight && 
+                                           childRect.right <= window.innerWidth;
+                    return `${idx}: ${child.id || child.className}\n  Display: ${childStyle.display}\n  Width: ${childStyle.width} (${childRect.width.toFixed(0)}px)\n  Height: ${childStyle.height} (${childRect.height.toFixed(0)}px)\n  Rect: top=${childRect.top.toFixed(0)}, left=${childRect.left.toFixed(0)}\n  En viewport: ${childEnViewport}`;
+                }).join('\n\n') : 'N/A';
+                
+                alert(`DEBUG 5 - Después de 2000ms:\nbtnExcelMobile existe: true\nDisplay: ${style.display}\nWidth: ${style.width} (${rect.width.toFixed(0)}px)\nHeight: ${style.height} (${rect.height.toFixed(0)}px)\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}\nEn viewport: ${enViewport}\n\nHijos del contenedor:\n${hijos}`);
+            } else {
+                alert('DEBUG 5 - btnExcelMobile NO EXISTE después de 2000ms');
+            }
         }, 2000);
     }
 
