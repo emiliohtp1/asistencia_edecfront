@@ -165,17 +165,32 @@
                             <th>Nombre</th>
                             <th>Programa</th>
                             <th>Fichas</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbodyFichados">
                         <tr>
-                            <td colspan="4" style="text-align: center;">Cargando fichados...</td>
+                            <td colspan="5" style="text-align: center;">Cargando fichados...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="paginacion-fichados" id="paginacionFichados">
                 <!-- Los botones de paginación se generarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para confirmar eliminación de registro de fichado -->
+    <div class="modal-overlay" id="modalEliminarFichado" style="display: none;">
+        <div class="modal-content modal-fichar">
+            <h2 id="tituloEliminarFichado">¿Eliminar 1 registro del usuario?</h2>
+            <div id="mensajeExitoEliminarFichado" class="mensaje-exito" style="display: none;">
+                1 registro eliminado correctamente
+            </div>
+            <div class="modal-buttons-fichar" id="botonesEliminarFichado">
+                <button class="btn-fichar-si" id="btnEliminarFichadoSi">Sí</button>
+                <button class="btn-fichar-no" id="btnEliminarFichadoNo">No</button>
             </div>
         </div>
     </div>

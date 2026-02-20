@@ -36,6 +36,16 @@ let paginaActualFichados = 1; // Página actual de la paginación de fichados
 const fichadosPorPagina = 10; // Cantidad de fichados por página
 let paginacionFichados; // Elemento del DOM para la paginación de fichados
 
+// Elementos para modal de eliminar fichado
+let modalEliminarFichado;
+let btnEliminarFichadoSi;
+let btnEliminarFichadoNo;
+let tituloEliminarFichado;
+let mensajeExitoEliminarFichado;
+let botonesEliminarFichado;
+let fichadoSeleccionadoEliminar = null;
+let procesandoEliminarFichado = false;
+
 // Elementos para Excel
 let btnExcel;
 let modalExcelOverlay;
@@ -434,7 +444,7 @@ async function cargarFichados() {
         
     } catch (error) {
         console.error('Error al cargar fichados:', error);
-        tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar fichados.</td></tr>';
+        tbodyFichados.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar fichados.</td></tr>';
         if (paginacionFichados) {
             paginacionFichados.innerHTML = '';
         }
@@ -448,7 +458,7 @@ function mostrarFichados() {
     tbodyFichados.innerHTML = '';
     
     if (fichadosFiltrados.length === 0) {
-        tbodyFichados.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay alumnos fichados.</td></tr>';
+        tbodyFichados.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay alumnos fichados.</td></tr>';
         if (paginacionFichados) {
             paginacionFichados.innerHTML = '';
         }
@@ -470,8 +480,26 @@ function mostrarFichados() {
             <td>${fichado.nombre || ''}</td>
             <td>${fichado.programa || ''}</td>
             <td class="${claseFichas}">${cantidadFichas}</td>
+            <td>
+                <button class="btn-eliminar-usuario" data-matricula="${fichado.matricula || ''}" data-nombre="${fichado.nombre || ''}" title="Eliminar registro">
+                    ×
+                </button>
+            </td>
         `;
         tbodyFichados.appendChild(fila);
+    });
+    
+    // Agregar event listeners a los botones de eliminar
+    const botonesEliminar = document.querySelectorAll('#tbodyFichados .btn-eliminar-usuario');
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const matricula = boton.getAttribute('data-matricula');
+            const nombre = boton.getAttribute('data-nombre');
+            const fichado = fichadosFiltrados.find(f => f.matricula === matricula);
+            if (fichado) {
+                abrirModalEliminarFichado(fichado);
+            }
+        });
     });
     
     // Renderizar paginación
@@ -606,6 +634,121 @@ function renderizarPaginacionFichados() {
 }
 
 // ==============================
+//   MODAL DE ELIMINAR FICHADO
+// ==============================
+
+function abrirModalEliminarFichado(fichado) {
+    fichadoSeleccionadoEliminar = fichado;
+    if (tituloEliminarFichado) {
+        tituloEliminarFichado.textContent = `¿Eliminar 1 registro del usuario ${fichado.nombre || ''}?`;
+    }
+    if (modalEliminarFichado) {
+        modalEliminarFichado.style.display = 'flex';
+    }
+    // Ocultar mensaje de éxito al abrir el modal
+    if (mensajeExitoEliminarFichado) {
+        mensajeExitoEliminarFichado.style.display = 'none';
+        mensajeExitoEliminarFichado.classList.remove('show');
+    }
+    // Mostrar los botones al abrir el modal
+    if (btnEliminarFichadoSi) {
+        btnEliminarFichadoSi.style.display = 'block';
+    }
+    if (btnEliminarFichadoNo) {
+        btnEliminarFichadoNo.style.display = 'block';
+    }
+    if (botonesEliminarFichado) {
+        botonesEliminarFichado.style.display = 'flex';
+    }
+    procesandoEliminarFichado = false;
+}
+
+function cerrarModalEliminarFichado() {
+    if (modalEliminarFichado) {
+        modalEliminarFichado.style.display = 'none';
+    }
+    fichadoSeleccionadoEliminar = null;
+    procesandoEliminarFichado = false;
+}
+
+async function eliminarRegistroFichado() {
+    // Evitar múltiples eliminaciones simultáneas
+    if (procesandoEliminarFichado) {
+        return;
+    }
+    
+    if (!fichadoSeleccionadoEliminar || !fichadoSeleccionadoEliminar.matricula) {
+        alert('Error: No se puede eliminar el registro. Falta información del fichado.');
+        return;
+    }
+    
+    // Marcar como procesando
+    procesandoEliminarFichado = true;
+    
+    // Ocultar botones inmediatamente para evitar múltiples registros
+    if (btnEliminarFichadoSi) {
+        btnEliminarFichadoSi.style.display = 'none';
+    }
+    if (btnEliminarFichadoNo) {
+        btnEliminarFichadoNo.style.display = 'none';
+    }
+    if (botonesEliminarFichado) {
+        botonesEliminarFichado.style.display = 'none';
+    }
+    
+    try {
+        const matricula = fichadoSeleccionadoEliminar.matricula;
+        const response = await fetch(`https://asistencia-edec.onrender.com/api/fichados/apodaca/${matricula}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.detail || 'Error al eliminar registro.');
+        }
+        
+        // Mostrar mensaje de éxito
+        if (mensajeExitoEliminarFichado) {
+            mensajeExitoEliminarFichado.style.display = 'block';
+            setTimeout(() => {
+                mensajeExitoEliminarFichado.classList.add('show');
+            }, 10);
+            
+            // Cerrar el modal después de 2 segundos y recargar fichados
+            setTimeout(() => {
+                mensajeExitoEliminarFichado.classList.remove('show');
+                setTimeout(() => {
+                    mensajeExitoEliminarFichado.style.display = 'none';
+                    cerrarModalEliminarFichado();
+                    // Recargar fichados después de eliminar
+                    cargarFichados();
+                }, 500);
+            }, 2000);
+        } else {
+            // Fallback si no existe el elemento
+            alert('1 registro eliminado correctamente.');
+            cerrarModalEliminarFichado();
+            cargarFichados();
+        }
+        
+    } catch (error) {
+        console.error('Error al eliminar registro de fichado:', error);
+        alert(error.message || 'Error al eliminar registro. Intenta nuevamente.');
+        // Restaurar botones en caso de error
+        if (btnEliminarFichadoSi) {
+            btnEliminarFichadoSi.style.display = 'block';
+        }
+        if (btnEliminarFichadoNo) {
+            btnEliminarFichadoNo.style.display = 'block';
+        }
+        if (botonesEliminarFichado) {
+            botonesEliminarFichado.style.display = 'flex';
+        }
+        procesandoEliminarFichado = false;
+    }
+}
+
+// ==============================
 //   CAMBIAR A VISTA DE FICHADOS
 // ==============================
 function mostrarVistaFichados() {
@@ -692,6 +835,14 @@ document.addEventListener('DOMContentLoaded', () => {
     tbodyFichados = document.getElementById("tbodyFichados");
     btnExcelFichados = document.getElementById("btnExcelFichados");
     mensajeExitoFichados = document.getElementById("mensajeExitoFichados");
+    
+    // Elementos para modal de eliminar fichado
+    modalEliminarFichado = document.getElementById("modalEliminarFichado");
+    btnEliminarFichadoSi = document.getElementById("btnEliminarFichadoSi");
+    btnEliminarFichadoNo = document.getElementById("btnEliminarFichadoNo");
+    tituloEliminarFichado = document.getElementById("tituloEliminarFichado");
+    mensajeExitoEliminarFichado = document.getElementById("mensajeExitoEliminarFichado");
+    botonesEliminarFichado = document.getElementById("botonesEliminarFichado");
     
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
@@ -824,6 +975,28 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRegresar.addEventListener("click", () => {
         mostrarVistaAsistencias();
     });
+    
+    // Event listeners para modal de eliminar fichado
+    if (btnEliminarFichadoSi) {
+        btnEliminarFichadoSi.addEventListener("click", async () => {
+            await eliminarRegistroFichado();
+        });
+    }
+    
+    if (btnEliminarFichadoNo) {
+        btnEliminarFichadoNo.addEventListener("click", () => {
+            cerrarModalEliminarFichado();
+        });
+    }
+    
+    // Cerrar modal al hacer click fuera
+    if (modalEliminarFichado) {
+        modalEliminarFichado.addEventListener("click", (e) => {
+            if (e.target === modalEliminarFichado && !procesandoEliminarFichado) {
+                cerrarModalEliminarFichado();
+            }
+        });
+    }
 
     // Cerrar sesión
     btnCerrarSesion.addEventListener("click", () => {
