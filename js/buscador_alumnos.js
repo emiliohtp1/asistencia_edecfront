@@ -28,18 +28,35 @@ async function buscarAlumno(termino) {
 
     // Buscar primero en bachillerato
     try {
-        const responseBachillerato = await fetch(API_BACHILLERATO, {
-            cache: 'no-cache'
+        // Agregar timestamp para forzar petición única y evitar cache
+        const urlBachillerato = `${API_BACHILLERATO}?t=${Date.now()}`;
+        const responseBachillerato = await fetch(urlBachillerato, {
+            cache: 'no-store'
         });
         if (responseBachillerato.ok) {
             const dataBachillerato = await responseBachillerato.json();
             const alumnosBachillerato = dataBachillerato.alumnos || [];
+            
+            // Debug: Verificar datos recibidos
+            console.log('=== DEBUG BACHILLERATO ===');
+            console.log('Total alumnos recibidos:', alumnosBachillerato.length);
+            if (alumnosBachillerato.length > 0) {
+                console.log('Primer alumno completo:', alumnosBachillerato[0]);
+                console.log('Coordinador del primer alumno:', alumnosBachillerato[0]?.coordinador);
+            }
             
             alumnosEncontrados = alumnosBachillerato.filter(alumno => {
                 const matricula = (alumno.matricula || '').toLowerCase();
                 const nombre = (alumno.nombre || '').toLowerCase();
                 return matricula.includes(terminoBusqueda) || nombre.includes(terminoBusqueda);
             });
+
+            // Debug: Verificar alumnos encontrados
+            if (alumnosEncontrados.length > 0) {
+                console.log('Alumnos encontrados:', alumnosEncontrados.length);
+                console.log('Primer alumno encontrado:', alumnosEncontrados[0]);
+                console.log('Coordinador del alumno encontrado:', alumnosEncontrados[0]?.coordinador);
+            }
 
             if (alumnosEncontrados.length > 0) {
                 mostrarAlumnos(alumnosEncontrados);
@@ -52,18 +69,35 @@ async function buscarAlumno(termino) {
 
     // Si no se encuentra en bachillerato, buscar en universidad
     try {
-        const responseUniversidad = await fetch(API_UNIVERSIDAD, {
-            cache: 'no-cache'
+        // Agregar timestamp para forzar petición única y evitar cache
+        const urlUniversidad = `${API_UNIVERSIDAD}?t=${Date.now()}`;
+        const responseUniversidad = await fetch(urlUniversidad, {
+            cache: 'no-store'
         });
         if (responseUniversidad.ok) {
             const dataUniversidad = await responseUniversidad.json();
             const alumnosUniversidad = dataUniversidad.alumnos || [];
+            
+            // Debug: Verificar datos recibidos
+            console.log('=== DEBUG UNIVERSIDAD ===');
+            console.log('Total alumnos recibidos:', alumnosUniversidad.length);
+            if (alumnosUniversidad.length > 0) {
+                console.log('Primer alumno completo:', alumnosUniversidad[0]);
+                console.log('Coordinador del primer alumno:', alumnosUniversidad[0]?.coordinador);
+            }
             
             alumnosEncontrados = alumnosUniversidad.filter(alumno => {
                 const matricula = (alumno.matricula || '').toLowerCase();
                 const nombre = (alumno.nombre || '').toLowerCase();
                 return matricula.includes(terminoBusqueda) || nombre.includes(terminoBusqueda);
             });
+
+            // Debug: Verificar alumnos encontrados
+            if (alumnosEncontrados.length > 0) {
+                console.log('Alumnos encontrados:', alumnosEncontrados.length);
+                console.log('Primer alumno encontrado:', alumnosEncontrados[0]);
+                console.log('Coordinador del alumno encontrado:', alumnosEncontrados[0]?.coordinador);
+            }
 
             if (alumnosEncontrados.length > 0) {
                 mostrarAlumnos(alumnosEncontrados);
@@ -86,8 +120,10 @@ async function buscarAlumno(termino) {
 // ==============================
 async function obtenerFichados() {
     try {
-        const response = await fetch(API_FICHADOS, {
-            cache: 'no-cache'
+        // Agregar timestamp para forzar petición única y evitar cache
+        const urlFichados = `${API_FICHADOS}?t=${Date.now()}`;
+        const response = await fetch(urlFichados, {
+            cache: 'no-store'
         });
         if (!response.ok) {
             throw new Error('Error al obtener fichados');
@@ -118,12 +154,21 @@ async function mostrarAlumnos(alumnos) {
     // Obtener fichados
     const fichadosMap = await obtenerFichados();
 
-    alumnos.forEach(alumno => {
+    alumnos.forEach((alumno, index) => {
         const fila = document.createElement('tr');
         const cantidadFichas = fichadosMap[alumno.matricula] || 0;
         const claseFichas = cantidadFichas >= 3 ? 'fichas-rojo' : '';
         // Manejar coordinador en minúscula o mayúscula
         const coordinador = alumno.coordinador || alumno.Coordinador || '';
+        
+        // Debug: Verificar coordinador antes de mostrar
+        if (index === 0) {
+            console.log('=== DEBUG MOSTRAR ALUMNOS ===');
+            console.log('Alumno a mostrar:', alumno);
+            console.log('Coordinador extraído:', coordinador);
+            console.log('alumno.coordinador:', alumno.coordinador);
+            console.log('alumno.Coordinador:', alumno.Coordinador);
+        }
         
         fila.innerHTML = `
             <td>${alumno.matricula || ''}</td>
