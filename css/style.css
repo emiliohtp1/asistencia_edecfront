@@ -441,16 +441,9 @@ button[type="submit"]:hover {
     flex-wrap: wrap;
 }
 
-/* Botones flotantes para asistencias */
+/* Botones flotantes para asistencias - Solo visibles en móviles */
 .asistencias-header-buttons {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
-    z-index: 1000;
+    display: none;
 }
 
 .asistencias-header-buttons .btn-fichados,
@@ -507,6 +500,29 @@ button[type="submit"]:hover {
 }
 
 @media (max-width: 768px) {
+    /* Mostrar botones flotantes en móviles */
+    .asistencias-header-buttons {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        z-index: 1000;
+        flex-wrap: nowrap;
+    }
+    
+    .asistencias-header-buttons .btn-fichados,
+    .asistencias-header-buttons .btn-excel,
+    .asistencias-header-buttons .btn-cerrar-sesion {
+        padding: 6px 10px;
+        font-size: 11px;
+        white-space: nowrap;
+        margin: 0;
+        flex-shrink: 0;
+    }
+    
     .buscador-header {
         flex-direction: row;
         gap: 8px;
@@ -844,6 +860,7 @@ button[type="submit"]:hover {
 .fichados-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
     margin-bottom: 25px;
     flex-wrap: wrap;
@@ -856,25 +873,13 @@ button[type="submit"]:hover {
     flex: 1;
 }
 
-.btn-excel-fichados {
-    padding: 12px 24px;
-    font-size: 16px;
-    background: #217346;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-weight: bold;
+.fichados-header .btn-regresar {
+    flex-shrink: 0;
     white-space: nowrap;
-    text-align: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.btn-excel-fichados:hover {
-    background: #1a5a37;
+.btn-excel-fichados {
+    display: none; /* Oculto porque ahora se usa el botón flotante */
 }
 
 .mensaje-exito-fichados {
@@ -946,22 +951,33 @@ button[type="submit"]:hover {
 
 @media (max-width: 768px) {
     .fichados-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
         gap: 15px;
+        justify-content: space-between;
     }
     
     .fichados-header h2 {
-        width: 100%;
+        flex: 1;
+        margin: 0;
     }
     
-    .btn-regresar {
-        width: 100%;
+    .fichados-header .btn-regresar {
+        flex-shrink: 0;
+        width: auto;
+        white-space: nowrap;
     }
     
+    /* Ocultar el botón grande de Excel de fichados en móviles */
     .btn-excel-fichados {
-        width: 100%;
+        display: none;
     }
+    
+    /* Ocultar mensaje de éxito de fichados en móviles (se mostrará en otro lugar si es necesario) */
+    #mensajeExitoFichados {
+        display: none !important;
+    }
+}
     
     .mensaje-exito-fichados {
         width: 100%;

@@ -45,6 +45,7 @@ let mensajeExitoEliminarFichado;
 let botonesEliminarFichado;
 let fichadoSeleccionadoEliminar = null;
 let procesandoEliminarFichado = false;
+let vistaActual = 'asistencias'; // 'asistencias' o 'fichados'
 
 // Elementos para Excel
 let btnExcel;
@@ -752,6 +753,9 @@ async function eliminarRegistroFichado() {
 //   CAMBIAR A VISTA DE FICHADOS
 // ==============================
 function mostrarVistaFichados() {
+    // Cambiar vista actual
+    vistaActual = 'fichados';
+    
     // Ocultar contenedor de asistencias
     const tablaAsistencias = document.getElementById('tablaAsistencias');
     const mensajeSinResultados = document.getElementById('mensajeSinResultados');
@@ -781,6 +785,9 @@ function mostrarVistaFichados() {
 //   REGRESAR A VISTA DE ASISTENCIAS
 // ==============================
 function mostrarVistaAsistencias() {
+    // Cambiar vista actual
+    vistaActual = 'asistencias';
+    
     // Ocultar contenedor de fichados
     contenedorFichados.style.display = 'none';
     
@@ -1093,7 +1100,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleExcelClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        abrirModalExcel();
+        
+        // Si estamos en la vista de fichados, exportar fichados
+        if (vistaActual === 'fichados') {
+            generarExcelFichados();
+        } else {
+            // Si estamos en la vista de asistencias, abrir modal de Excel
+            abrirModalExcel();
+        }
     };
     
     if (btnExcel) {
@@ -1103,6 +1117,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnExcelDesktop = document.getElementById("btnExcelDesktop");
     if (btnExcelDesktop) {
         btnExcelDesktop.addEventListener("click", handleExcelClick);
+    }
+    
+    // El botón grande de Excel de fichados ya no se usa, pero mantenemos la referencia por si acaso
+    const btnExcelFichados = document.getElementById("btnExcelFichados");
+    if (btnExcelFichados) {
+        btnExcelFichados.addEventListener("click", () => {
+            generarExcelFichados();
+        });
     }
     
     if (btnCerrarModalExcel) {
@@ -1584,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             window.URL.revokeObjectURL(url);
             
-            // Mostrar mensaje de éxito
+            // Mostrar mensaje de éxito (si existe, aunque esté oculto en móviles)
             if (mensajeExitoFichados) {
                 mensajeExitoFichados.style.display = 'block';
                 
@@ -1593,6 +1615,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (mensajeExitoFichados) {
                         mensajeExitoFichados.style.display = 'none';
                     }
+                }, 2000);
+            }
+            
+            // También mostrar un mensaje temporal en la parte superior si estamos en móviles
+            if (window.innerWidth <= 768) {
+                const mensajeTemporal = document.createElement('div');
+                mensajeTemporal.textContent = 'Archivo generado exitosamente';
+                mensajeTemporal.style.cssText = 'position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: #28a745; color: white; padding: 12px 20px; border-radius: 8px; z-index: 2000; font-weight: bold;';
+                document.body.appendChild(mensajeTemporal);
+                
+                setTimeout(() => {
+                    mensajeTemporal.remove();
                 }, 2000);
             }
         } catch (error) {
