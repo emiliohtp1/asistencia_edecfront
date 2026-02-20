@@ -519,6 +519,10 @@ button[type="submit"]:hover {
         min-width: auto;
         position: relative;
         z-index: 1;
+        align-self: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Asegurar que el botón Excel no esté oculto */

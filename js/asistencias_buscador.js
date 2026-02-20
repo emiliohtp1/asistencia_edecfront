@@ -1058,7 +1058,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnExcelMobile.textContent.includes("Importar a Excel")) {
                 btnExcelMobile.textContent = "Excel";
             }
+            if (btnCerrarSesion && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+                btnCerrarSesion.textContent = "Cerrar";
+            }
         }
+        
+        // Mostrar el botón después de cambiar el texto (evita parpadeo)
+        btnExcelMobile.style.visibility = 'visible';
         
         // Event listener para el botón móvil (EXACTAMENTE igual que btnFichados)
         btnExcelMobile.addEventListener("click", handleExcelClick);
