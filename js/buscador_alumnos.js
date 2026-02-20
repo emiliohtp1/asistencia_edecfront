@@ -28,7 +28,9 @@ async function buscarAlumno(termino) {
 
     // Buscar primero en bachillerato
     try {
-        const responseBachillerato = await fetch(API_BACHILLERATO);
+        const responseBachillerato = await fetch(API_BACHILLERATO, {
+            cache: 'no-cache'
+        });
         if (responseBachillerato.ok) {
             const dataBachillerato = await responseBachillerato.json();
             const alumnosBachillerato = dataBachillerato.alumnos || [];
@@ -50,7 +52,9 @@ async function buscarAlumno(termino) {
 
     // Si no se encuentra en bachillerato, buscar en universidad
     try {
-        const responseUniversidad = await fetch(API_UNIVERSIDAD);
+        const responseUniversidad = await fetch(API_UNIVERSIDAD, {
+            cache: 'no-cache'
+        });
         if (responseUniversidad.ok) {
             const dataUniversidad = await responseUniversidad.json();
             const alumnosUniversidad = dataUniversidad.alumnos || [];
@@ -82,7 +86,9 @@ async function buscarAlumno(termino) {
 // ==============================
 async function obtenerFichados() {
     try {
-        const response = await fetch(API_FICHADOS);
+        const response = await fetch(API_FICHADOS, {
+            cache: 'no-cache'
+        });
         if (!response.ok) {
             throw new Error('Error al obtener fichados');
         }
