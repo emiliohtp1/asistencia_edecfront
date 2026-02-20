@@ -840,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
     contenedorFichados = document.getElementById("contenedorFichados");
     btnRegresar = document.getElementById("btnRegresar");
     tbodyFichados = document.getElementById("tbodyFichados");
-    btnExcelFichados = document.getElementById("btnExcelFichados");
+    btnExcelFichados = document.getElementById("btnExcelFichados"); // Puede ser null si el botón no existe
     mensajeExitoFichados = document.getElementById("mensajeExitoFichados");
     
     // Elementos para modal de eliminar fichado
@@ -1120,7 +1120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // El botón grande de Excel de fichados ya no se usa, pero mantenemos la referencia por si acaso
-    const btnExcelFichados = document.getElementById("btnExcelFichados");
     if (btnExcelFichados) {
         btnExcelFichados.addEventListener("click", () => {
             generarExcelFichados();
