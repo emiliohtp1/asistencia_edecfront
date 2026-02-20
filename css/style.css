@@ -446,36 +446,26 @@ button[type="submit"]:hover {
     display: none;
 }
 
-/* Asegurar que los botones flotantes siempre estén visibles en móviles */
-@media (max-width: 768px) {
-    .asistencias-header-buttons {
-        display: flex !important;
-    }
-    
-    .asistencias-header-buttons .btn-fichados,
-    .asistencias-header-buttons .btn-excel,
-    .asistencias-header-buttons .btn-cerrar-sesion {
-        display: block !important;
-        visibility: visible !important;
-    }
-}
-
+/* Estilos base para botones flotantes */
 .asistencias-header-buttons .btn-fichados,
-.asistencias-header-buttons .btn-excel {
+.asistencias-header-buttons .btn-excel,
+.asistencias-header-buttons .btn-cerrar-sesion {
     padding: 8px 12px;
     font-size: 12px;
     white-space: nowrap;
     margin: 0;
-}
-
-.asistencias-header-buttons .btn-fichados {
-    background: #dc3545;
-    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.3s;
     font-weight: bold;
+    display: block;
+    visibility: visible;
+}
+
+.asistencias-header-buttons .btn-fichados {
+    background: #dc3545;
+    color: white;
 }
 
 .asistencias-header-buttons .btn-fichados:hover {
@@ -485,11 +475,7 @@ button[type="submit"]:hover {
 .asistencias-header-buttons .btn-excel {
     background: #217346;
     color: white;
-    border: none;
     border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-weight: bold;
 }
 
 .asistencias-header-buttons .btn-excel:hover {
@@ -499,14 +485,6 @@ button[type="submit"]:hover {
 .asistencias-header-buttons .btn-cerrar-sesion {
     background: #dc3545;
     color: white;
-    padding: 8px 12px;
-    font-size: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-    white-space: nowrap;
-    margin: 0;
 }
 
 .asistencias-header-buttons .btn-cerrar-sesion:hover {
@@ -534,11 +512,8 @@ button[type="submit"]:hover {
     .asistencias-header-buttons .btn-cerrar-sesion {
         padding: 6px 8px;
         font-size: 11px;
-        white-space: nowrap;
-        margin: 0;
         flex-shrink: 0;
         min-width: auto;
-        display: block !important;
     }
     
     .buscador-header {

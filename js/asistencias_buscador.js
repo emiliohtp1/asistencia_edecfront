@@ -776,6 +776,17 @@ function mostrarVistaFichados() {
     // Mostrar contenedor de fichados
     contenedorFichados.style.display = 'block';
     
+    // Obtener y configurar el botón de Excel de fichados ahora que el contenedor está visible
+    btnExcelFichados = document.getElementById("btnExcelFichados");
+    if (btnExcelFichados && !btnExcelFichados.hasAttribute('data-listener-attached')) {
+        btnExcelFichados.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            generarExcelFichados();
+        });
+        btnExcelFichados.setAttribute('data-listener-attached', 'true');
+    }
+    
     // Cargar fichados
     paginaActualFichados = 1; // Resetear a la primera página
     cargarFichados();
@@ -840,7 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
     contenedorFichados = document.getElementById("contenedorFichados");
     btnRegresar = document.getElementById("btnRegresar");
     tbodyFichados = document.getElementById("tbodyFichados");
-    btnExcelFichados = document.getElementById("btnExcelFichados"); // Puede ser null si el botón no existe
+    // btnExcelFichados se obtendrá cuando se muestre la vista de fichados
     mensajeExitoFichados = document.getElementById("mensajeExitoFichados");
     
     // Elementos para modal de eliminar fichado
@@ -1150,10 +1161,15 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExcelDesktop.addEventListener("click", handleExcelClick);
     }
     
-    // El botón grande de Excel de fichados ya no se usa, pero mantenemos la referencia por si acaso
-    if (btnExcelFichados) {
-        btnExcelFichados.addEventListener("click", () => {
-            generarExcelFichados();
+    // Event delegation para btnExcelFichados (se configurará cuando se muestre la vista de fichados)
+    // Usar event delegation en el contenedor de fichados como respaldo
+    if (contenedorFichados) {
+        contenedorFichados.addEventListener("click", (e) => {
+            if (e.target && e.target.id === "btnExcelFichados") {
+                e.preventDefault();
+                e.stopPropagation();
+                generarExcelFichados();
+            }
         });
     }
     
@@ -1663,13 +1679,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error al generar Excel de fichados:', error);
             alert('Error al generar el archivo Excel. Por favor, inténtalo de nuevo.');
         }
-    }
-    
-    // Event listener para generar Excel de fichados
-    if (btnExcelFichados) {
-        btnExcelFichados.addEventListener("click", () => {
-            generarExcelFichados();
-        });
     }
     
     // Poblar selectores de fecha al cargar la página
