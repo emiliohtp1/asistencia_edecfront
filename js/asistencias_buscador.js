@@ -1087,7 +1087,22 @@ document.addEventListener('DOMContentLoaded', () => {
                               rect.bottom <= window.innerHeight && 
                               rect.right <= window.innerWidth;
             
-            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\n\nBOTÓN:\nDisplay: ${style.display}\nVisibility: ${style.visibility}\nOpacity: ${style.opacity}\nWidth: ${style.width} (${rect.width}px)\nHeight: ${style.height} (${rect.height}px)\nPosition: ${style.position}\nTop: ${style.top}\nLeft: ${style.left}\nZ-index: ${style.zIndex}\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}, width=${rect.width.toFixed(0)}, height=${rect.height.toFixed(0)}\nEn viewport: ${enViewport}\n\nCONTENEDOR:\nDisplay: ${contenedorStyle.display}\nWidth: ${contenedorStyle.width}\nHeight: ${contenedorStyle.height}\nGap: ${contenedorStyle.gap}\nRect: top=${contenedorRect.top.toFixed(0)}, left=${contenedorRect.left.toFixed(0)}, width=${contenedorRect.width.toFixed(0)}, height=${contenedorRect.height.toFixed(0)}\n\nViewport: ${window.innerWidth}x${window.innerHeight}`);
+            // Verificar si hay elementos superpuestos
+            const elementosEnPosicion = document.elementsFromPoint(rect.left + rect.width/2, rect.top + rect.height/2);
+            const elementoSuperior = elementosEnPosicion[0];
+            
+            alert(`DEBUG 3 - Después de configurar:\nEvent listener agregado\n\nBOTÓN:\nDisplay: ${style.display}\nVisibility: ${style.visibility}\nOpacity: ${style.opacity}\nWidth: ${style.width} (${rect.width}px)\nHeight: ${style.height} (${rect.height}px)\nPosition: ${style.position}\nTop: ${style.top}\nLeft: ${style.left}\nZ-index: ${style.zIndex}\nRect: top=${rect.top.toFixed(0)}, left=${rect.left.toFixed(0)}, width=${rect.width.toFixed(0)}, height=${rect.height.toFixed(0)}\nEn viewport: ${enViewport}\n\nElemento superior en posición: ${elementoSuperior ? (elementoSuperior.id || elementoSuperior.className || elementoSuperior.tagName) : 'N/A'}\nEs el botón?: ${elementoSuperior === btnExcelMobile}\n\nCONTENEDOR:\nDisplay: ${contenedorStyle.display}\nWidth: ${contenedorStyle.width}\nHeight: ${contenedorStyle.height}\nGap: ${contenedorStyle.gap}\nRect: top=${contenedorRect.top.toFixed(0)}, left=${contenedorRect.left.toFixed(0)}, width=${contenedorRect.width.toFixed(0)}, height=${contenedorRect.height.toFixed(0)}\n\nViewport: ${window.innerWidth}x${window.innerHeight}`);
+            
+            // DEBUG 3.5: Verificar inmediatamente después del alert
+            setTimeout(() => {
+                const btnCheck = document.getElementById("btnExcelMobile");
+                if (btnCheck) {
+                    const checkStyle = window.getComputedStyle(btnCheck);
+                    const checkRect = btnCheck.getBoundingClientRect();
+                    const elementosAhora = document.elementsFromPoint(checkRect.left + checkRect.width/2, checkRect.top + checkRect.height/2);
+                    alert(`DEBUG 3.5 - Inmediatamente después del alert:\nDisplay: ${checkStyle.display}\nVisibility: ${checkStyle.visibility}\nOpacity: ${checkStyle.opacity}\nRect: top=${checkRect.top.toFixed(0)}, left=${checkRect.left.toFixed(0)}\nElemento superior ahora: ${elementosAhora[0] ? (elementosAhora[0].id || elementosAhora[0].className || elementosAhora[0].tagName) : 'N/A'}\nEs el botón?: ${elementosAhora[0] === btnCheck}`);
+                }
+            }, 100);
         }
     } else {
         if (window.innerWidth <= 768) {
