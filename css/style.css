@@ -2171,17 +2171,64 @@ button[type="submit"]:hover {
 }
 
 @media (max-width: 768px) {
-    .vinculacion-header-buttons {
-        position: relative;
-        top: 0;
-        right: 0;
-        flex-direction: column;
-        width: 100%;
-        margin-bottom: 15px;
+    .buscador-page {
+        padding: 10px;
     }
     
-    .vinculacion-header-buttons .btn-excel,
+    .buscador-container {
+        margin-top: 60px;
+    }
+    
+    .vinculacion-header-buttons {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        flex-direction: row;
+        gap: 10px;
+        width: auto;
+        margin-bottom: 0;
+        padding: 0;
+        z-index: 1000;
+    }
+    
+    .vinculacion-header-buttons .btn-excel {
+        padding: 8px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
     .vinculacion-header-buttons .btn-cerrar-sesion {
+        padding: 8px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    /* Formulario de registro en móvil */
+    .buscador-container form#formRegistrarVinculacion {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .buscador-container form#formRegistrarVinculacion .input-group {
         width: 100%;
+        min-width: 100%;
+    }
+    
+    .buscador-container form#formRegistrarVinculacion input[type="text"],
+    .buscador-container form#formRegistrarVinculacion input[type="number"] {
+        width: 100%;
+        padding: 14px;
+        font-size: 18px;
+    }
+    
+    .buscador-container form#formRegistrarVinculacion button[type="submit"] {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 18px;
+    }
+    
+    /* Aumentar separación entre formulario y tabla */
+    .formulario-registro-vinculacion {
+        margin-bottom: 30px !important;
     }
 }
