@@ -777,15 +777,24 @@ function mostrarVistaFichados() {
     contenedorFichados.style.display = 'block';
     
     // Obtener y configurar el botón de Excel de fichados ahora que el contenedor está visible
-    btnExcelFichados = document.getElementById("btnExcelFichados");
-    if (btnExcelFichados && !btnExcelFichados.hasAttribute('data-listener-attached')) {
-        btnExcelFichados.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            generarExcelFichados();
-        });
-        btnExcelFichados.setAttribute('data-listener-attached', 'true');
-    }
+    // Usar setTimeout para asegurar que el DOM esté completamente renderizado
+    setTimeout(() => {
+        btnExcelFichados = document.getElementById("btnExcelFichados");
+        if (btnExcelFichados) {
+            // Remover listener anterior si existe
+            const newBtn = btnExcelFichados.cloneNode(true);
+            btnExcelFichados.parentNode.replaceChild(newBtn, btnExcelFichados);
+            btnExcelFichados = newBtn;
+            
+            // Agregar nuevo listener
+            btnExcelFichados.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Botón Excel Fichados clickeado');
+                generarExcelFichados();
+            });
+        }
+    }, 100);
     
     // Cargar fichados
     paginaActualFichados = 1; // Resetear a la primera página
@@ -864,6 +873,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Elementos para Excel
     btnExcel = document.getElementById("btnExcel");
+    // Botón Excel para móviles (nuevo)
+    const btnExcelMobile = document.getElementById("btnExcelMobile");
     modalExcelOverlay = document.getElementById("modalExcelOverlay");
     modalExcel = document.getElementById("modalExcel");
     btnCerrarModalExcel = document.getElementById("btnCerrarModalExcel");
@@ -879,36 +890,56 @@ document.addEventListener('DOMContentLoaded', () => {
     paginacionAsistencias = document.getElementById("paginacionAsistencias");
     paginacionFichados = document.getElementById("paginacionFichados");
 
-    // Acortar texto de botones flotantes en móviles
-    if (window.innerWidth <= 768) {
-        const btnExcelFlotante = document.getElementById("btnExcel");
-        if (btnExcelFlotante && btnExcelFlotante.textContent.includes("Importar a Excel")) {
-            btnExcelFlotante.textContent = "Excel";
+    // Función para manejar clicks en botones de Excel (se define aquí para que esté disponible)
+    const handleExcelClick = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-        if (btnCerrarSesion && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
-            btnCerrarSesion.textContent = "Cerrar";
+        
+        // Si estamos en la vista de fichados, exportar fichados
+        if (vistaActual === 'fichados') {
+            generarExcelFichados();
+        } else {
+            // Si estamos en la vista de asistencias, abrir modal de Excel
+            abrirModalExcel();
         }
-    }
-    
-    // También actualizar si se redimensiona la ventana
-    window.addEventListener('resize', () => {
-        const btnExcelFlotante = document.getElementById("btnExcel");
+    };
+
+    // Configurar botón Excel móvil después de que todo esté cargado
+    if (btnExcelMobile) {
+        // Acortar texto en móviles
         if (window.innerWidth <= 768) {
-            if (btnExcelFlotante && !btnExcelFlotante.textContent.includes("Excel") && btnExcelFlotante.textContent.includes("Importar a Excel")) {
-                btnExcelFlotante.textContent = "Excel";
+            if (btnExcelMobile.textContent.includes("Importar a Excel")) {
+                btnExcelMobile.textContent = "Excel";
             }
-            if (btnCerrarSesion && !btnCerrarSesion.textContent.includes("Cerrar") && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+            if (btnCerrarSesion && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
                 btnCerrarSesion.textContent = "Cerrar";
             }
-        } else {
-            if (btnExcelFlotante && btnExcelFlotante.textContent === "Excel") {
-                btnExcelFlotante.textContent = "Importar a Excel";
-            }
-            if (btnCerrarSesion && btnCerrarSesion.textContent === "Cerrar") {
-                btnCerrarSesion.textContent = "Cerrar Sesión";
-            }
         }
-    });
+        
+        // Event listener para el botón móvil
+        btnExcelMobile.addEventListener("click", handleExcelClick);
+        
+        // También actualizar si se redimensiona la ventana
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 768) {
+                if (btnExcelMobile && !btnExcelMobile.textContent.includes("Excel") && btnExcelMobile.textContent.includes("Importar a Excel")) {
+                    btnExcelMobile.textContent = "Excel";
+                }
+                if (btnCerrarSesion && !btnCerrarSesion.textContent.includes("Cerrar") && btnCerrarSesion.textContent.includes("Cerrar Sesión")) {
+                    btnCerrarSesion.textContent = "Cerrar";
+                }
+            } else {
+                if (btnExcelMobile && btnExcelMobile.textContent === "Excel") {
+                    btnExcelMobile.textContent = "Importar a Excel";
+                }
+                if (btnCerrarSesion && btnCerrarSesion.textContent === "Cerrar") {
+                    btnCerrarSesion.textContent = "Cerrar Sesión";
+                }
+            }
+        });
+    }
 
     // Configurar event listeners
     btnBuscar.addEventListener("click", () => {
@@ -1138,21 +1169,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Event listeners para el modal de Excel (flotante y desktop)
-    const handleExcelClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Si estamos en la vista de fichados, exportar fichados
-        if (vistaActual === 'fichados') {
-            generarExcelFichados();
-        } else {
-            // Si estamos en la vista de asistencias, abrir modal de Excel
-            abrirModalExcel();
-        }
-    };
-    
-    if (btnExcel) {
+    // El botón btnExcel ya no se usa en móviles (se usa btnExcelMobile)
+    // Solo usarlo en desktop si existe
+    if (btnExcel && window.innerWidth > 768) {
         btnExcel.addEventListener("click", handleExcelClick);
     }
     
@@ -1165,9 +1184,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Usar event delegation en el contenedor de fichados como respaldo
     if (contenedorFichados) {
         contenedorFichados.addEventListener("click", (e) => {
-            if (e.target && e.target.id === "btnExcelFichados") {
+            // Verificar si el click fue en el botón o en un elemento hijo
+            const clickedButton = e.target.closest('#btnExcelFichados');
+            if (clickedButton || e.target.id === "btnExcelFichados") {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('Event delegation capturó click en btnExcelFichados');
                 generarExcelFichados();
             }
         });

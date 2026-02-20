@@ -448,7 +448,7 @@ button[type="submit"]:hover {
 
 /* Estilos base para botones flotantes */
 .asistencias-header-buttons .btn-fichados,
-.asistencias-header-buttons .btn-excel,
+.asistencias-header-buttons .btn-excel-mobile,
 .asistencias-header-buttons .btn-cerrar-sesion {
     padding: 8px 12px;
     font-size: 12px;
@@ -461,6 +461,7 @@ button[type="submit"]:hover {
     font-weight: bold;
     display: block;
     visibility: visible;
+    opacity: 1;
 }
 
 .asistencias-header-buttons .btn-fichados {
@@ -472,13 +473,13 @@ button[type="submit"]:hover {
     background: #c82333;
 }
 
-.asistencias-header-buttons .btn-excel {
+.asistencias-header-buttons .btn-excel-mobile {
     background: #217346;
     color: white;
     border-radius: 6px;
 }
 
-.asistencias-header-buttons .btn-excel:hover {
+.asistencias-header-buttons .btn-excel-mobile:hover {
     background: #1a5a37;
 }
 
@@ -508,7 +509,7 @@ button[type="submit"]:hover {
     }
     
     .asistencias-header-buttons .btn-fichados,
-    .asistencias-header-buttons .btn-excel,
+    .asistencias-header-buttons .btn-excel-mobile,
     .asistencias-header-buttons .btn-cerrar-sesion {
         padding: 6px 8px;
         font-size: 11px;
