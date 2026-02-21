@@ -283,6 +283,47 @@ async function registrarVinculacion(e) {
     }
     
     try {
+        // Verificar si ya existe un registro con el mismo nombre o teléfono
+        const responseDatos = await fetch(API_VINCULACION_DATOS);
+        if (!responseDatos.ok) {
+            throw new Error('Error al verificar registros existentes');
+        }
+        
+        const dataDatos = await responseDatos.json();
+        const registrosExistentes = dataDatos.registros || [];
+        
+        // Verificar duplicados (comparación case-insensitive para nombre)
+        const nombreNormalizado = nombre.toLowerCase();
+        const existeNombre = registrosExistentes.some(registro => 
+            registro.nombre && registro.nombre.toLowerCase() === nombreNormalizado
+        );
+        
+        const existeTelefono = registrosExistentes.some(registro => 
+            registro.telefono === telefono
+        );
+        
+        if (existeNombre || existeTelefono) {
+            let mensajeError = 'Ya existe un registro con ';
+            if (existeNombre && existeTelefono) {
+                mensajeError += 'este nombre y este teléfono.';
+            } else if (existeNombre) {
+                mensajeError += 'este nombre.';
+            } else {
+                mensajeError += 'este teléfono.';
+            }
+            
+            errorMsg.textContent = mensajeError;
+            errorMsg.style.display = 'block';
+            
+            // Limpiar los 3 inputs
+            inputNombre.value = '';
+            inputTelefono.value = '';
+            inputPrograma.value = '';
+            
+            return;
+        }
+        
+        // Si no hay duplicados, proceder con el registro
         const response = await fetch(API_VINCULACION_REGISTRAR, {
             method: 'POST',
             headers: {
