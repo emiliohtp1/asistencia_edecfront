@@ -109,7 +109,7 @@ async function cargarRegistros() {
         mostrarRegistros();
     } catch (error) {
         console.error('Error al cargar registros:', error);
-        tbodyVinculacion.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar registros</td></tr>';
+        tbodyVinculacion.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar registros</td></tr>';
     }
 }
 
@@ -137,8 +137,9 @@ function mostrarRegistros() {
     registrosPagina.forEach(registro => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
-            <td>${registro.telefono || ''}</td>
             <td>${registro.nombre || ''}</td>
+            <td>${registro.telefono || ''}</td>
+            <td>${registro.programa || ''}</td>
             <td>${registro.fecha || ''}</td>
             <td>
                 <button class="btn-eliminar-usuario" onclick="eliminarRegistro(${registro.telefono})" title="Eliminar">
@@ -437,7 +438,7 @@ async function generarExcel() {
         const worksheet = workbook.addWorksheet('Vinculacion');
         
         // Definir los headers
-        const headers = ['Teléfono', 'Nombre', 'Fecha'];
+        const headers = ['Nombre', 'Teléfono', 'Programa', 'Fecha'];
         
         // Agregar headers con estilo
         const headerRow = worksheet.addRow(headers);
@@ -453,8 +454,9 @@ async function generarExcel() {
         // Agregar los datos
         registrosParaExcel.forEach(registro => {
             const row = worksheet.addRow([
-                registro.telefono || '',
                 registro.nombre || '',
+                registro.telefono || '',
+                registro.programa || '',
                 registro.fecha || ''
             ]);
             
@@ -481,22 +483,24 @@ async function generarExcel() {
         
         // Calcular el ancho máximo para cada columna
         const columnWidths = {
-            A: 0, // Teléfono
-            B: 0, // Nombre
-            C: 0  // Fecha
+            A: 0, // Nombre
+            B: 0, // Teléfono
+            C: 0, // Programa
+            D: 0  // Fecha
         };
         
         // Calcular ancho para headers
         headers.forEach((header, index) => {
-            const colLetter = String.fromCharCode(65 + index); // A, B, C
+            const colLetter = String.fromCharCode(65 + index); // A, B, C, D
             columnWidths[colLetter] = Math.max(columnWidths[colLetter] || 0, header.length);
         });
         
         // Calcular ancho para datos
         registrosParaExcel.forEach(registro => {
             const values = [
-                String(registro.telefono || ''),
                 String(registro.nombre || ''),
+                String(registro.telefono || ''),
+                String(registro.programa || ''),
                 String(registro.fecha || '')
             ];
             
@@ -507,9 +511,10 @@ async function generarExcel() {
         });
         
         // Aplicar anchos de columna
-        worksheet.getColumn('A').width = Math.max(15, Math.min(columnWidths.A + 5, 20)); // Teléfono
-        worksheet.getColumn('B').width = Math.max(30, Math.min(columnWidths.B + 5, 50)); // Nombre
-        worksheet.getColumn('C').width = Math.max(15, Math.min(columnWidths.C + 5, 20)); // Fecha
+        worksheet.getColumn('A').width = Math.max(30, Math.min(columnWidths.A + 5, 50)); // Nombre
+        worksheet.getColumn('B').width = Math.max(15, Math.min(columnWidths.B + 5, 20)); // Teléfono
+        worksheet.getColumn('C').width = Math.max(40, Math.min(columnWidths.C + 5, 60)); // Programa
+        worksheet.getColumn('D').width = Math.max(15, Math.min(columnWidths.D + 5, 20)); // Fecha
         
         // Generar el nombre del archivo
         let nombreArchivo = 'Vinculacion_Registros';
