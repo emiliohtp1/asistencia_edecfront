@@ -425,37 +425,37 @@ function cerrarModalExcel() {
 
 async function generarExcel() {
     try {
-        let registrosParaExcel = [...todosLosRegistros];
+        // Recargar los datos más recientes de la API antes de exportar
+        const responseDatos = await fetch(API_VINCULACION_DATOS);
+        if (!responseDatos.ok) {
+            throw new Error('Error al cargar registros para exportar');
+        }
+        
+        const dataDatos = await responseDatos.json();
+        let registrosParaExcel = dataDatos.registros || [];
         
         // Filtrar por fecha si se proporciona
         const fechaFiltro = excelFiltroFecha.value;
         if (fechaFiltro) {
+            // Parsear la fecha del filtro (formato YYYY-MM-DD)
+            const partesFiltro = fechaFiltro.split('-');
+            const anioFiltro = parseInt(partesFiltro[0]);
+            const mesFiltro = parseInt(partesFiltro[1]);
+            const diaFiltro = parseInt(partesFiltro[2]);
+            
             registrosParaExcel = registrosParaExcel.filter(registro => {
-                // Usar timestamp si está disponible (más confiable)
-                if (registro.timestamp) {
-                    // Parsear el timestamp del registro
-                    const fechaRegistro = new Date(registro.timestamp);
-                    // Parsear la fecha del filtro (formato YYYY-MM-DD)
-                    const fechaFiltroDate = new Date(fechaFiltro + 'T00:00:00');
-                    
-                    // Comparar solo año, mes y día (ignorar hora)
-                    return fechaRegistro.getFullYear() === fechaFiltroDate.getFullYear() &&
-                           fechaRegistro.getMonth() === fechaFiltroDate.getMonth() &&
-                           fechaRegistro.getDate() === fechaFiltroDate.getDate();
-                } else if (registro.fecha) {
-                    // Fallback: usar el campo fecha si timestamp no está disponible
-                    // Formato esperado: "17/02/2026 a las 17:16"
-                    const partesFecha = registro.fecha.split(' ')[0].split('/'); // ["17", "02", "2026"]
+                // Usar el campo fecha que ya está en hora local (más confiable para comparar)
+                // Formato esperado: "20/02/2026 a las 18:23"
+                if (registro.fecha) {
+                    const partesFecha = registro.fecha.split(' ')[0].split('/'); // ["20", "02", "2026"]
                     if (partesFecha.length === 3) {
                         const diaRegistro = parseInt(partesFecha[0]);
-                        const mesRegistro = parseInt(partesFecha[1]) - 1; // Los meses en JS son 0-indexed
+                        const mesRegistro = parseInt(partesFecha[1]);
                         const anioRegistro = parseInt(partesFecha[2]);
                         
-                        const fechaFiltroDate = new Date(fechaFiltro + 'T00:00:00');
-                        
-                        return anioRegistro === fechaFiltroDate.getFullYear() &&
-                               mesRegistro === fechaFiltroDate.getMonth() &&
-                               diaRegistro === fechaFiltroDate.getDate();
+                        return anioRegistro === anioFiltro &&
+                               mesRegistro === mesFiltro &&
+                               diaRegistro === diaFiltro;
                     }
                 }
                 return false;
