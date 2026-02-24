@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrador Asistencias - Barras</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { visibility: hidden; }
+    </style>
+</head>
+<body class="asistencia-page">
+    <script>
+        // Verificación inmediata antes de renderizar contenido
+        (function() {
+            const isLoggedIn = localStorage.getItem('isLoggedInBarras');
+            if (isLoggedIn !== 'true') {
+                window.location.replace('registradorbarraslogin.html');
+                return;
+            }
+            document.body.style.visibility = 'visible';
+        })();
+    </script>
+    <button class="btn-cerrar-sesion-barras" id="btnCerrarSesion">Cerrar Sesión</button>
+
+    <div class="asistencia-container-barras">
+        <img src="images/logo.png" alt="Logo" class="logo">
+        <h2 class="titulo-registrador-barras">Registrador Asistencias</h2>
+        <input type="text" id="codigoBarrasInput" class="input-codigo-barras" placeholder="Escanea el código de barras" autofocus>
+        <div id="mensajeExito" class="mensaje-exito-barras">¡Asistencia registrada!</div>
+        <div id="mensajeError" class="mensaje-error-barras">Error de asistencia.</div>
+    </div>
+
+    <script src="js/authGuard_registradorbarras.js"></script>
+    <script src="js/registradorbarras.js"></script>
+</body>
+</html>

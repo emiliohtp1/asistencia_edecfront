@@ -2366,3 +2366,108 @@ button[type="submit"]:hover {
         margin-bottom: 30px !important;
     }
 }
+
+/* ================================
+   ESTILOS PARA REGISTRADOR BARRAS
+   ================================ */
+
+/* Container principal para registrador de barras */
+.asistencia-container-barras {
+    width: 400px;
+    height: auto;
+    min-height: 400px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+/* Título del registrador */
+.titulo-registrador-barras {
+    margin: 0;
+    font-size: 24px;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Input para código de barras */
+.input-codigo-barras {
+    width: 90%;
+    padding: 15px;
+    font-size: 22px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.input-codigo-barras:focus {
+    outline: none;
+    border-color: #0b0b63;
+}
+
+/* Mensaje de éxito */
+.mensaje-exito-barras {
+    display: none;
+    opacity: 0;
+    width: 90%;
+    background: #28a745;
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    box-sizing: border-box;
+}
+
+.mensaje-exito-barras.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Mensaje de error */
+.mensaje-error-barras {
+    display: none;
+    opacity: 0;
+    width: 90%;
+    background: #dc3545;
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    box-sizing: border-box;
+}
+
+.mensaje-error-barras.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Botón cerrar sesión para registrador de barras (superior izquierda) */
+.btn-cerrar-sesion-barras {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 1000;
+}
+
+.btn-cerrar-sesion-barras:hover {
+    background: #c82333;
+}
