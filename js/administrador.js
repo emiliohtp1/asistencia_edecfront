@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBuscador = document.getElementById('btnBuscador');
     const btnAsistencias = document.getElementById('btnAsistencias');
     const btnRegistrador = document.getElementById('btnRegistrador');
+    const btnRegistradorBarras = document.getElementById('btnRegistradorBarras');
     const btnUsuarios = document.getElementById('btnUsuarios');
     const btnAlumnos = document.getElementById('btnAlumnos');
     const btnVinculacion = document.getElementById('btnVinculacion');
@@ -505,6 +506,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('registradorCorreo', correo);
                     localStorage.setItem('registradorRol', usuario.rol);
+                } else if (tipoPagina === 'registradorbarras') {
+                    localStorage.setItem('isLoggedInBarras', 'true');
+                    localStorage.setItem('registradorBarrasCorreo', correo);
+                    localStorage.setItem('registradorBarrasRol', usuario.rol);
                 } else if (tipoPagina === 'vinculacion') {
                     localStorage.setItem('isLoggedInVinculacion', 'true');
                     localStorage.setItem('vinculacionCorreo', correo);
@@ -553,6 +558,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Abrir inmediatamente para evitar bloqueo en móviles
         const nuevaVentana = window.open(url, '_blank');
         const valido = await validarAdminAntesDeRedirigir(url, 'registrador');
+        if (!valido && nuevaVentana && !nuevaVentana.closed) {
+            nuevaVentana.close();
+        }
+    });
+    
+    btnRegistradorBarras.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btnRegistradorBarras.getAttribute('data-url');
+        // Abrir inmediatamente para evitar bloqueo en móviles
+        const nuevaVentana = window.open(url, '_blank');
+        const valido = await validarAdminAntesDeRedirigir(url, 'registradorbarras');
         if (!valido && nuevaVentana && !nuevaVentana.closed) {
             nuevaVentana.close();
         }
