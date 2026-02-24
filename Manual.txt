@@ -19,17 +19,20 @@ frontend/
 │   ├── authGuard_asistencias.js     # Guard de autenticación para asistencias
 │   ├── authGuard_buscador.js        # Guard de autenticación para buscador
 │   ├── authGuard_registrador.js     # Guard de autenticación para registrador
+│   ├── authGuard_registradorbarras.js # Guard de autenticación para registrador barras
+│   ├── authGuard_vinculacion.js     # Guard de autenticación para vinculación
 │   ├── buscador_alumnos.js          # Lógica de búsqueda de alumnos
 │   ├── login_administrador.js       # Lógica de login para administrador
 │   ├── login_asistencias.js         # Lógica de login para asistencias
 │   ├── login_buscador.js            # Lógica de login para buscador
 │   ├── login_registrador.js         # Lógica de login para registrador
+│   ├── login_registradorbarras.js   # Lógica de login para registrador barras
 │   ├── login_vinculacion.js         # Lógica de login para vinculación
 │   ├── password-toggle.js           # Toggle de visibilidad de contraseñas
 │   ├── registrador.js               # Lógica de registro de asistencias
+│   ├── registradorbarras.js         # Lógica de registro de asistencias con código de barras
 │   ├── registro-usuario.js          # Lógica de registro de nuevos usuarios
 │   ├── vinculacion.js               # Lógica de gestión de vinculación
-│   ├── authGuard_vinculacion.js     # Guard de autenticación para vinculación
 ├── images/
 │   └── logo.png                     # Logo de la institución
 ├── administrador.html               # Dashboard del administrador
@@ -40,6 +43,8 @@ frontend/
 ├── buscadorlogin.html               # Página de login para buscador
 ├── home.html                        # Página principal del registrador
 ├── index.html                       # Página de login del registrador
+├── registradorbarras.html           # Página principal del registrador de barras
+├── registradorbarraslogin.html     # Página de login para registrador de barras
 ├── vinculacion.html                 # Página de gestión de vinculación
 └── vinculacionlogin.html            # Página de login para vinculación
 
@@ -175,7 +180,7 @@ frontend/
    - password-toggle.js
    - authGuard_administrador.js: Verificación de autenticación y rol
    - administrador.js: Lógica completa del dashboard
-
+   
    Detalles importantes:
    - Roles permitidos: administrador, director, coordinador
    - Filtrado de roles disponibles según el usuario logueado
@@ -183,6 +188,8 @@ frontend/
    - Modal separado para usuarios pendientes de aprobación
    - Botón "Actualizar lista" en modal de pendientes
    - Ordenamiento dinámico en tablas de usuarios y alumnos
+   - Tabla de usuarios pendientes muestra: Nombre Completo, Correo, Rol, Campus, Fecha de Creación, Acciones
+   - Fecha de creación formateada de ISO 8601 a dd/mm/aaaa
 
 8. administradorlogin.html
    Propósito: Página de login para administradores, directores y coordinadores.
@@ -202,14 +209,15 @@ frontend/
    - Capitalización automática de nombres en formulario de creación de usuarios
 
 9. vinculacion.html
-   Propósito: Gestión de registros de vinculación (nombre y teléfono).
+   Propósito: Gestión de registros de vinculación (nombre, teléfono y programa).
    Funcionalidad:
-   - Formulario para registrar nuevos contactos (nombre y teléfono)
-   - Tabla que muestra los 10 registros más recientes
+   - Formulario para registrar nuevos contactos (nombre, teléfono y programa)
+   - Tabla que muestra los registros con columnas: Nombre, Teléfono, Programa, Fecha, Acciones
    - Paginación de registros (10 por página)
    - Botón de eliminar por registro (botón rojo con X blanca)
    - Exportación a Excel con filtro por fecha
    - Botones "Importar a Excel" y "Cerrar Sesión" alineados horizontalmente
+   - Validación de duplicados: no permite registrar si ya existe el nombre o teléfono
    
    Scripts incluidos:
    - ExcelJS (CDN): Librería para generar archivos Excel
@@ -220,8 +228,11 @@ frontend/
    - Roles permitidos: administrador, director, coordinador, vinculacion
    - Capitalización automática de nombres al escribir
    - Formato de Excel: "Vinculacion_Registros_dd-mm-aaaa.xlsx"
-   - Headers azules en Excel (Teléfono, Nombre, Fecha)
+   - Headers azules en Excel (Nombre, Teléfono, Programa, Fecha)
    - Usa localStorage: isLoggedInVinculacion, vinculacionCorreo, vinculacionRol
+   - Selector de programa con 17 opciones predefinidas (Bachillerato, Licenciaturas, Ingenierías, Online)
+   - Validación de duplicados antes de registrar (consulta API de datos)
+   - Limpieza automática de inputs si se detecta duplicado
 
 10. vinculacionlogin.html
    Propósito: Página de login para usuarios con rol de vinculación.
@@ -238,6 +249,45 @@ frontend/
    Detalles importantes:
    - Usa localStorage: isLoggedInVinculacion, vinculacionCorreo, vinculacionRol
    - Verifica roles: administrador, director, coordinador, vinculacion
+
+11. registradorbarraslogin.html
+   Propósito: Página de login para usuarios con rol de registrador de barras.
+   Funcionalidad:
+   - Similar a index.html pero para rol de registrador de barras
+   - Redirige a registradorbarras.html después de login exitoso
+   - Verifica autorización y rol del usuario
+   
+   Scripts incluidos:
+   - password-toggle.js
+   - registro-usuario.js
+   - login_registradorbarras.js
+   
+   Detalles importantes:
+   - Usa localStorage: isLoggedInBarras, registradorBarrasCorreo, registradorBarrasRol
+   - Verifica roles: administrador, director, coordinador, servicio social
+
+12. registradorbarras.html
+   Propósito: Página principal del registrador de asistencias con código de barras.
+   Funcionalidad:
+   - Input para escanear códigos de barras (funciona como teclado virtual)
+   - Registro automático de asistencias al escanear (Enter automático del scanner)
+   - Mensaje de éxito (verde) al registrar asistencia
+   - Mensaje de error (rojo) si hay problemas
+   - Botón para cerrar sesión (flotante superior izquierda)
+   - Autofocus automático en el input
+   - Recuperación automática del foco cada 1 segundo si se pierde
+   
+   Scripts incluidos:
+   - authGuard_registradorbarras.js: Verifica autenticación antes de mostrar contenido
+   - registradorbarras.js: Lógica de registro de asistencias con código de barras
+   
+   Detalles importantes:
+   - Verificación inmediata de sesión antes de renderizar (visibility: hidden)
+   - Busca alumnos primero en bachillerato, luego en universidad
+   - El scanner funciona como un teclado, enviando el código seguido de Enter
+   - Input se limpia automáticamente después de cada registro (exitoso o con error)
+   - Matrícula se envía como string al backend
+   - Container blanco con elementos verticales: logo, título, input, mensajes
 
 ================================================================================
                             ARCHIVOS JAVASCRIPT
@@ -380,6 +430,8 @@ frontend/
     - Paginación en todas las tablas (10 elementos por página)
     - Actualización de contador de usuarios pendientes
     - Botón circular con inicial del usuario
+    - Tabla de usuarios pendientes con columnas: Nombre Completo, Correo, Rol, Campus, Fecha de Creación, Acciones
+    - Formateo de fecha de creación de ISO 8601 a dd/mm/aaaa
     
     Detalles importantes:
     - Excluye roles "administrador" y "director" del formulario de registro
@@ -392,6 +444,7 @@ frontend/
     - Capitalización automática de nombres en formulario de creación de usuarios
     - Botón "Registros Vinculación" que abre vinculacion.html en nueva pestaña
     - Fix para mobile: window.open() se ejecuta antes de validación async para evitar bloqueo de pop-ups
+    - Función formatearFecha() para convertir timestamps ISO a formato legible dd/mm/aaaa
 
 13. password-toggle.js
     Propósito: Script reutilizable para mostrar/ocultar contraseñas.
@@ -436,12 +489,15 @@ frontend/
     - DELETE /api/vinculacion/borrar/{telefono}
     
     Funcionalidad:
-    - Registro de nuevos contactos (nombre y teléfono)
+    - Registro de nuevos contactos (nombre, teléfono y programa)
     - Visualización de registros con paginación (10 por página)
+    - Tabla con columnas: Nombre, Teléfono, Programa, Fecha, Acciones
     - Eliminación de registros individuales
     - Exportación a Excel con filtro por fecha
     - Capitalización automática de nombres al escribir
     - Actualización automática de tabla después de registrar/eliminar
+    - Validación de duplicados antes de registrar (nombre o teléfono)
+    - Limpieza automática de inputs si se detecta duplicado
     
     Librerías:
     - ExcelJS v4.4.0 (desde CDN)
@@ -449,9 +505,12 @@ frontend/
     Detalles importantes:
     - Formato de nombre de archivo Excel: "Vinculacion_Registros_dd-mm-aaaa.xlsx"
     - Parsing directo de fecha para evitar problemas de timezone
-    - Headers azules en Excel (#0b0b63)
-    - Filtro por fecha usando campo "timestamp" de la API
-    - Botones "Importar a Excel" y "Cerrar Sesión" en contenedor flex horizontal
+    - Headers azules en Excel (Nombre, Teléfono, Programa, Fecha)
+    - Filtro por fecha usando campo "fecha" formateado (hora local) en lugar de timestamp
+    - Recarga de datos desde API antes de exportar para obtener datos más recientes
+    - Selector de programa con 17 opciones predefinidas
+    - Validación de duplicados compara nombre (case-insensitive) y teléfono (exacto)
+    - Mensajes de error específicos según tipo de duplicado detectado
 
 16. login_vinculacion.js
     Propósito: Maneja el proceso de autenticación para usuarios de vinculación.
@@ -462,6 +521,43 @@ frontend/
     Propósito: Protege vinculacion.html verificando autenticación y rol.
     Similar a authGuard_registrador.js pero para vinculación.
     Roles permitidos: administrador, director, coordinador, vinculacion.
+
+18. login_registradorbarras.js
+    Propósito: Maneja el proceso de autenticación para registradores de barras.
+    Similar a login_registrador.js pero con diferentes claves de localStorage.
+    Verifica roles: administrador, director, coordinador, servicio social.
+    Guarda: isLoggedInBarras, registradorBarrasCorreo, registradorBarrasRol.
+
+19. authGuard_registradorbarras.js
+    Propósito: Protege registradorbarras.html verificando autenticación y rol.
+    Similar a authGuard_registrador.js pero para registrador de barras.
+    Roles permitidos: administrador, director, coordinador, servicio social.
+    Redirige a registradorbarraslogin.html si no está autenticado.
+
+20. registradorbarras.js
+    Propósito: Lógica para registrar asistencias usando código de barras.
+    Endpoints:
+    - GET /api/alumnos/bachillerato
+    - GET /api/alumnos/universidad
+    - POST /api/asistencias/registrar
+    
+    Funcionalidad:
+    - Input con autofocus automático al cargar la página
+    - Recuperación automática del foco cada 1 segundo si se pierde
+    - Detección automática de Enter (del scanner) para registrar
+    - Búsqueda secuencial: primero bachillerato, luego universidad
+    - Registro de asistencia con matrícula (como string) y nombre
+    - Mensaje de éxito visual (verde) al registrar
+    - Mensaje de error visual (rojo) si hay problemas
+    - Limpieza automática del input después de cada registro
+    - Enfoque automático después de limpiar input
+    
+    Detalles importantes:
+    - El scanner funciona como teclado, enviando código + Enter automáticamente
+    - Matrícula se convierte a string antes de enviar al backend
+    - Validación de matrícula antes de buscar alumno
+    - Manejo de errores con mensajes específicos
+    - Intervalo de autofocus se detiene cuando el input tiene foco manualmente
 
 ================================================================================
                             ARCHIVO CSS
@@ -567,11 +663,11 @@ FICHADOS:
 
 VINCULACIÓN:
 - POST /api/vinculacion/registrar
-  Body: { "nombre": "...", "telefono": 1234567890 }
+  Body: { "nombre": "...", "telefono": 1234567890, "programa": "..." }
   Respuesta: { "mensaje": "Registro creado exitosamente" }
 
 - GET /api/vinculacion/datos
-  Respuesta: { "total": 22, "registros": [{ "_id": "...", "nombre": "...", "telefono": 1234567890, "fecha": "17/02/2026 a las 17:16", "timestamp": "2026-02-17T23:16:59.881000" }] }
+  Respuesta: { "total": 22, "registros": [{ "_id": "...", "nombre": "...", "telefono": 1234567890, "programa": "...", "fecha": "17/02/2026 a las 17:16", "timestamp": "2026-02-17T23:16:59.881000" }] }
 
 - DELETE /api/vinculacion/borrar/{telefono}
   Respuesta: { "mensaje": "Registro eliminado exitosamente" }
@@ -593,6 +689,7 @@ Flujo de autenticación:
 
 LocalStorage keys por rol:
 - Registrador: isLoggedIn, registradorCorreo, registradorRol
+- Registrador Barras: isLoggedInBarras, registradorBarrasCorreo, registradorBarrasRol
 - Asistencias: isLoggedInBuscador, asistenciasCorreo, asistenciasRol
 - Buscador: isLoggedInBuscadorAlumnos, buscadorCorreo, buscadorRol
 - Administrador: isLoggedInAdmin, adminCorreo, adminRol, adminContraseña
@@ -609,7 +706,7 @@ Roles y permisos:
 - administrador: Acceso completo a todas las páginas
 - director: Acceso completo a todas las páginas
 - coordinador: Acceso a todas las páginas excepto creación de admin/director
-- servicio social: Acceso a registrador, asistencias y buscador
+- servicio social: Acceso a registrador, registrador de barras, asistencias y buscador
 - vinculacion: Acceso exclusivo a página de vinculación
 
 ================================================================================
@@ -687,16 +784,30 @@ Restricciones de registro:
    - Aplicada en: vinculacion.html, administrador.html, y todos los modales de registro
 
 9. Sistema de vinculación:
-   - Gestión de contactos (nombre y teléfono)
+   - Gestión de contactos (nombre, teléfono y programa)
+   - Selector de programa con 17 opciones predefinidas
+   - Validación de duplicados (nombre o teléfono)
    - Exportación a Excel con filtro por fecha
    - Eliminación individual de registros
    - Paginación de resultados
    - Formato de fecha en nombre de archivo: dd-mm-aaaa
+   - Tabla con columnas: Nombre, Teléfono, Programa, Fecha, Acciones
 
 10. Mejoras en modales:
     - Ocultación inmediata de botones para prevenir múltiples acciones
     - Mensajes de éxito con animación
     - Protección contra clics múltiples con banderas de estado
+
+11. Registrador de barras:
+    - Sistema de registro de asistencias usando código de barras
+    - Autofocus automático en input de código de barras
+    - Recuperación automática del foco cada 1 segundo
+    - Detección automática de Enter del scanner
+    - Mensajes visuales de éxito (verde) y error (rojo)
+    - Limpieza automática del input después de cada registro
+    - Matrícula enviada como string al backend
+    - Container blanco con diseño vertical: logo, título, input, mensajes
+    - Botón cerrar sesión flotante en esquina superior izquierda
 
 ================================================================================
                             NOTAS TÉCNICAS
@@ -803,6 +914,7 @@ Registro de Vinculación:
   "_id": "6994f6eb6e622ea21e9f5a99",
   "nombre": "Alberto Ortiz Delgado",
   "telefono": 8144316908,
+  "programa": "Lic. Administracion de Empresas",
   "fecha": "17/02/2026 a las 17:16",
   "timestamp": "2026-02-17T23:16:59.881000"
 }
@@ -816,8 +928,22 @@ Sistema de Asistencia EDEC. Para más información sobre endpoints específicos,
 consultar la documentación de la API del backend.
 
 Fecha de creación: 2026
-Versión: 2.0
+Versión: 3.0
 Última actualización: Febrero 2026
+
+Cambios en versión 3.0:
+- Agregada página de registrador de barras (registradorbarras.html y registradorbarraslogin.html)
+- Nuevo sistema de registro de asistencias usando código de barras
+- Autofocus automático y recuperación del foco en registrador de barras
+- Mensajes visuales de éxito y error en registrador de barras
+- Agregado campo "programa" a registros de vinculación
+- Tabla de vinculación actualizada con columna "Programa"
+- Validación de duplicados en vinculación (nombre o teléfono)
+- Tabla de usuarios pendientes actualizada con columnas: Rol, Campus, Fecha de Creación
+- Formateo de fecha de creación en usuarios pendientes (ISO 8601 a dd/mm/aaaa)
+- Exportación Excel de vinculación actualizada con columna "Programa"
+- Corrección de filtrado por fecha en exportación Excel de vinculación (usa campo "fecha" en lugar de "timestamp")
+- Recarga de datos desde API antes de exportar Excel en vinculación
 
 Cambios en versión 2.0:
 - Agregada página de vinculación (vinculacion.html y vinculacionlogin.html)
