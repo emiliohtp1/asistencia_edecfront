@@ -139,8 +139,8 @@ codigoBarrasInput.addEventListener("keypress", async (e) => {
                 return;
             }
 
-            // Mostrar mensaje de éxito
-            mostrarExito();
+            // Mostrar mensaje de éxito con el nombre del usuario
+            mostrarExito(alumno.nombre);
 
             // Limpiar el campo de texto inmediatamente tras el éxito
             codigoBarrasInput.value = "";
@@ -158,9 +158,14 @@ codigoBarrasInput.addEventListener("keypress", async (e) => {
 // ==============================
 //   FUNCIONES DE MENSAJES
 // ==============================
-function mostrarExito() {
+function mostrarExito(nombre) {
     mensajeError.style.display = "none";
     mensajeExito.style.display = "block";
+    // Mostrar "¡Asistencia registrada!" y el nombre del usuario (segunda línea)
+    mensajeExito.innerHTML = "";
+    mensajeExito.appendChild(document.createTextNode("¡Asistencia registrada!"));
+    mensajeExito.appendChild(document.createElement("br"));
+    mensajeExito.appendChild(document.createTextNode(nombre || ""));
     
     setTimeout(() => {
         mensajeExito.classList.add("show");
@@ -170,6 +175,8 @@ function mostrarExito() {
         mensajeExito.classList.remove("show");
         setTimeout(() => {
             mensajeExito.style.display = "none";
+            // Restaurar texto por defecto para la próxima vez
+            mensajeExito.innerHTML = "¡Asistencia registrada!";
         }, 600);
     }, 3000);
 }
