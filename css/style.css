@@ -2471,3 +2471,46 @@ button[type="submit"]:hover {
 .btn-cerrar-sesion-barras:hover {
     background: #c82333;
 }
+
+/* Modal Acerca de - administrador */
+.modal-acerca-de {
+    background: #0b0b63;
+    color: #fff;
+}
+
+.modal-acerca-de h2 {
+    color: #fff;
+    margin-bottom: 24px;
+}
+
+.modal-acerca-de .btn-cerrar-modal {
+    color: #fff;
+    background: transparent;
+}
+
+.modal-acerca-de .btn-cerrar-modal:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.acerca-de-content {
+    padding: 0;
+}
+
+.acerca-de-linea {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.acerca-de-linea:last-child {
+    margin-bottom: 0;
+}
+
+.acerca-de-label {
+    color: #6c8cff;
+    font-weight: bold;
+}
+
+.acerca-de-valor {
+    color: #ffffff;
+}

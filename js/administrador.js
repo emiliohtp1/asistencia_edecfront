@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnUsuarios = document.getElementById('btnUsuarios');
     const btnAlumnos = document.getElementById('btnAlumnos');
     const btnVinculacion = document.getElementById('btnVinculacion');
+    const btnAcercaDe = document.getElementById('btnAcercaDe');
+    const modalAcercaDe = document.getElementById('modalAcercaDe');
     
     // Elementos para la vista de alumnos
     const containerPrincipal = document.getElementById('containerPrincipal');
@@ -582,6 +584,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const valido = await validarAdminAntesDeRedirigir(url, 'vinculacion');
         if (!valido && nuevaVentana && !nuevaVentana.closed) {
             nuevaVentana.close();
+        }
+    });
+    
+    btnAcercaDe.addEventListener('click', () => {
+        modalAcercaDe.style.display = 'flex';
+    });
+    
+    document.getElementById('btnCerrarAcercaDe').addEventListener('click', () => {
+        modalAcercaDe.style.display = 'none';
+    });
+    
+    modalAcercaDe.addEventListener('click', (e) => {
+        if (e.target === modalAcercaDe) {
+            modalAcercaDe.style.display = 'none';
         }
     });
     
