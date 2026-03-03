@@ -1074,12 +1074,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cerrar sesión
-    btnCerrarSesion.addEventListener("click", () => {
+    const cerrarSesionHandler = () => {
         if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
             limpiarTodasLasCredenciales();
             window.location.href = "asistenciaslogin.html";
         }
-    });
+    };
+    btnCerrarSesion.addEventListener("click", cerrarSesionHandler);
+    const btnCerrarSesionDesktop = document.getElementById("btnCerrarSesionDesktop");
+    if (btnCerrarSesionDesktop) btnCerrarSesionDesktop.addEventListener("click", cerrarSesionHandler);
 
     // Configurar botón Excel móvil (EXACTAMENTE igual que btnFichados y btnCerrarSesion)
     if (btnExcelMobile) {
