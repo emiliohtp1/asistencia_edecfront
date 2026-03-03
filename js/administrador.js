@@ -5,6 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BACHILLERATO = 'https://asistencia-edec.onrender.com/api/alumnos/bachillerato';
     const API_UNIVERSIDAD = 'https://asistencia-edec.onrender.com/api/alumnos/universidad';
     
+    // Bloquear POST/DELETE si el usuario tiene rol "viewer"
+    function esViewerBloqueado() {
+        if (localStorage.getItem('adminRol') === 'viewer') {
+            alert('Función no permitida');
+            return true;
+        }
+        return false;
+    }
+    
     // Elementos del DOM
     const btnCrearUsuario = document.getElementById('btnCrearUsuario');
     const btnCrearUsuarioModal = document.getElementById('btnCrearUsuarioModal');
@@ -356,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Crear usuario
     formCrearUsuario.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (esViewerBloqueado()) return;
         
         const errorMsg = document.getElementById('error-message-crear');
         const successMsg = document.getElementById('success-message-crear');
@@ -410,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cambiar contraseña
     formCambiarContraseña.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (esViewerBloqueado()) return;
         
         const errorMsg = document.getElementById('error-message-password');
         const successMsg = document.getElementById('success-message-password');
@@ -482,8 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const userResponse = await fetch(`https://asistencia-edec.onrender.com/api/usuarios/apodaca/${correo}`);
             if (userResponse.ok) {
                 const usuario = await userResponse.json();
-                // Roles permitidos: administrador, director, coordinador
-                const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+                // Roles permitidos: administrador, director, coordinador, viewer
+                const rolesPermitidos = ['administrador', 'director', 'coordinador', 'viewer'];
                 if (!rolesPermitidos.includes(usuario.rol)) {
                     alert('Ya no tienes permisos para acceder a esta página. Acceso denegado.');
                     localStorage.removeItem('isLoggedInAdmin');
@@ -818,6 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para autorizar usuario
     async function autorizarUsuario(correo) {
         if (!correo) return;
+        if (esViewerBloqueado()) return;
         
         try {
             const response = await fetch(`${API_USUARIOS}/cambiar-autorizado`, {
@@ -849,6 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para eliminar usuario pendiente
     async function eliminarUsuarioPendiente(correo) {
         if (!correo) return;
+        if (esViewerBloqueado()) return;
         
         try {
             const response = await fetch(`${API_USUARIOS}/${correo}`, {
@@ -873,6 +886,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para eliminar usuario
     async function eliminarUsuario(correo) {
         if (!correo) return;
+        if (esViewerBloqueado()) return;
         
         if (!confirm(`¿Estás seguro de que deseas eliminar al usuario con correo: ${correo}?`)) {
             return;
@@ -1013,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Crear alumno
     formCrearAlumno.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (esViewerBloqueado()) return;
         
         const errorMsg = document.getElementById('error-message-crear-alumno');
         const successMsg = document.getElementById('success-message-crear-alumno');
@@ -1110,6 +1125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Función para eliminar alumno
     async function eliminarAlumno(matricula, tipo) {
+        if (esViewerBloqueado()) return;
+        
         const apiUrl = tipo === 'bachillerato'
             ? `https://asistencia-edec.onrender.com/api/alumnos/bachillerato/${matricula}`
             : `https://asistencia-edec.onrender.com/api/alumnos/universidad/${matricula}`;

@@ -2,6 +2,14 @@ const API_VINCULACION_REGISTRAR = 'https://asistencia-edec.onrender.com/api/vinc
 const API_VINCULACION_DATOS = 'https://asistencia-edec.onrender.com/api/vinculacion/datos';
 const API_VINCULACION_BORRAR = 'https://asistencia-edec.onrender.com/api/vinculacion/borrar/';
 
+function esViewerBloqueadoVinculacion() {
+    if (localStorage.getItem('vinculacionRol') === 'viewer') {
+        alert('Función no permitida');
+        return true;
+    }
+    return false;
+}
+
 let formRegistrarVinculacion;
 let inputNombre;
 let inputTelefono;
@@ -265,7 +273,8 @@ function renderizarPaginacion() {
 // ==============================
 async function registrarVinculacion(e) {
     e.preventDefault();
-    
+    if (esViewerBloqueadoVinculacion()) return;
+
     const errorMsg = document.getElementById('error-message-registro');
     const successMsg = document.getElementById('success-message-registro');
     
@@ -365,6 +374,7 @@ async function registrarVinculacion(e) {
 //   ELIMINAR REGISTRO
 // ==============================
 async function eliminarRegistro(telefono) {
+    if (esViewerBloqueadoVinculacion()) return;
     if (!confirm(`¿Estás seguro de que deseas eliminar el registro con teléfono ${telefono}?`)) {
         return;
     }
@@ -424,6 +434,7 @@ function cerrarModalExcel() {
 }
 
 async function generarExcel() {
+    if (esViewerBloqueadoVinculacion()) return;
     try {
         // Recargar los datos más recientes de la API antes de exportar
         const responseDatos = await fetch(API_VINCULACION_DATOS);

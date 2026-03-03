@@ -3,6 +3,14 @@ const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/univer
 const API_FICHAR_ALUMNO = "https://asistencia-edec.onrender.com/api/fichados/apodaca/registrar";
 const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
 
+function esViewerBloqueadoBuscador() {
+    if (localStorage.getItem('buscadorRol') === 'viewer') {
+        alert('Función no permitida');
+        return true;
+    }
+    return false;
+}
+
 let inputBuscarAlumno;
 let btnBuscarAlumno;
 let tbodyAlumnos;
@@ -181,6 +189,7 @@ function cerrarModalFichar() {
 //   FICHAR ALUMNO
 // ==============================
 async function ficharAlumno() {
+    if (esViewerBloqueadoBuscador()) return;
     // Evitar múltiples registros simultáneos
     if (procesandoFichar) {
         return;

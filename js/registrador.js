@@ -2,6 +2,14 @@ const API_ASISTENCIA = "https://asistencia-edec.onrender.com/api/asistencias/reg
 const API_BACHILLERATO = "https://asistencia-edec.onrender.com/api/alumnos/bachillerato";
 const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/universidad";
 
+function esViewerBloqueadoRegistrador() {
+    if (localStorage.getItem('registradorRol') === 'viewer') {
+        alert('Función no permitida');
+        return true;
+    }
+    return false;
+}
+
 const matriculaInput = document.getElementById("matriculaInput");
 const teclas = document.querySelectorAll(".tecla");
 const btnRegistrar = document.getElementById("btnRegistrar");
@@ -75,6 +83,7 @@ async function buscarAlumno(matricula) {
 //   REGISTRAR ASISTENCIA
 // ==============================
 btnRegistrar.addEventListener("click", async () => {
+    if (esViewerBloqueadoRegistrador()) return;
     const matricula = matriculaInput.value.trim();
 
     // Validar que sea exactamente 5 dígitos

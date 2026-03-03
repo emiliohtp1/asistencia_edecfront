@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (response.ok) {
             const usuario = await response.json();
             
-            // Roles permitidos: administrador, director, coordinador
-            const rolesPermitidos = ['administrador', 'director', 'coordinador'];
+            // Roles permitidos: administrador, director, coordinador, viewer
+            const rolesPermitidos = ['administrador', 'director', 'coordinador', 'viewer'];
             
             // Verificar que el usuario tenga un rol permitido
             if (!rolesPermitidos.includes(usuario.rol)) {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.removeItem('adminCorreo');
                 localStorage.removeItem('adminRol');
                 localStorage.removeItem('adminContraseña');
-                alert('No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director o coordinador pueden acceder.');
+                alert('No tienes permisos para acceder a esta página. Solo usuarios con rol de administrador, director, coordinador o viewer pueden acceder.');
                 window.location.href = 'administradorlogin.html';
                 return;
             }

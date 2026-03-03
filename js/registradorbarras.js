@@ -2,6 +2,14 @@ const API_ASISTENCIA = "https://asistencia-edec.onrender.com/api/asistencias/reg
 const API_BACHILLERATO = "https://asistencia-edec.onrender.com/api/alumnos/bachillerato";
 const API_UNIVERSIDAD = "https://asistencia-edec.onrender.com/api/alumnos/universidad";
 
+function esViewerBloqueadoRegistradorBarras() {
+    if (localStorage.getItem('registradorBarrasRol') === 'viewer') {
+        alert('Función no permitida');
+        return true;
+    }
+    return false;
+}
+
 const codigoBarrasInput = document.getElementById("codigoBarrasInput");
 const mensajeExito = document.getElementById("mensajeExito");
 const mensajeError = document.getElementById("mensajeError");
@@ -90,6 +98,7 @@ codigoBarrasInput.addEventListener("keypress", async (e) => {
     // Detectar cuando se presiona Enter o cuando el scanner termina de leer
     if (e.key === "Enter" || e.keyCode === 13) {
         e.preventDefault();
+        if (esViewerBloqueadoRegistradorBarras()) return;
         
         const matricula = codigoBarrasInput.value.trim();
 

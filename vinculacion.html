@@ -23,7 +23,7 @@
             
             // Verificación rápida del rol (la verificación completa se hace en authGuard)
             const rolGuardado = localStorage.getItem('vinculacionRol');
-            const rolesPermitidos = ['administrador', 'director', 'coordinador', 'vinculacion'];
+            const rolesPermitidos = ['administrador', 'director', 'coordinador', 'vinculacion', 'viewer'];
             if (!rolesPermitidos.includes(rolGuardado)) {
                 localStorage.removeItem('isLoggedInVinculacion');
                 localStorage.removeItem('vinculacionCorreo');

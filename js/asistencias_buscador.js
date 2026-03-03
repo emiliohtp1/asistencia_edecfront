@@ -2,6 +2,14 @@ const API_TODAS_ASISTENCIAS_APODACA = "https://asistencia-edec.onrender.com/api/
 const API_BUSCAR_MATRICULA_APODACA = "https://asistencia-edec.onrender.com/api/asistencias/apodaca/";
 const API_FICHADOS = "https://asistencia-edec.onrender.com/api/fichados/apodaca";
 
+function esViewerBloqueadoAsistencias() {
+    if (localStorage.getItem('asistenciasRol') === 'viewer') {
+        alert('Función no permitida');
+        return true;
+    }
+    return false;
+}
+
 let inputBuscarMatricula;
 let btnBuscar;
 let btnFichados;
@@ -674,6 +682,7 @@ function cerrarModalEliminarFichado() {
 }
 
 async function eliminarRegistroFichado() {
+    if (esViewerBloqueadoAsistencias()) return;
     // Evitar múltiples eliminaciones simultáneas
     if (procesandoEliminarFichado) {
         return;
@@ -1384,6 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Función para generar el archivo Excel
     async function generarExcel() {
+        if (esViewerBloqueadoAsistencias()) return;
         try {
             // Filtrar asistencias según los filtros seleccionados
             let asistenciasFiltradas = filtrarAsistenciasParaExcel();
@@ -1548,6 +1558,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //   FUNCIÓN GLOBAL PARA GENERAR EXCEL DE FICHADOS
 // ==============================
 async function generarExcelFichados() {
+    if (esViewerBloqueadoAsistencias()) return;
     try {
             if (todosLosFichados.length === 0) {
                 alert('No hay datos de fichados para exportar.');

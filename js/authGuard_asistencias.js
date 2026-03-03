@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Roles permitidos: administrador, director, coordinador, servicio social
-    const rolesPermitidos = ['administrador', 'director', 'coordinador', 'servicio social'];
+    const rolesPermitidos = ['administrador', 'director', 'coordinador', 'servicio social', 'viewer'];
 
     // Verificar el rol del usuario desde la API
     try {

@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     
                     // Roles permitidos: administrador, director, coordinador, vinculacion
-                    const rolesPermitidos = ['administrador', 'director', 'coordinador', 'vinculacion'];
+                    const rolesPermitidos = ['administrador', 'director', 'coordinador', 'vinculacion', 'viewer'];
                     
                     // Verificar que el usuario tenga un rol permitido
                     if (!rolesPermitidos.includes(usuario.rol)) {
