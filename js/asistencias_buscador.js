@@ -91,39 +91,50 @@ async function cargarTodasLasAsistencias(mantenerPagina = false) {
 }
 
 // ==============================
-//   BUSCAR POR MATRÍCULA
+//   BUSCAR POR MATRÍCULA O NOMBRE
 // ==============================
-async function buscarPorMatricula(matricula, mantenerPagina = false) {
-    if (!matricula || matricula.trim() === '') {
+async function buscarPorMatricula(term, mantenerPagina = false) {
+    const busqueda = (term || '').trim();
+    if (busqueda === '') {
         // Si está vacío, cargar todas las asistencias
         cargarTodasLasAsistencias(mantenerPagina);
         return;
     }
 
     try {
-        const response = await fetch(`${API_BUSCAR_MATRICULA_APODACA}${matricula.trim()}`);
-        
-        if (!response.ok) {
-            if (response.status === 404) {
-                todasLasAsistencias = [];
-                if (!mantenerPagina) {
-                    paginaActual = 1; // Resetear a la primera página
+        // Si la búsqueda es solo numérica, usar el endpoint por matrícula
+        if (/^\d+$/.test(busqueda)) {
+            const response = await fetch(`${API_BUSCAR_MATRICULA_APODACA}${busqueda}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    todasLasAsistencias = [];
+                    if (!mantenerPagina) paginaActual = 1;
+                    aplicarFiltros(mantenerPagina);
+                    return;
                 }
-                aplicarFiltros(mantenerPagina);
-                return;
+                throw new Error('Error al buscar.');
             }
-            throw new Error('Error al buscar la matrícula.');
+            const data = await response.json();
+            todasLasAsistencias = data.asistencias || [];
+        } else {
+            // Búsqueda por nombre (o texto): cargar todas y filtrar por matrícula o nombre
+            const response = await fetch(API_TODAS_ASISTENCIAS_APODACA);
+            if (!response.ok) throw new Error('Error al cargar asistencias.');
+            const data = await response.json();
+            const todas = data.asistencias || [];
+            const termLower = busqueda.toLowerCase();
+            todasLasAsistencias = todas.filter(a => {
+                const matricula = String(a.Matricula || '').toLowerCase();
+                const nombre = String(a.Nombre || '').toLowerCase();
+                return matricula.includes(termLower) || nombre.includes(termLower);
+            });
         }
 
-        const data = await response.json();
-        todasLasAsistencias = data.asistencias || [];
-        if (!mantenerPagina) {
-            paginaActual = 1; // Resetear a la primera página al buscar
-        }
+        if (!mantenerPagina) paginaActual = 1;
         aplicarFiltros(mantenerPagina);
     } catch (error) {
         console.error('Error:', error);
-        mostrarMensajeError('Error al buscar la matrícula.');
+        mostrarMensajeError('Error al buscar.');
     }
 }
 
@@ -920,12 +931,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Permitir buscar todas si se limpia el campo
+    // Actualizar la lista al escribir (con debounce para no abusar de peticiones)
+    let timeoutBusqueda = null;
     inputBuscarMatricula.addEventListener("input", (e) => {
-        if (e.target.value.trim() === '') {
-            paginaActual = 1; // Resetear a la primera página al limpiar
+        const valor = e.target.value.trim();
+        if (valor === '') {
+            if (timeoutBusqueda) clearTimeout(timeoutBusqueda);
+            paginaActual = 1;
             cargarTodasLasAsistencias();
+            return;
         }
+        if (timeoutBusqueda) clearTimeout(timeoutBusqueda);
+        timeoutBusqueda = setTimeout(() => {
+            paginaActual = 1;
+            buscarPorMatricula(valor, true);
+            timeoutBusqueda = null;
+        }, 350);
     });
 
     // Función para abrir la ventana flotante de filtros
